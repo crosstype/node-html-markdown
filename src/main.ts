@@ -83,9 +83,9 @@ export class NodeHtmlMarkdown {
         el = el.toUpperCase();
 
         const base = translators.get(el) as TranslatorConfig | undefined;
-        const res = !base ? t :
-                    typeof t === 'function' ? Object.assign(t, { base }) :
-                      { ...base, ...t };
+        const res = typeof t === 'function'
+                    ? Object.assign((...args:any[]) => t.apply(void 0, <any>args), { base })
+                    : { ...base, ...t };
 
         translators.set(el, res)
       });

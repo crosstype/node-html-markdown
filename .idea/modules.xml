@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/node-html-to-markdown.iml" filepath="$PROJECT_DIR$/.idea/node-html-to-markdown.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/node-html-markdown.iml" filepath="$PROJECT_DIR$/.idea/node-html-markdown.iml" />
     </modules>
   </component>
 </project>

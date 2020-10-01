@@ -4,6 +4,18 @@ import { ElementNode } from './nodes';
 
 
 /* ****************************************************************************************************************** */
+// region: Utility Types
+/* ****************************************************************************************************************** */
+
+/**
+ * Make certain properties required
+ */
+export declare type RequireSome<T, K extends keyof T> = T & Pick<Required<T>, K>;
+
+// endregion
+
+
+/* ****************************************************************************************************************** */
 // region: String Utils
 /* ****************************************************************************************************************** */
 
@@ -16,6 +28,12 @@ export const isWhiteSpaceOnly = (s: string) => !/\S/.test(s);
  * @param value - Value to return if true
  */
 export const truthyStr = (v: any, value?: string): string => v ? ((value !== undefined) ? value : String(v)) : '';
+export const getWhitespaceStats = (s: string, pos: 'start' | 'end'): { length: number, newLines: number } => {
+  const regexp = new RegExp(String.raw`${truthyStr(pos === 'start','^')}(\r?\n\s*)+${truthyStr(pos === 'end', '$')}`);
+  const whitespace = s.match(regexp);
+  if (!whitespace) return { length: 0, newLines: 0 };
+  return { length: whitespace[0].length, newLines: whitespace[0].match(/\r?\n/g)![0].length }
+}
 
 // endregion
 

@@ -7,7 +7,6 @@ import { CommentNode, NodeType, TextNode } from 'node-html-parser';
 /* ****************************************************************************************************************** */
 
 export { TextNode, NodeType, CommentNode }
-export type VisitedNode = ElementNode & { indentLevel?: number }
 
 /* ********************************************************* *
  * Merged Nodes - Unions of node-html-parser and common DOM

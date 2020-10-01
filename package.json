@@ -24,7 +24,8 @@
     "md",
     "html5",
     "node-html-parser",
-    "fast-html-parser"
+    "fast-html-parser",
+    "turndown"
   ],
   "author": "Ron S.",
   "repository": {

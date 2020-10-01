@@ -22,11 +22,13 @@ export const HtmlToMarkdownOptions = Object.freeze({
 
   /**
    * Bullet marker
+   * @default *
    */
   bulletMarker: '*',
 
   /**
    * Indent string
+   * @default '  '
    */
   indent: '  ',
 
@@ -44,6 +46,7 @@ export const HtmlToMarkdownOptions = Object.freeze({
 
   /**
    * Strong delimiter
+   * @default **
    */
   strongDelimiter: '**',
 
@@ -55,7 +58,13 @@ export const HtmlToMarkdownOptions = Object.freeze({
   /**
    * Add elements to block elements list (surrounds with newlines)
    */
-  blockElements: <string[]><any>void 0
+  blockElements: <string[]><any>void 0,
+
+  /**
+   * Max consecutive new lines allowed
+   * @default 3
+   */
+  maxConsecutiveNewlines: <number>3,
 });
 
 // endregion
