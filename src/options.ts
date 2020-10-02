@@ -1,90 +1,65 @@
-import { defaultBlockElements, defaultIgnoreElements } from './config';
-
-
 /* ****************************************************************************************************************** */
-// region: Type / Defaults
+// region: Types
 /* ****************************************************************************************************************** */
 
-export type HtmlToMarkdownOptions = typeof HtmlToMarkdownOptions;
-
-export const HtmlToMarkdownOptions = Object.freeze({
+export interface NodeHtmlMarkdownOptions {
   /**
    * Use native window DOMParser when available
    * @default false
    */
-  preferNativeParser: false,
+  preferNativeParser: boolean,
 
   /**
    * Code block fence
    * @default ```
    */
-  codeFence: '```',
+  codeFence: string,
 
   /**
    * Bullet marker
    * @default *
    */
-  bulletMarker: '*',
+  bulletMarker: string,
 
   /**
    * Indent string
    * @default '  '
    */
-  indent: '  ',
+  indent: string,
 
   /**
    * Style for code block
    * @default fence
    */
-  codeBlockStyle: <'indented' | 'fenced'>'fenced',
+  codeBlockStyle: 'indented' | 'fenced',
 
   /**
    * Emphasis delimiter
    * @default _
    */
-  emDelimiter: '_',
+  emDelimiter: string,
 
   /**
    * Strong delimiter
    * @default **
    */
-  strongDelimiter: '**',
+  strongDelimiter: string,
 
   /**
-   * Ignore elements (tag) - Ignore inner text does not parse children
+   * Supplied elements will be ignored (ignores inner text does not parse children)
    */
-  ignore: <string[]><any>void 0,
+  readonly ignore?: string[],
 
   /**
-   * Add elements to block elements list (surrounds with newlines)
+   * Supplied elements will be treated as blocks (surrounded with blank lines)
    */
-  blockElements: <string[]><any>void 0,
+  readonly blockElements?: string[],
 
   /**
    * Max consecutive new lines allowed
    * @default 3
    */
-  maxConsecutiveNewlines: <number>3,
-});
-
-// endregion
-
-
-/* ****************************************************************************************************************** */
-// region: Utilities
-/* ****************************************************************************************************************** */
-
-export function createOptions(options: Partial<HtmlToMarkdownOptions> = {}): HtmlToMarkdownOptions {
-  const { ignore, blockElements } = options;
-
-  return Object.freeze({
-    ...HtmlToMarkdownOptions,
-    ...options,
-    ignore: ignore ? defaultIgnoreElements.concat(ignore.map(e => e.toUpperCase())) : defaultIgnoreElements,
-    blockElements: blockElements
-                   ? defaultBlockElements.concat(blockElements.map(e => e.toUpperCase()))
-                   : defaultBlockElements
-  });
+  maxConsecutiveNewlines: number,
 }
 
 // endregion

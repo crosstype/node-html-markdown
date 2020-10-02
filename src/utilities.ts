@@ -1,18 +1,6 @@
-import { HtmlToMarkdownOptions } from './options';
-import { parse } from 'node-html-parser';
+import { NodeHtmlMarkdownOptions } from './options';
 import { ElementNode } from './nodes';
-
-
-/* ****************************************************************************************************************** */
-// region: Utility Types
-/* ****************************************************************************************************************** */
-
-/**
- * Make certain properties required
- */
-export declare type RequireSome<T, K extends keyof T> = T & Pick<Required<T>, K>;
-
-// endregion
+import { nodeHtmlParserConfig } from './config';
 
 
 /* ****************************************************************************************************************** */
@@ -22,18 +10,36 @@ export declare type RequireSome<T, K extends keyof T> = T & Pick<Required<T>, K>
 export const trimNewLines = (s: string) => s.replace(/^\n+|\n+$/g, '');
 export const surround = (source: string, surroundStr: string) => `${surroundStr}${source}${surroundStr}`;
 export const isWhiteSpaceOnly = (s: string) => !/\S/.test(s);
-/**
- * If value is truthy, returns `value` (or `v` if no `value` provided), otherwise, returns an empty string
- * @param v - Var to check for truthiness
- * @param value - Value to return if true
- */
-export const truthyStr = (v: any, value?: string): string => v ? ((value !== undefined) ? value : String(v)) : '';
 export const getWhitespaceStats = (s: string, pos: 'start' | 'end'): { length: number, newLines: number } => {
   const regexp = new RegExp(String.raw`${truthyStr(pos === 'start','^')}(\r?\n\s*)+${truthyStr(pos === 'end', '$')}`);
   const whitespace = s.match(regexp);
   if (!whitespace) return { length: 0, newLines: 0 };
   return { length: whitespace[0].length, newLines: whitespace[0].match(/\r?\n/g)!.length }
 }
+
+/**
+ * If value is truthy, returns `value` (or `v` if no `value` provided), otherwise, returns an empty string
+ * @param v - Var to check for truthiness
+ * @param value - Value to return if true
+ */
+export const truthyStr = (v: any, value?: string): string => v ? ((value !== undefined) ? value : String(v)) : '';
+
+// endregion
+
+
+/* ****************************************************************************************************************** */
+// region: Object Helpers
+/* ****************************************************************************************************************** */
+
+/**
+ * Verify that object has all provided keys
+ * @param strict - Can *only* have the provided keys
+ */
+export const hasKeys = (o: object, keys: string[], strict?: boolean) => {
+  if (typeof o !== 'object') return false;
+  const objKeys = Object.keys(o);
+  return !strict ? keys.every(k => objKeys.includes(k)) : (objKeys.sort().toString() === keys.sort().toString());
+};
 
 // endregion
 
@@ -42,45 +48,63 @@ export const getWhitespaceStats = (s: string, pos: 'start' | 'end'): { length: n
 // region: Parser
 /* ****************************************************************************************************************** */
 
-/**
- * Determine if environment provides a working, native DOM Parser
- */
-const hasNativeDomParser = (): boolean => {
+function tryParseWithNativeDom(html: string): ElementNode | undefined {
   try {
-    return !!(window?.DOMParser && (new window.DOMParser()).parseFromString('', 'text/html'));
+    if (!(window?.DOMParser && (new window.DOMParser()).parseFromString('', 'text/html'))) return void 0;
   } catch {
-    return false;
+    return void 0;
+  }
+
+  /* Get a document */
+  let doc: Document;
+  try {
+    doc = document.implementation.createHTMLDocument('').open()
+  } catch (e) {
+    const { ActiveXObject } = (<any>window);
+    if (ActiveXObject) {
+      const doc = ActiveXObject('htmlfile');
+      doc.designMode = 'on';        // disable on-page scripts
+      return doc.open();
+    }
+    throw e;
+  }
+
+  // Prepare document, ensuring we have a wrapper node
+  doc.write('<node-html-markdown>' + html + '</node-html-markdown>');
+  doc.close();
+
+  return doc.documentElement;
+}
+
+const getNodeHtmlParser = () => {
+  try {
+    return require('node-html-parser').parse as typeof import('node-html-parser').parse
+  } catch {
+    return undefined;
   }
 }
 
 /**
  * Parser string to HTMLElement
  */
-export function parseHTML(html: string, options: HtmlToMarkdownOptions): ElementNode {
-  let doc: HTMLDocument;
+export function parseHTML(html: string, options: NodeHtmlMarkdownOptions): ElementNode {
+  let nodeHtmlParse: ReturnType<typeof getNodeHtmlParser>;
 
-  /* Parse with native engine, if specified and possible */
-  if (options.preferNativeParser && hasNativeDomParser()) {
+  /* If specified, try to parse with native engine, fallback to node-html-parser */
+  let el: ElementNode | undefined;
+  if (options.preferNativeParser) {
     try {
-      doc = document.implementation.createHTMLDocument('').open()
-    } catch (e) {
-      const { ActiveXObject } = (<any>window);
-      if (ActiveXObject) {
-        doc = ActiveXObject('htmlfile');
-        doc.designMode = 'on';        // disable on-page scripts
-        doc.open();
-      }
-      else throw e;
+      el = tryParseWithNativeDom(html);
     }
-
-    doc.write(html);
-    doc.close();
-
-    return doc.documentElement;
+    catch (e) {
+      nodeHtmlParse = getNodeHtmlParser();
+      if (nodeHtmlParse) console.warn('Native DOM parser encountered an error during parse', e);
+      throw e;
+    }
   }
+  else nodeHtmlParse = getNodeHtmlParser();
 
-  // Parse with node-html-parser (do not change config - set for optimal performance)
-  return parse(html, { lowerCaseTagName: false, script: false, style: false, pre: true, comment: false });
+  return el || nodeHtmlParse!(html, nodeHtmlParserConfig);
 }
 
 // endregion

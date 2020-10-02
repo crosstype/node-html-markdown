@@ -1,7 +1,6 @@
-import { HtmlToMarkdownOptions } from './options';
-import { FileCollection, NodeHtmlMarkdown } from './main';
-import { parseHTML } from './utilities';
-import { getMarkdownForHtmlNodes, NodeMetadata, NodeMetadataMap, Visitor } from './visitor';
+import { NodeHtmlMarkdownOptions } from './options';
+import { hasKeys } from './utilities';
+import { NodeMetadata, NodeMetadataMap, Visitor } from './visitor';
 import { ElementNode } from './nodes';
 
 
@@ -14,11 +13,11 @@ export type TranslatorConfigFactory = {
   base?: TranslatorConfig
 }
 
-export type TranslatorCollection = { [tags: string]: TranslatorConfig | TranslatorConfigFactory }
+export type TranslatorConfigObject = { [tags: string]: TranslatorConfig | TranslatorConfigFactory }
 
 export type TranslatorContext = Partial<NodeMetadata> & {
   node: ElementNode
-  options: HtmlToMarkdownOptions
+  options: NodeHtmlMarkdownOptions
   parent?: ElementNode
   nodeMetadata: NodeMetadataMap
 }
@@ -66,8 +65,68 @@ export enum PostProcess {
 
 
 /* ****************************************************************************************************************** */
+// region: TranslatorCollection
+/* ****************************************************************************************************************** */
+
+export class TranslatorCollection {
+  /**
+   * @internal
+   */
+  [tagName: string]: any
+
+  get size() { return Object.keys(this).length }
+
+  /**
+   * Add / update translator config for one or more element tags
+   */
+  set(keys: string, config: TranslatorConfig | TranslatorConfigFactory, /* @internal */ preserveBase?: boolean) {
+    keys.split(',').forEach(el => {
+      el = el.toUpperCase();
+
+      if (preserveBase) {
+        const base = this[el];
+        if (isTranslatorConfig(base))
+          config = !isTranslatorConfig(config)
+                   ? Object.assign((...args: any[]) => (<Function>config).apply(void 0, args), { base })
+                   : { ...base, ...config };
+      }
+
+      this[el] = config;
+    });
+  }
+
+  /**
+   * Get translator config for element tag
+   */
+  get(key: string): TranslatorConfig | TranslatorConfigFactory {
+    return this[key.toUpperCase()] as any;
+  }
+
+  /**
+   * Returns array of entries
+   */
+  entries(): [ elementName: string, config: TranslatorConfig | TranslatorConfigFactory ][] {
+    return Object.entries(this);
+  }
+
+  /**
+   * Remove translator config for one or more element tags
+   */
+  remove(keys: string): void {
+    keys.split(',').forEach(el => delete this[el.toUpperCase()]);
+  }
+}
+
+// endregion
+
+
+/* ****************************************************************************************************************** */
 // region: Utilities
 /* ****************************************************************************************************************** */
+
+export const isTranslatorConfig = (v: any): v is TranslatorConfig =>
+  typeof v === 'object' &&
+  hasKeys(v, [ 'prefix', 'postfix', 'content', 'postprocess', 'recurse', 'surroundingNewlines', 'ignore' ], true);
 
 export function createTranslatorContext(visitor: Visitor, node: ElementNode, metadata?: NodeMetadata): TranslatorContext
 {
@@ -79,19 +138,6 @@ export function createTranslatorContext(visitor: Visitor, node: ElementNode, met
     nodeMetadata,
     ...metadata
   });
-}
-
-export function translateHtml(this: NodeHtmlMarkdown, htmlOrFiles: string | FileCollection): string | FileCollection {
-  const inputIsCollection = typeof htmlOrFiles !== 'string';
-  const inputFiles: FileCollection = !inputIsCollection ? { 'default': <string>htmlOrFiles } : <FileCollection>htmlOrFiles;
-  const outputFiles: FileCollection = {};
-
-  for (const [ fileName, html ] of Object.entries(inputFiles)) {
-    const parsedHtml = parseHTML(html, this.options);
-    outputFiles[fileName] = getMarkdownForHtmlNodes(this, parsedHtml, fileName !== 'default' ? fileName : void 0);
-  }
-
-  return inputIsCollection ? outputFiles : outputFiles['default'];
 }
 
 // endregion

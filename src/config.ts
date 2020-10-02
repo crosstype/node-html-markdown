@@ -1,5 +1,7 @@
 import { isWhiteSpaceOnly, surround, trimNewLines } from './utilities';
-import { PostProcess, TranslatorCollection } from './translator';
+import { PostProcess, TranslatorConfigObject } from './translator';
+import { NodeHtmlMarkdownOptions } from './options';
+import { Options as NodeHtmlParserOptions } from 'node-html-parser'
 
 
 /* ****************************************************************************************************************** */
@@ -22,10 +24,28 @@ export const defaultIgnoreElements = [
 
 
 /* ****************************************************************************************************************** */
+// region: Options
+/* ****************************************************************************************************************** */
+
+export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
+  preferNativeParser: false,
+  codeFence: '```',
+  bulletMarker: '*',
+  indent: '  ',
+  codeBlockStyle: <'indented' | 'fenced'>'fenced',
+  emDelimiter: '_',
+  strongDelimiter: '**',
+  maxConsecutiveNewlines: 3,
+});
+
+// endregion
+
+
+/* ****************************************************************************************************************** */
 // region: Translators
 /* ****************************************************************************************************************** */
 
-export const defaultTranslators: TranslatorCollection = {
+export const defaultTranslators: TranslatorConfigObject = {
   /* Line break */
   'br': { content: `  \n`, recurse: false },
 
@@ -126,5 +146,23 @@ export const defaultTranslators: TranslatorCollection = {
     }
   }
 }
+
+// endregion
+
+
+/* ****************************************************************************************************************** */
+// region: General
+/* ****************************************************************************************************************** */
+
+/**
+ * Note: Do not change - values are tuned for performance
+ */
+export const nodeHtmlParserConfig: NodeHtmlParserOptions = {
+  lowerCaseTagName: false,
+  script: false,
+  style: false,
+  pre: true,
+  comment: false
+};
 
 // endregion

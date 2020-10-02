@@ -1,6 +1,8 @@
-import { createOptions, HtmlToMarkdownOptions } from './options';
-import { translateHtml, TranslatorCollection, TranslatorConfig, TranslatorConfigFactory } from './translator';
-import { defaultTranslators } from './config';
+import { NodeHtmlMarkdownOptions } from './options';
+import { TranslatorCollection, TranslatorConfigObject } from './translator';
+import { defaultBlockElements, defaultIgnoreElements, defaultOptions, defaultTranslators } from './config';
+import { parseHTML } from './utilities';
+import { getMarkdownForHtmlNodes } from './visitor';
 
 
 /* ****************************************************************************************************************** */
@@ -8,7 +10,7 @@ import { defaultTranslators } from './config';
 /* ****************************************************************************************************************** */
 
 export type FileCollection = { [fileName: string]: string }
-type Options = Partial<HtmlToMarkdownOptions>
+type Options = Partial<NodeHtmlMarkdownOptions>
 
 // endregion
 
@@ -18,15 +20,22 @@ type Options = Partial<HtmlToMarkdownOptions>
 /* ****************************************************************************************************************** */
 
 export class NodeHtmlMarkdown {
-  public translators = new Map<string, TranslatorConfig | TranslatorConfigFactory>();
-  /**
-   * @internal
-   */
-  public readonly options: HtmlToMarkdownOptions
+  public translators = new TranslatorCollection();
+  public readonly options: NodeHtmlMarkdownOptions
 
-  constructor(options?: Partial<HtmlToMarkdownOptions>, customTranslators?: TranslatorCollection) {
-    this.options = createOptions(options);
-    this.addTranslators(customTranslators);
+  constructor(options?: Options, customTranslators?: TranslatorConfigObject) {
+    /* Setup Options */
+    this.options = { ...defaultOptions, ...options };
+    const ignoredElements = { ...defaultIgnoreElements, ...this.options.ignore };
+    const blockElements = { ...defaultBlockElements, ...this.options.blockElements };
+
+    /* Setup Translator Bases */
+    ignoredElements?.forEach(el => this.translators.set(el, { ignore: true, recurse: false }));
+    blockElements?.forEach(el => this.translators.set(el, { surroundingNewlines: 2 }));
+
+    /* Add and merge bases with default and custom translator configs */
+    for (const [ elems, cfg ] of Object.entries({ ...defaultTranslators, ...customTranslators }))
+      this.translators.set(elems, cfg, true);
   }
 
 
@@ -37,15 +46,15 @@ export class NodeHtmlMarkdown {
   /**
    * Translate HTML source text to markdown
    */
-  static translate(html: string, options?: Options, customTranslators?: TranslatorCollection): string
+  static translate(html: string, options?: Options, customTranslators?: TranslatorConfigObject): string
   /**
    * Translate collection of HTML source text to markdown
    */
-  static translate(files: FileCollection, options?: Options, customTranslators?: TranslatorCollection): FileCollection
-  static translate(htmlOrFiles: string | FileCollection, opt?: Options, trans?: TranslatorCollection):
+  static translate(files: FileCollection, options?: Options, customTranslators?: TranslatorConfigObject): FileCollection
+  static translate(htmlOrFiles: string | FileCollection, opt?: Options, trans?: TranslatorConfigObject):
     string | FileCollection
   {
-    return translateHtml.call(new NodeHtmlMarkdown(opt, trans), htmlOrFiles);
+    return NodeHtmlMarkdown.prototype.translateWorker.call(new NodeHtmlMarkdown(opt, trans), htmlOrFiles);
   }
 
   // endregion
@@ -63,39 +72,30 @@ export class NodeHtmlMarkdown {
    */
   translate(files: FileCollection): FileCollection
   translate(htmlOrFiles: string | FileCollection): string | FileCollection {
-    return translateHtml.call(this, htmlOrFiles);
+    return this.translateWorker(htmlOrFiles);
   }
 
   // endregion
 
   /* ********************************************************* */
-  // region: Internal
+  // region: Internal Methods
   /* ********************************************************* */
 
-  private addTranslators(customTranslators?: TranslatorCollection) {
-    const { translators, options } = this;
+  private translateWorker(htmlOrFiles: string | FileCollection) {
+    const inputIsCollection = typeof htmlOrFiles !== 'string';
+    const inputFiles: FileCollection = !inputIsCollection ? { 'default': <string>htmlOrFiles } : <FileCollection>htmlOrFiles;
+    const outputFiles: FileCollection = {};
 
-    // Add ignored element bases
-    options.ignore?.forEach(el => translators.set(el.toUpperCase(), { ignore: true, recurse: false }));
+    for (const [ fileName, html ] of Object.entries(inputFiles)) {
+      const parsedHtml = parseHTML(html, this.options);
+      outputFiles[fileName] = getMarkdownForHtmlNodes(this, parsedHtml, fileName !== 'default' ? fileName : void 0);
+    }
 
-    // Add block element bases
-    options.blockElements?.forEach(el => translators.set(el.toUpperCase(), { surroundingNewlines: 2 }));
-
-    /* Add and merge bases with default and custom translator configs */
-    for (const [ elems, t ] of Object.entries({ ...defaultTranslators, ...customTranslators }))
-      elems.split(',').forEach(el => {
-        el = el.toUpperCase();
-
-        const base = translators.get(el) as TranslatorConfig | undefined;
-        const res = typeof t === 'function'
-                    ? Object.assign((...args:any[]) => t.apply(void 0, <any>args), { base })
-                    : { ...base, ...t };
-
-        translators.set(el, res)
-      });
+    return inputIsCollection ? outputFiles : outputFiles['default'];
   }
 
   // endregion
+
 }
 
 // endregion
