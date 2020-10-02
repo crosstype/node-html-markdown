@@ -4,6 +4,7 @@
   "compilerOptions": {
     "types": [ "jest", "node" ],
     "noEmit": true,
-    "incremental": false
+    "incremental": false,
+    "target": "ES2018"
   }
 }

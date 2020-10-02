@@ -1,7 +1,4 @@
 # Built
-*.d.ts
-*.js.map
-*.js
 dist
 coverage
 package-lock.json
