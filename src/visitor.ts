@@ -82,71 +82,73 @@ export class Visitor {
   private visitNode(node: HtmlNode, textOnly?: boolean, metadata?: NodeMetadata): void {
     const { result } = this;
 
-    if (isTextNode(node)) return this.appendResult(node.text);
+    if (isTextNode(node) && !node.isWhitespace) return this.appendResult(node.text);
     if (textOnly) return;
 
     if (isElementNode(node)) {
       const { instance: { translators } } = this;
-      const cfgOrFactory = translators.get(node.tagName);
-      if (cfgOrFactory) {
-        /* Get Translator Config */
-        let cfg: TranslatorConfig;
-        let ctx: TranslatorContext | undefined;
-        if (typeof cfgOrFactory === 'function') {
-          const base = cfgOrFactory.base;
-          ctx = createTranslatorContext(this, node, metadata);
-          cfg = { ...base, ...cfgOrFactory(ctx) };
-        } else cfg = cfgOrFactory;
+      const translatorCfgOrFactory = translators.get(node.tagName);
 
-        // Skip checking children if ignore flag set for node
-        if (cfg.ignore) return;
+      // If no handler for element, visit children
+      if (!translatorCfgOrFactory) return node.childNodes.forEach((n: HtmlNode) => this.visitNode(n));
 
-        /* Handle metadata update */
-        switch (node.tagName) {
-          case 'UL':
-          case 'OL':
-            metadata = {
-              listKind: (<any>node.tagName),
-              indentLevel: metadata ? metadata.indentLevel + 1 : 0
-            };
-            break;
-          case 'LI':
-            if (metadata?.listKind === 'OL') metadata.listItemNumber = (metadata.listItemNumber || 0) + 1;
-        }
-        if (metadata) this.nodeMetadata.set(node, metadata);
-
-        const startPosOuter = cfg.postprocess && result.text.length;
-
-        /* Append opening */
-        if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
-        if (cfg.prefix) this.appendResult(cfg.prefix);
-
-        /* Handle content */
-        if (typeof cfg.content === 'string') this.appendResult(cfg.content);
-        else {
-          const startPos = cfg.postprocess && result.text.length;
-
-          // Process child nodes
-          node.childNodes.forEach((n: HtmlNode) => this.visitNode(n, !cfg.recurse, metadata));
-
-          /* Apply translator post-processing */
-          if (cfg.postprocess) {
-            const postRes = cfg.postprocess({
-              ...(ctx || createTranslatorContext(this, node, metadata)),
-              content: result.text.substr(startPos!)
-            });
-
-            // If remove flag sent, remove / omit everything for this node (prefix, newlines, content, postfix)
-            if (postRes === PostProcess.RemoveNode) return this.appendResult('', startPosOuter);
-
-            if (typeof postRes === 'string') this.appendResult(postRes, startPos);
-          }
-        }
-
-        /* Append closing */
-        if (cfg.postfix) this.appendResult(cfg.postfix);
-        if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
+      /* Handle metadata update */
+      switch (node.tagName) {
+        case 'UL':
+        case 'OL':
+          metadata = {
+            listKind: (<any>node.tagName),
+            indentLevel: metadata ? metadata.indentLevel + 1 : 0
+          };
+          break;
+        case 'LI':
+          if (metadata?.listKind === 'OL') metadata.listItemNumber = (metadata.listItemNumber || 0) + 1;
       }
+      if (metadata) this.nodeMetadata.set(node, metadata);
+
+      /* Get Translator Config */
+      let cfg: TranslatorConfig;
+      let ctx: TranslatorContext | undefined;
+      if (typeof translatorCfgOrFactory === 'function') {
+        const base = translatorCfgOrFactory.base;
+        ctx = createTranslatorContext(this, node, metadata);
+        cfg = { ...base, ...translatorCfgOrFactory(ctx) };
+      } else cfg = translatorCfgOrFactory;
+
+      // Skip checking children if ignore flag set for node
+      if (cfg.ignore) return;
+
+      const startPosOuter = result.text.length;
+
+      /* Append opening */
+      if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
+      if (cfg.prefix) this.appendResult(cfg.prefix);
+
+      /* Handle content */
+      if (typeof cfg.content === 'string') this.appendResult(cfg.content);
+      else {
+        const startPos = result.text.length;
+
+        // Process child nodes
+        node.childNodes.forEach((n: HtmlNode) => this.visitNode(n, (cfg.recurse === false), metadata));
+
+        /* Apply translator post-processing */
+        if (cfg.postprocess) {
+          const postRes = cfg.postprocess({
+            ...(ctx || createTranslatorContext(this, node, metadata)),
+            content: result.text.substr(startPos)
+          });
+
+          // If remove flag sent, remove / omit everything for this node (prefix, newlines, content, postfix)
+          if (postRes === PostProcess.RemoveNode) return this.appendResult('', startPosOuter);
+
+          if (typeof postRes === 'string') this.appendResult(postRes, startPos);
+        }
+      }
+
+      /* Append closing */
+      if (cfg.postfix) this.appendResult(cfg.postfix);
+      if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
     }
   }
 
@@ -167,7 +169,7 @@ export function getMarkdownForHtmlNodes(instance: NodeHtmlMarkdown, rootNode: Ht
   if (instance.options.maxConsecutiveNewlines)
     result = result.replace(new RegExp(String.raw`(\r?\n\s*){${maxRN}}(\r?\n\s*)`, 'g'), '$1');
 
-  return result;
+  return result.trim();
 }
 
 // endregion

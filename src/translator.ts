@@ -23,7 +23,6 @@ export type TranslatorContext = Partial<NodeMetadata> & {
   nodeMetadata: NodeMetadataMap
 }
 
-
 export type TranslatorConfig = {
   /**
    * Preceeds content, follows surroundingNewLines
@@ -83,7 +82,7 @@ export function createTranslatorContext(visitor: Visitor, node: ElementNode, met
 }
 
 export function translateHtml(this: NodeHtmlMarkdown, htmlOrFiles: string | FileCollection): string | FileCollection {
-  const inputIsCollection = typeof htmlOrFiles === 'string';
+  const inputIsCollection = typeof htmlOrFiles !== 'string';
   const inputFiles: FileCollection = !inputIsCollection ? { 'default': <string>htmlOrFiles } : <FileCollection>htmlOrFiles;
   const outputFiles: FileCollection = {};
 

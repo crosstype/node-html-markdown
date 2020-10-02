@@ -1,28 +1,9 @@
 {
+  "extends": "./tsconfig.base",
   "include": [ "src" ],
 
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
-
-    "noErrorTruncation": false,
-    "incremental": true,
-
-    "lib": [ "esnext", "dom" ],
-    "target": "ESNext",
-    "module": "CommonJS",
-    "moduleResolution": "node",
-
-    "strict": true,
-    "declaration": true,
-    "preserveConstEnums": true,
-    "removeComments": false,
-    "sourceMap": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "preserveSymlinks": true,
-    "stripInternal": true
+    "outDir": "dist"
   }
 }

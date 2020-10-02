@@ -32,7 +32,7 @@ export const getWhitespaceStats = (s: string, pos: 'start' | 'end'): { length: n
   const regexp = new RegExp(String.raw`${truthyStr(pos === 'start','^')}(\r?\n\s*)+${truthyStr(pos === 'end', '$')}`);
   const whitespace = s.match(regexp);
   if (!whitespace) return { length: 0, newLines: 0 };
-  return { length: whitespace[0].length, newLines: whitespace[0].match(/\r?\n/g)![0].length }
+  return { length: whitespace[0].length, newLines: whitespace[0].match(/\r?\n/g)!.length }
 }
 
 // endregion

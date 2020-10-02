@@ -11,7 +11,7 @@ export const defaultBlockElements = [
   'DT', 'FIELDSET', 'FIGCAPTION', 'FIGURE', 'FOOTER', 'FORM', 'FRAMESET', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
   'HEADER', 'HGROUP', 'HR', 'HTML', 'ISINDEX', 'LI', 'MAIN', 'MENU', 'NAV', 'NOFRAMES', 'NOSCRIPT', 'OL',
   'OUTPUT', 'P', 'PRE', 'SECTION', 'TABLE', 'TBODY', 'TD', 'TFOOT', 'TH', 'THEAD', 'TR', 'UL', 'BLOCKQUOTE',
-  'PRE', 'CODE'
+  'PRE', 'UL', 'OL'
 ]
 
 export const defaultIgnoreElements = [
@@ -30,11 +30,11 @@ export const defaultTranslators: TranslatorCollection = {
   'br': { content: `  \n`, recurse: false },
 
   /* Horizontal Rule*/
-  'hr': { content: '* * *', surroundingNewlines: 2, recurse: false },
+  'hr': { content: '* * *', recurse: false },
 
   /* Headings */
   'h1,h2,h3,h4,h5,h6': ({ node }) => ({
-    content: '#'.repeat(+node.tagName.charAt(1))
+    prefix: '#'.repeat(+node.tagName.charAt(1)) + ' '
   }),
 
   /* Italic / Emphasis */
@@ -42,6 +42,11 @@ export const defaultTranslators: TranslatorCollection = {
     prefix: emDelimiter,
     postfix: emDelimiter,
     postprocess: ({ content }) => isWhiteSpaceOnly(content) ? PostProcess.RemoveNode : PostProcess.NoChange
+  }),
+
+  /* Lists (ordered & unordered) */
+  'ol,ul': ({ listKind }) => ({
+    surroundingNewlines: listKind ? 1 : 2
   }),
 
   /* Bold / Strong */
@@ -53,22 +58,14 @@ export const defaultTranslators: TranslatorCollection = {
 
   /* Block Quote */
   'blockquote': {
-    postprocess: ({ content }) => trimNewLines(content).replace(/^/gm, '> '),
-  },
-
-  /* Lists (ordered & unordered) */
-  'ul,ol': ({ node, parent }) => {
-    const isLILastChild = (parent?.tagName === 'LI' && node === parent.lastChild);
-    return {
-      prefix: isLILastChild ? `\n` : `\n\n`,
-      postfix: isLILastChild ? void 0 : `\n\n`,
-    }
+    postprocess: ({ content }) => trimNewLines(content).replace(/^(>*)[^\S\r\n]?/gm, `>$1 `),
   },
 
   /* List Item */
   'li': ({ options: { indent, bulletMarker }, indentLevel, listKind, listItemNumber }) => ({
     prefix: indent.repeat(+(indentLevel || 0)) +
-            ((listKind === 'OL') && (listItemNumber !== undefined)) ? `${listItemNumber}. ` : `${bulletMarker} `
+            (((listKind === 'OL') && (listItemNumber !== undefined)) ? `${listItemNumber}. ` : `${bulletMarker} `),
+    surroundingNewlines: 1
   }),
 
   /* Code (block / inline) */

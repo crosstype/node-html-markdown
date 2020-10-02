@@ -77,14 +77,14 @@ export const HtmlToMarkdownOptions = Object.freeze({
 export function createOptions(options: Partial<HtmlToMarkdownOptions> = {}): HtmlToMarkdownOptions {
   const { ignore, blockElements } = options;
 
-  return {
+  return Object.freeze({
     ...HtmlToMarkdownOptions,
     ...options,
     ignore: ignore ? defaultIgnoreElements.concat(ignore.map(e => e.toUpperCase())) : defaultIgnoreElements,
     blockElements: blockElements
                    ? defaultBlockElements.concat(blockElements.map(e => e.toUpperCase()))
                    : defaultBlockElements
-  }
+  });
 }
 
 // endregion

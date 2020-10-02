@@ -1,6 +1,6 @@
 import { createOptions, HtmlToMarkdownOptions } from './options';
 import { translateHtml, TranslatorCollection, TranslatorConfig, TranslatorConfigFactory } from './translator';
-import { defaultBlockElements, defaultTranslators } from './config';
+import { defaultTranslators } from './config';
 
 
 /* ****************************************************************************************************************** */
@@ -18,13 +18,17 @@ type Options = Partial<HtmlToMarkdownOptions>
 /* ****************************************************************************************************************** */
 
 export class NodeHtmlMarkdown {
-  public options: HtmlToMarkdownOptions;
   public translators = new Map<string, TranslatorConfig | TranslatorConfigFactory>();
+  /**
+   * @internal
+   */
+  public readonly options: HtmlToMarkdownOptions
 
   constructor(options?: Partial<HtmlToMarkdownOptions>, customTranslators?: TranslatorCollection) {
     this.options = createOptions(options);
     this.addTranslators(customTranslators);
   }
+
 
   /* ********************************************************* */
   // region: Static Methods
@@ -75,7 +79,7 @@ export class NodeHtmlMarkdown {
     options.ignore?.forEach(el => translators.set(el.toUpperCase(), { ignore: true, recurse: false }));
 
     // Add block element bases
-    defaultBlockElements.forEach(el => translators.set(el.toUpperCase(), { surroundingNewlines: true }));
+    options.blockElements?.forEach(el => translators.set(el.toUpperCase(), { surroundingNewlines: 2 }));
 
     /* Add and merge bases with default and custom translator configs */
     for (const [ elems, t ] of Object.entries({ ...defaultTranslators, ...customTranslators }))
