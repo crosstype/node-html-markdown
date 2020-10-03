@@ -46,10 +46,13 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
 // region: Escapes
 /* ****************************************************************************************************************** */
 
+/**
+ * @see EscapeConfig
+ */
 export const defaultEscapes: EscapeConfig = {
-  // Pattern / Character            Affected                        Example
+  // Pattern / Character            Affected                        Affected Examples
   singleCharacters: [
-    '\\\\',                      // Escaping
+    '\\\\',                      // Escaping                        \-
     '`',                         // Code                            `` code ``,  ```lang\n code block \n```
     '\*',                        // Bullet & Separators             * item,  ***
     '_',                         // Bold, Italics                   _italic_,  __bold__
@@ -59,7 +62,7 @@ export const defaultEscapes: EscapeConfig = {
   ],
 
   /**
-   * Note: Surround escape capture group with parens, or leave parens out to escape from start of match
+   * See comments on EscapeConfig for detail on how this works
    */
   startLinePatterns: [
     /\+\s/,                      // Bullets                          + item
