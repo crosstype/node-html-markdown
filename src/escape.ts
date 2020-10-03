@@ -63,7 +63,7 @@ export class EscapeText {
     /* Build start line pattern matcher */
     let patterns = '';
     const { startLinePatterns } = this.config;
-    for (let i = 0; i < startLinePatterns.length; i++) {
+    for (let i = 0; i < startLinePatterns.length; ++i) {
       const { source } = startLinePatterns[i];
       const { start, close } = getParenthesesRange(source) || {};
       let matchExp = !close ? source : source.substr(start! + 1, (close - start!) - 1);

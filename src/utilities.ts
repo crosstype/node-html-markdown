@@ -28,7 +28,7 @@ export const getParenthesesRange = (s: string): { start: number, close: number }
   function findNeedle(needle: string, startPos: number = 0): number | undefined {
     for (let i = startPos, backslashes = 0; i < s.length; ++i) {
       const char = s.charAt(i);
-      if (char === '\\') backslashes++;
+      if (char === '\\') ++backslashes;
       else {
         if ((char === needle) && (!backslashes || (backslashes === 2))) return i;
         backslashes = 0;

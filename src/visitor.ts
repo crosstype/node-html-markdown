@@ -84,13 +84,13 @@ export class Visitor {
   private visitNode(node: HtmlNode, textOnly?: boolean, metadata?: NodeMetadata): void {
     const { result, instance: { escaper } } = this;
 
-    /* Handle text */
+    /* Handle text node */
     if (isTextNode(node) && !node.isWhitespace)
       return this.appendResult(metadata?.noEscape ? node.text : escaper.escape(node.text));
 
     if (textOnly) return;
 
-    /* Handle node */
+    /* Handle element node */
     if (isElementNode(node)) {
       const { instance: { translators } } = this;
       const translatorCfgOrFactory = translators[node.tagName] as TranslatorConfig | TranslatorConfigFactory;
@@ -111,7 +111,7 @@ export class Visitor {
       }
       if (metadata) this.nodeMetadata.set(node, metadata);
 
-      // If no handler for element, visit children
+      // If no translator for element, visit children
       if (!translatorCfgOrFactory) return node.childNodes.forEach((n: HtmlNode) => this.visitNode(n));
 
       /* Get Translator Config */
@@ -122,7 +122,7 @@ export class Visitor {
         cfg = { ...translatorCfgOrFactory.base, ...translatorCfgOrFactory(ctx) };
       } else cfg = translatorCfgOrFactory;
 
-      // Skip checking children if ignore flag set for node
+      // Skip and don't check children if ignore flag set
       if (cfg.ignore) return;
 
       /* Update metadata for noEscape flag */
@@ -133,11 +133,11 @@ export class Visitor {
 
       const startPosOuter = result.text.length;
 
-      /* Append opening */
+      /* Write opening */
       if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
       if (cfg.prefix) this.appendResult(cfg.prefix);
 
-      /* Handle content */
+      /* Write inner content */
       if (typeof cfg.content === 'string') this.appendResult(cfg.content);
       else {
         const startPos = result.text.length;
@@ -159,7 +159,7 @@ export class Visitor {
         }
       }
 
-      /* Append closing */
+      /* Write closing */
       if (cfg.postfix) this.appendResult(cfg.postfix);
       if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
     }
