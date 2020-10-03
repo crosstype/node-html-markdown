@@ -1,14 +1,16 @@
 import { NodeHtmlMarkdown } from './main';
 import { ElementNode, HtmlNode, isElementNode, isTextNode } from './nodes';
 import { getWhitespaceStats } from './utilities';
-import { createTranslatorContext, PostProcess, TranslatorConfig, TranslatorContext } from './translator';
+import {
+  createTranslatorContext, isTranslatorConfig, PostProcess, TranslatorConfig, TranslatorConfigFactory, TranslatorContext
+} from './translator';
 
 
 /* ****************************************************************************************************************** */
 // region: Types
 /* ****************************************************************************************************************** */
 
-export type NodeMetadata = { indentLevel: number, listKind: 'OL' | 'UL', listItemNumber?: number }
+export type NodeMetadata = { indentLevel?: number, listKind?: 'OL' | 'UL', listItemNumber?: number, noEscape?: boolean }
 export type NodeMetadataMap = Map<ElementNode, NodeMetadata>
 
 type VisitorResult = {
@@ -80,25 +82,28 @@ export class Visitor {
   /* ********************************************************* */
 
   private visitNode(node: HtmlNode, textOnly?: boolean, metadata?: NodeMetadata): void {
-    const { result } = this;
+    const { result, instance: { escaper } } = this;
 
-    if (isTextNode(node) && !node.isWhitespace) return this.appendResult(node.text);
+    /* Handle text */
+    if (isTextNode(node) && !node.isWhitespace)
+      return this.appendResult(metadata?.noEscape ? node.text : escaper.escape(node.text));
+
     if (textOnly) return;
 
+    /* Handle node */
     if (isElementNode(node)) {
       const { instance: { translators } } = this;
-      const translatorCfgOrFactory = translators.get(node.tagName);
+      const translatorCfgOrFactory = translators[node.tagName] as TranslatorConfig | TranslatorConfigFactory;
 
-      // If no handler for element, visit children
-      if (!translatorCfgOrFactory) return node.childNodes.forEach((n: HtmlNode) => this.visitNode(n));
-
-      /* Handle metadata update */
+      /* Update metadata with list detail */
       switch (node.tagName) {
         case 'UL':
         case 'OL':
           metadata = {
+            ...metadata,
+            listItemNumber: 0,
             listKind: (<any>node.tagName),
-            indentLevel: metadata ? metadata.indentLevel + 1 : 0
+            indentLevel: (metadata?.indentLevel ?? -1) + 1
           };
           break;
         case 'LI':
@@ -106,17 +111,25 @@ export class Visitor {
       }
       if (metadata) this.nodeMetadata.set(node, metadata);
 
+      // If no handler for element, visit children
+      if (!translatorCfgOrFactory) return node.childNodes.forEach((n: HtmlNode) => this.visitNode(n));
+
       /* Get Translator Config */
       let cfg: TranslatorConfig;
       let ctx: TranslatorContext | undefined;
-      if (typeof translatorCfgOrFactory === 'function') {
-        const base = translatorCfgOrFactory.base;
+      if (!isTranslatorConfig(translatorCfgOrFactory)) {
         ctx = createTranslatorContext(this, node, metadata);
-        cfg = { ...base, ...translatorCfgOrFactory(ctx) };
+        cfg = { ...translatorCfgOrFactory.base, ...translatorCfgOrFactory(ctx) };
       } else cfg = translatorCfgOrFactory;
 
       // Skip checking children if ignore flag set for node
       if (cfg.ignore) return;
+
+      /* Update metadata for noEscape flag */
+      if (cfg.noEscape && !metadata?.noEscape) {
+        metadata = { ...metadata, noEscape: true };
+        this.nodeMetadata.set(node, metadata);
+      }
 
       const startPosOuter = result.text.length;
 
@@ -165,9 +178,11 @@ export class Visitor {
 export function getMarkdownForHtmlNodes(instance: NodeHtmlMarkdown, rootNode: HtmlNode, fileName?: string): string {
   let result = new Visitor(instance, rootNode, fileName).result.text;
 
-  const { maxConsecutiveNewlines: maxRN } = instance.options;
-  if (instance.options.maxConsecutiveNewlines)
-    result = result.replace(new RegExp(String.raw`(\r?\n\s*){${maxRN}}(\r?\n\s*)`, 'g'), '$1');
+  const { maxConsecutiveNewlines } = instance.options;
+  if (maxConsecutiveNewlines) result = result.replace(
+    new RegExp(String.raw`(\r?\n\s*){${maxConsecutiveNewlines}}(\r?\n\s*)`, 'g'),
+    '$1'
+  );
 
   return result.trim();
 }

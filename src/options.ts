@@ -2,6 +2,9 @@
 // region: Types
 /* ****************************************************************************************************************** */
 
+import { EscapeConfig } from './escape';
+
+
 export interface NodeHtmlMarkdownOptions {
   /**
    * Use native window DOMParser when available
@@ -60,6 +63,11 @@ export interface NodeHtmlMarkdownOptions {
    * @default 3
    */
   maxConsecutiveNewlines: number,
+
+  /**
+   * Add custom escape rules
+   */
+  escape?: Partial<EscapeConfig>
 }
 
 // endregion

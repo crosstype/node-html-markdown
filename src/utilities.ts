@@ -16,6 +16,26 @@ export const getWhitespaceStats = (s: string, pos: 'start' | 'end'): { length: n
   if (!whitespace) return { length: 0, newLines: 0 };
   return { length: whitespace[0].length, newLines: whitespace[0].match(/\r?\n/g)!.length }
 }
+export const getParenthesesRange = (s: string): { start: number, close: number } | undefined => {
+  const start = findNeedle('(');
+  if (!start) return;
+
+  const close = findNeedle(')', start);
+  if (!close) return;
+
+  return { start, close };
+
+  function findNeedle(needle: string, startPos: number = 0): number | undefined {
+    for (let i = startPos, backslashes = 0; i < s.length; ++i) {
+      const char = s.charAt(i);
+      if (char === '\\') backslashes++;
+      else {
+        if ((char === needle) && (!backslashes || (backslashes === 2))) return i;
+        backslashes = 0;
+      }
+    }
+  }
+}
 
 /**
  * If value is truthy, returns `value` (or `v` if no `value` provided), otherwise, returns an empty string
@@ -23,23 +43,6 @@ export const getWhitespaceStats = (s: string, pos: 'start' | 'end'): { length: n
  * @param value - Value to return if true
  */
 export const truthyStr = (v: any, value?: string): string => v ? ((value !== undefined) ? value : String(v)) : '';
-
-// endregion
-
-
-/* ****************************************************************************************************************** */
-// region: Object Helpers
-/* ****************************************************************************************************************** */
-
-/**
- * Verify that object has all provided keys
- * @param strict - Can *only* have the provided keys
- */
-export const hasKeys = (o: object, keys: string[], strict?: boolean) => {
-  if (typeof o !== 'object') return false;
-  const objKeys = Object.keys(o);
-  return !strict ? keys.every(k => objKeys.includes(k)) : (objKeys.sort().toString() === keys.sort().toString());
-};
 
 // endregion
 

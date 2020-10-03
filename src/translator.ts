@@ -1,5 +1,4 @@
 import { NodeHtmlMarkdownOptions } from './options';
-import { hasKeys } from './utilities';
 import { NodeMetadata, NodeMetadataMap, Visitor } from './visitor';
 import { ElementNode } from './nodes';
 
@@ -54,6 +53,10 @@ export type TranslatorConfig = {
    * Ignore node entirely
    */
   ignore?: boolean
+  /**
+   * Do not escape content
+   */
+  noEscape?: boolean
 }
 
 export enum PostProcess {
@@ -83,15 +86,16 @@ export class TranslatorCollection {
     keys.split(',').forEach(el => {
       el = el.toUpperCase();
 
+      let res = config;
       if (preserveBase) {
         const base = this[el];
         if (isTranslatorConfig(base))
-          config = !isTranslatorConfig(config)
-                   ? Object.assign((...args: any[]) => (<Function>config).apply(void 0, args), { base })
-                   : { ...base, ...config };
+          res = !isTranslatorConfig(config)
+                ? Object.assign((...args: any[]) => (<Function>config).apply(void 0, args), { base })
+                : { ...base, ...config };
       }
 
-      this[el] = config;
+      this[el] = res;
     });
   }
 
@@ -124,9 +128,10 @@ export class TranslatorCollection {
 // region: Utilities
 /* ****************************************************************************************************************** */
 
-export const isTranslatorConfig = (v: any): v is TranslatorConfig =>
-  typeof v === 'object' &&
-  hasKeys(v, [ 'prefix', 'postfix', 'content', 'postprocess', 'recurse', 'surroundingNewlines', 'ignore' ], true);
+/**
+ * Only use to narrow union of types where only TranslatorConfig has JS type 'object'
+ */
+export const isTranslatorConfig = (v: any): v is TranslatorConfig => typeof v === 'object';
 
 export function createTranslatorContext(visitor: Visitor, node: ElementNode, metadata?: NodeMetadata): TranslatorContext
 {
