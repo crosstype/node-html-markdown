@@ -1,8 +1,7 @@
 import { isWhiteSpaceOnly, surround, trimNewLines } from './utilities';
-import { PostProcess, TranslatorConfigObject } from './translator';
+import { PostProcessResult, TranslatorConfigObject } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
 import { Options as NodeHtmlParserOptions } from 'node-html-parser'
-import { EscapeConfig } from './escape';
 
 
 /* ****************************************************************************************************************** */
@@ -37,43 +36,36 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
   emDelimiter: '_',
   strongDelimiter: '**',
   maxConsecutiveNewlines: 3,
-});
-
-// endregion
-
-
-/* ****************************************************************************************************************** */
-// region: Escapes
-/* ****************************************************************************************************************** */
-
-/**
- * @see EscapeConfig
- */
-export const defaultEscapes: EscapeConfig = {
-  // Pattern / Character            Affected                        Affected Examples
-  singleCharacters: [
-    '\\\\',                      // Escaping                        \-
-    '`',                         // Code                            `` code ``,  ```lang\n code block \n```
-    '\*',                        // Bullet & Separators             * item,  ***
-    '_',                         // Bold, Italics                   _italic_,  __bold__
-    '~',                         // Strikethrough, Code             ~~strike~~,  ~~~lang\n code block \n~~~
-    '\\[',                       // Url                             [caption](url)
-    '\\]',                       // Url                             [caption](url)
-  ],
-
   /**
-   * See comments on EscapeConfig for detail on how this works
+   * Character:               Affects:                       Example:
+   *
+   *     \                      Escaping                        \-
+   *     `                      Code                            `` code ``,  ```lang\n code block \n```
+   *     *                      Bullet & Separators             * item,  ***
+   *     _                      Bold, Italics, Separator        _italic_,  __bold__,  ^___
+   *     ~                      Strikethrough, Code             ~~strike~~,  ~~~lang\n code block \n~~~
+   *     [                      Url                             [caption](url)
+   *     ]                      Url                             [caption](url)
    */
-  startLinePatterns: [
-    /\+\s/,                      // Bullets                          + item
-    /_{3,}/,                     // Separators                       ___
-    /=+/,                        // Heading                          heading\n====
-    /#{1,6}\s/,                  // Heading                          ## Heading
-    />/,                         // Blockquote                       > quote
-    /-/,                         // Bullet, Header, Separator        - item, heading\n---, ---
-    /\d+(\.\s)/                  // Numbered list item               1. Item
+  globalEscape: [ /[\\`*_~\[\]]/gm, '\\$&'],
+  /**
+   * Note:  The following compiled pattern was selected after perf testing various alternatives.
+   *        Please be mindful of performance if updating/changing it.
+   *
+   * Sequence:                Affects:                        Example:
+   *
+   *    +(space)                Bullets                         + item
+   *    =                       Heading                         heading\n====
+   *    #{1,6}(space)           Heading                         ## Heading
+   *    >                       Blockquote                      > quote
+   *    -                       Bullet, Header, Separator       - item, heading\n---, ---
+   *    \d+\.(space)            Numbered list item              1. Item
+   */
+  lineStartEscape: [
+    /^(\s*?)((?:\+[^\S\r\n])|(?:[=>-])|(?:#{1,6}[^\S\r\n]))|(?:(\d+)(\.[^\S\r\n]))/gm,
+    '$1$3\\$2$4'
   ]
-}
+});
 
 // endregion
 
@@ -100,7 +92,7 @@ export const defaultTranslators: TranslatorConfigObject = {
   /* Strikethrough */
   'del,s,strike': {
     postprocess: ({ content }) => isWhiteSpaceOnly(content)
-                                  ? PostProcess.RemoveNode
+                                  ? PostProcessResult.RemoveNode
                                   : content.replace(/^(.+)$/gm, '~~$1~~')
   },
 
@@ -108,7 +100,7 @@ export const defaultTranslators: TranslatorConfigObject = {
   'em,i': ({ options: { emDelimiter } }) => ({
     prefix: emDelimiter,
     postfix: emDelimiter,
-    postprocess: ({ content }) => isWhiteSpaceOnly(content) ? PostProcess.RemoveNode : PostProcess.NoChange
+    postprocess: ({ content }) => isWhiteSpaceOnly(content) ? PostProcessResult.RemoveNode : PostProcessResult.NoChange
   }),
 
   /* Lists (ordered & unordered) */
@@ -120,7 +112,7 @@ export const defaultTranslators: TranslatorConfigObject = {
   'strong,b': ({ options: { strongDelimiter } }) => ({
     prefix: strongDelimiter,
     postfix: strongDelimiter,
-    postprocess: ({ content }) => isWhiteSpaceOnly(content) ? PostProcess.RemoveNode : PostProcess.NoChange
+    postprocess: ({ content }) => isWhiteSpaceOnly(content) ? PostProcessResult.RemoveNode : PostProcessResult.NoChange
   }),
 
   /* Block Quote */

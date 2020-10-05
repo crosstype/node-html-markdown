@@ -2,8 +2,10 @@ import { NodeHtmlMarkdown } from './main';
 import { ElementNode, HtmlNode, isElementNode, isTextNode } from './nodes';
 import { getWhitespaceStats } from './utilities';
 import {
-  createTranslatorContext, isTranslatorConfig, PostProcess, TranslatorConfig, TranslatorConfigFactory, TranslatorContext
+  createTranslatorContext, isTranslatorConfig, PostProcessResult, TranslatorConfig, TranslatorConfigFactory,
+  TranslatorContext
 } from './translator';
+import { NodeHtmlMarkdownOptions } from './options';
 
 
 /* ****************************************************************************************************************** */
@@ -28,13 +30,18 @@ type VisitorResult = {
 // region: Visitor
 /* ****************************************************************************************************************** */
 
+/**
+ * Properties & methods marked public are designated as such due to the fact that we may add middleware / transformer
+ * support in the future
+ */
 export class Visitor {
   public result: VisitorResult
   public nodeMetadata: NodeMetadataMap = new Map();
+  private options: NodeHtmlMarkdownOptions;
 
   constructor(
     public instance: NodeHtmlMarkdown,
-    private rootNode: HtmlNode,
+    public rootNode: HtmlNode,
     public fileName?: string,
   )
   {
@@ -45,22 +52,15 @@ export class Visitor {
         newLines: 0
       }
     };
+    this.options = instance.options;
     this.visitNode(rootNode);
   }
-
-  /* ********************************************************* */
-  // region: Accessors
-  /* ********************************************************* */
-
-  get options() { return this.instance.options }
-
-  // endregion
 
   /* ********************************************************* */
   // region: Methods
   /* ********************************************************* */
 
-  appendResult(s: string, startPos?: number) {
+  public appendResult(s: string, startPos?: number) {
     if (!s && startPos === undefined) return;
     const { result } = this;
 
@@ -70,7 +70,7 @@ export class Visitor {
     result.trailingNewlineStats = getWhitespaceStats(result.text, 'end');
   }
 
-  appendNewlines(count: number) {
+  public appendNewlines(count: number) {
     const { newLines } = this.result.trailingNewlineStats;
     this.appendResult('\n'.repeat(Math.max(0, (+count - newLines))));
   }
@@ -81,12 +81,29 @@ export class Visitor {
   // region: Internal Methods
   /* ********************************************************* */
 
+  /**
+   * Apply escaping and custom replacement rules
+   */
+  private processText(text: string) {
+    const { lineStartEscape, globalEscape, textReplace } = this.options;
+    let res = text
+      .replace(globalEscape[0], globalEscape[1])
+      .replace(lineStartEscape[0], lineStartEscape[1]);
+
+    if (!textReplace) return res;
+
+    /* If specified, apply custom replacement patterns */
+    for (const [ pattern, r ] of textReplace) res = res.replace(pattern, r);
+
+    return res;
+  }
+
   private visitNode(node: HtmlNode, textOnly?: boolean, metadata?: NodeMetadata): void {
-    const { result, instance: { escaper } } = this;
+    const { result } = this;
 
     /* Handle text node */
     if (isTextNode(node) && !node.isWhitespace)
-      return this.appendResult(metadata?.noEscape ? node.text : escaper.escape(node.text));
+      return this.appendResult(metadata?.noEscape ? node.text : this.processText(node.text));
 
     if (textOnly) return;
 
@@ -153,7 +170,7 @@ export class Visitor {
           });
 
           // If remove flag sent, remove / omit everything for this node (prefix, newlines, content, postfix)
-          if (postRes === PostProcess.RemoveNode) return this.appendResult('', startPosOuter);
+          if (postRes === PostProcessResult.RemoveNode) return this.appendResult('', startPosOuter);
 
           if (typeof postRes === 'string') this.appendResult(postRes, startPos);
         }
@@ -180,7 +197,7 @@ export function getMarkdownForHtmlNodes(instance: NodeHtmlMarkdown, rootNode: Ht
 
   const { maxConsecutiveNewlines } = instance.options;
   if (maxConsecutiveNewlines) result = result.replace(
-    new RegExp(String.raw`(\r?\n\s*){${maxConsecutiveNewlines}}(\r?\n\s*)`, 'g'),
+    new RegExp(String.raw`((?:\r?\n\s*){${maxConsecutiveNewlines}})(?:\r?\n\s*)+`, 'g'),
     '$1'
   );
 

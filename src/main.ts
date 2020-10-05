@@ -3,7 +3,6 @@ import { TranslatorCollection, TranslatorConfigObject } from './translator';
 import { defaultBlockElements, defaultIgnoreElements, defaultOptions, defaultTranslators } from './config';
 import { parseHTML } from './utilities';
 import { getMarkdownForHtmlNodes } from './visitor';
-import { EscapeText } from './escape';
 
 
 /* ****************************************************************************************************************** */
@@ -22,7 +21,6 @@ type Options = Partial<NodeHtmlMarkdownOptions>
 
 export class NodeHtmlMarkdown {
   public translators = new TranslatorCollection();
-  public escaper: EscapeText
   public readonly options: NodeHtmlMarkdownOptions
 
   constructor(options?: Options, customTranslators?: TranslatorConfigObject) {
@@ -38,9 +36,6 @@ export class NodeHtmlMarkdown {
     /* Add and merge bases with default and custom translator configs */
     for (const [ elems, cfg ] of Object.entries({ ...defaultTranslators, ...customTranslators }))
       this.translators.set(elems, cfg, true);
-
-    /* Setup Escaper */
-    this.escaper = new EscapeText(this.options.escape);
   }
 
 

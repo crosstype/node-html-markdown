@@ -38,7 +38,7 @@ export type TranslatorConfig = {
    * Post-process content after inner nodes have been rendered.
    * Returning undefined will cause the content to not be updated
    */
-  postprocess?: (ctx: TranslatorContext & { content: string }) => string | PostProcess
+  postprocess?: (ctx: TranslatorContext & { content: string }) => string | PostProcessResult
   /**
    * If false, no child elements will be scanned
    * @default true
@@ -59,7 +59,7 @@ export type TranslatorConfig = {
   noEscape?: boolean
 }
 
-export enum PostProcess {
+export enum PostProcessResult {
   NoChange,
   RemoveNode
 }
