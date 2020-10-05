@@ -19,6 +19,8 @@ export type TranslatorContext = Partial<NodeMetadata> & {
   options: NodeHtmlMarkdownOptions
   parent?: ElementNode
   nodeMetadata: NodeMetadataMap
+  visitor: Visitor
+  base?: TranslatorConfig
 }
 
 export type TranslatorConfig = {
@@ -57,6 +59,14 @@ export type TranslatorConfig = {
    * Do not escape content
    */
   noEscape?: boolean
+  /**
+   * If first character matches end of the last written data, add a space
+   * @example
+   * // old text: **abc**
+   * // new text: **def**
+   * // becomes: **abc** **def**
+   */
+  spaceIfRepeatingChar?: boolean
 }
 
 export enum PostProcessResult {
@@ -133,16 +143,23 @@ export class TranslatorCollection {
  */
 export const isTranslatorConfig = (v: any): v is TranslatorConfig => typeof v === 'object';
 
-export function createTranslatorContext(visitor: Visitor, node: ElementNode, metadata?: NodeMetadata): TranslatorContext
+export function createTranslatorContext(
+  visitor: Visitor,
+  node: ElementNode,
+  metadata?: NodeMetadata,
+  base?: TranslatorConfig
+): TranslatorContext
 {
   const { instance, nodeMetadata, } = visitor;
-  return Object.freeze({
+  return {
     node,
     options: instance.options,
     parent: <ElementNode>node.parentNode,
     nodeMetadata,
+    visitor,
+    base,
     ...metadata
-  });
+  };
 }
 
 // endregion

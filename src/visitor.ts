@@ -1,6 +1,6 @@
 import { NodeHtmlMarkdown } from './main';
 import { ElementNode, HtmlNode, isElementNode, isTextNode } from './nodes';
-import { getWhitespaceStats } from './utilities';
+import { getWhitespaceStats, trimNewLines } from './utilities';
 import {
   createTranslatorContext, isTranslatorConfig, PostProcessResult, TranslatorConfig, TranslatorConfigFactory,
   TranslatorContext
@@ -60,12 +60,12 @@ export class Visitor {
   // region: Methods
   /* ********************************************************* */
 
-  public appendResult(s: string, startPos?: number) {
+  public appendResult(s: string, startPos?: number, spaceIfRepeatingChar?: boolean) {
     if (!s && startPos === undefined) return;
     const { result } = this;
 
     if (startPos !== undefined) result.text = result.text.substr(0, startPos);
-    result.text += s;
+    result.text += (spaceIfRepeatingChar && result.text.slice(-1) === s[0] ? ' ' : '') + s;
 
     result.trailingNewlineStats = getWhitespaceStats(result.text, 'end');
   }
@@ -98,7 +98,7 @@ export class Visitor {
     return res;
   }
 
-  private visitNode(node: HtmlNode, textOnly?: boolean, metadata?: NodeMetadata): void {
+  public visitNode(node: HtmlNode, textOnly?: boolean, metadata?: NodeMetadata): void {
     const { result } = this;
 
     /* Handle text node */
@@ -124,18 +124,18 @@ export class Visitor {
           };
           break;
         case 'LI':
-          if (metadata?.listKind === 'OL') metadata.listItemNumber = (metadata.listItemNumber || 0) + 1;
+          if (metadata?.listKind === 'OL') metadata.listItemNumber = (metadata.listItemNumber ?? 0) + 1;
       }
       if (metadata) this.nodeMetadata.set(node, metadata);
 
       // If no translator for element, visit children
-      if (!translatorCfgOrFactory) return node.childNodes.forEach((n: HtmlNode) => this.visitNode(n));
+      if (!translatorCfgOrFactory) return node.childNodes.forEach((n: HtmlNode) => this.visitNode(n, textOnly, metadata));
 
       /* Get Translator Config */
       let cfg: TranslatorConfig;
       let ctx: TranslatorContext | undefined;
       if (!isTranslatorConfig(translatorCfgOrFactory)) {
-        ctx = createTranslatorContext(this, node, metadata);
+        ctx = createTranslatorContext(this, node, metadata, translatorCfgOrFactory.base);
         cfg = { ...translatorCfgOrFactory.base, ...translatorCfgOrFactory(ctx) };
       } else cfg = translatorCfgOrFactory;
 
@@ -155,7 +155,7 @@ export class Visitor {
       if (cfg.prefix) this.appendResult(cfg.prefix);
 
       /* Write inner content */
-      if (typeof cfg.content === 'string') this.appendResult(cfg.content);
+      if (typeof cfg.content === 'string') this.appendResult(cfg.content, void 0, cfg.spaceIfRepeatingChar);
       else {
         const startPos = result.text.length;
 
@@ -170,9 +170,12 @@ export class Visitor {
           });
 
           // If remove flag sent, remove / omit everything for this node (prefix, newlines, content, postfix)
-          if (postRes === PostProcessResult.RemoveNode) return this.appendResult('', startPosOuter);
+          if (postRes === PostProcessResult.RemoveNode) {
+            if (node.tagName === 'LI' && metadata?.listItemNumber) metadata.listItemNumber--;
+            return this.appendResult('', startPosOuter);
+          }
 
-          if (typeof postRes === 'string') this.appendResult(postRes, startPos);
+          if (typeof postRes === 'string') this.appendResult(postRes, startPos, cfg.spaceIfRepeatingChar);
         }
       }
 
@@ -197,11 +200,11 @@ export function getMarkdownForHtmlNodes(instance: NodeHtmlMarkdown, rootNode: Ht
 
   const { maxConsecutiveNewlines } = instance.options;
   if (maxConsecutiveNewlines) result = result.replace(
-    new RegExp(String.raw`((?:\r?\n\s*){${maxConsecutiveNewlines}})(?:\r?\n\s*)+`, 'g'),
+    new RegExp(String.raw`(?:\r?\n\s*)+((?:\r?\n\s*){${maxConsecutiveNewlines}})`, 'g'),
     '$1'
   );
 
-  return result.trim();
+  return trimNewLines(result);
 }
 
 // endregion

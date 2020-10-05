@@ -107,7 +107,7 @@ export function parseHTML(html: string, options: NodeHtmlMarkdownOptions): Eleme
   }
   else nodeHtmlParse = getNodeHtmlParser();
 
-  return el || nodeHtmlParse!(html, nodeHtmlParserConfig);
+  return el || nodeHtmlParse!(html, nodeHtmlParserConfig).removeWhitespace();
 }
 
 // endregion

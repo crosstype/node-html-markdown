@@ -1,4 +1,4 @@
-import { isWhiteSpaceOnly, surround, trimNewLines } from './utilities';
+import { isWhiteSpaceOnly, parseHTML, surround, trimNewLines } from './utilities';
 import { PostProcessResult, TranslatorConfigObject } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
 import { Options as NodeHtmlParserOptions } from 'node-html-parser'
@@ -12,12 +12,12 @@ export const defaultBlockElements = [
   'ADDRESS', 'ARTICLE', 'ASIDE', 'AUDIO', 'BLOCKQUOTE', 'BODY', 'CANVAS', 'CENTER', 'DD', 'DIR', 'DIV', 'DL',
   'DT', 'FIELDSET', 'FIGCAPTION', 'FIGURE', 'FOOTER', 'FORM', 'FRAMESET', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6',
   'HEADER', 'HGROUP', 'HR', 'HTML', 'ISINDEX', 'LI', 'MAIN', 'MENU', 'NAV', 'NOFRAMES', 'NOSCRIPT', 'OL',
-  'OUTPUT', 'P', 'PRE', 'SECTION', 'TABLE', 'TBODY', 'TD', 'TFOOT', 'TH', 'THEAD', 'TR', 'UL', 'BLOCKQUOTE',
-  'PRE', 'UL', 'OL'
+  'OUTPUT', 'P', 'PRE', 'SECTION', 'TABLE', 'TBODY', 'TD', 'TFOOT', 'TH', 'THEAD', 'TR', 'UL'
 ]
 
 export const defaultIgnoreElements = [
-  'AREA', 'BASE', 'COL', 'COMMAND', 'EMBED', 'INPUT', 'KEYGEN', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'
+  'AREA', 'BASE', 'COL', 'COMMAND', 'EMBED', 'HEAD', 'INPUT', 'KEYGEN', 'LINK', 'META', 'PARAM', 'SCRIPT',
+  'SOURCE', 'STYLE', 'TRACK', 'WBR'
 ];
 
 // endregion
@@ -47,7 +47,7 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
    *     [                      Url                             [caption](url)
    *     ]                      Url                             [caption](url)
    */
-  globalEscape: [ /[\\`*_~\[\]]/gm, '\\$&'],
+  globalEscape: [ /[\\`*_~\[\]]/gm, '\\$&' ],
   /**
    * Note:  The following compiled pattern was selected after perf testing various alternatives.
    *        Please be mindful of performance if updating/changing it.
@@ -62,7 +62,7 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
    *    \d+\.(space)            Numbered list item              1. Item
    */
   lineStartEscape: [
-    /^(\s*?)((?:\+[^\S\r\n])|(?:[=>-])|(?:#{1,6}[^\S\r\n]))|(?:(\d+)(\.[^\S\r\n]))/gm,
+    /^(\s*?)((?:\+\s)|(?:[=>-])|(?:#{1,6}\s))|(?:(\d+)(\.\s))/gm,
     '$1$3\\$2$4'
   ]
 });
@@ -76,7 +76,18 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
 
 export const defaultTranslators: TranslatorConfigObject = {
   /* Pre-formatted text */
-  'pre': { noEscape: true },
+  'pre': {
+    noEscape: true,
+    // TODO - Remove this workaround when node-html-parser fixes PRE bug
+    postprocess: ({ visitor, content, options, nodeMetadata }) => {
+      if (content.indexOf('<') < 0) return content;
+      const startPos = visitor.result.text.length;
+
+      const wrappedContent = `<wrapped-pre>${content}</wrapped-pre>`;
+      visitor.visitNode(parseHTML(wrappedContent, options), false, { ...nodeMetadata, noEscape: true });
+      return visitor.result.text.substr(startPos);
+    }
+  },
 
   /* Line break */
   'br': { content: `  \n`, recurse: false },
@@ -89,58 +100,74 @@ export const defaultTranslators: TranslatorConfigObject = {
     prefix: '#'.repeat(+node.tagName.charAt(1)) + ' '
   }),
 
+  /* Bold / Strong */
+  'strong,b': {
+    spaceIfRepeatingChar: true,
+    postprocess: ({ content, options: { strongDelimiter } }) =>
+      isWhiteSpaceOnly(content)
+      ? PostProcessResult.RemoveNode
+      : content.replace(/^[^\S\r\n]*?(\S+.*?)[^\S\r\n]*?$/gm, surround('$1', strongDelimiter))
+  },
+
   /* Strikethrough */
   'del,s,strike': {
-    postprocess: ({ content }) => isWhiteSpaceOnly(content)
-                                  ? PostProcessResult.RemoveNode
-                                  : content.replace(/^(.+)$/gm, '~~$1~~')
+    spaceIfRepeatingChar: true,
+    postprocess: ({ content }) =>
+      isWhiteSpaceOnly(content)
+      ? PostProcessResult.RemoveNode
+      : content.replace(/^[^\S\r\n]*?(\S+.*?)[^\S\r\n]*?$/gm, '~~$1~~')
   },
 
   /* Italic / Emphasis */
-  'em,i': ({ options: { emDelimiter } }) => ({
-    prefix: emDelimiter,
-    postfix: emDelimiter,
-    postprocess: ({ content }) => isWhiteSpaceOnly(content) ? PostProcessResult.RemoveNode : PostProcessResult.NoChange
-  }),
+  'em,i': {
+    spaceIfRepeatingChar: true,
+    postprocess: ({ content, options: { emDelimiter } }) =>
+      isWhiteSpaceOnly(content)
+      ? PostProcessResult.RemoveNode
+      : content.replace(/^[^\S\r\n]*?(\S+.*?)[^\S\r\n]*?$/gm, surround('$1', emDelimiter))
+  },
 
   /* Lists (ordered & unordered) */
   'ol,ul': ({ listKind }) => ({
-    surroundingNewlines: listKind ? 1 : 2
+    surroundingNewlines: listKind ? 1 : 2,
   }),
 
-  /* Bold / Strong */
-  'strong,b': ({ options: { strongDelimiter } }) => ({
-    prefix: strongDelimiter,
-    postfix: strongDelimiter,
-    postprocess: ({ content }) => isWhiteSpaceOnly(content) ? PostProcessResult.RemoveNode : PostProcessResult.NoChange
-  }),
+  /* List Item */
+  'li': ({ options: { bulletMarker }, indentLevel, listKind, listItemNumber }) => {
+    const indentationLevel = +(indentLevel || 0);
+    return {
+      prefix: '   '.repeat(+(indentLevel || 0)) +
+        (((listKind === 'OL') && (listItemNumber !== undefined)) ? `${listItemNumber}. ` : `${bulletMarker} `),
+      surroundingNewlines: 1,
+      postprocess: ({ content }) =>
+        isWhiteSpaceOnly(content)
+        ? PostProcessResult.RemoveNode
+        : content
+          .replace(/([^\r\n])(?:\r?\n)+/g, `$1  \n${'   '.repeat(indentationLevel)}`)
+          .replace(/(\S+?)[^\S\r\n]+$/gm, '$1  ')
+    }
+  },
 
   /* Block Quote */
   'blockquote': {
     postprocess: ({ content }) => trimNewLines(content).replace(/^(>*)[^\S\r\n]?/gm, `>$1 `)
   },
 
-  /* List Item */
-  'li': ({ options: { indent, bulletMarker }, indentLevel, listKind, listItemNumber }) => ({
-    prefix: indent.repeat(+(indentLevel || 0)) +
-      (((listKind === 'OL') && (listItemNumber !== undefined)) ? `${listItemNumber}. ` : `${bulletMarker} `),
-    surroundingNewlines: 1
-  }),
-
   /* Code (block / inline) */
   'code': ({ node, parent, options: { codeFence, codeBlockStyle } }) => {
-    const isCodeBlock = parent?.tagName === 'PRE' && parent.childNodes.length < 2;
+    const isCodeBlock = [ 'PRE', 'WRAPPED-PRE' ].includes(parent?.tagName!) && parent!.childNodes.length < 2;
 
     /* Handle code (non-block) */
     if (!isCodeBlock)
       return {
+        spaceIfRepeatingChar: true,
         noEscape: true,
         postprocess: ({ content }) => {
           // Find longest occurring sequence of running backticks and add one more (so content is escaped)
           const delimiter = '`' + (content.match(/`+/g)?.sort((a, b) => b.length - a.length)?.[0] || '');
           const padding = delimiter.length > 1 ? ' ' : '';
 
-          return surround(surround(content, padding), delimiter)
+          return surround(surround(content.replace(/(?:\r?\n){2,}/g, `\n`), padding), delimiter)
         }
       }
 
@@ -155,7 +182,6 @@ export const defaultTranslators: TranslatorConfigObject = {
     } else {
       return {
         noEscape: true,
-        surroundingNewlines: 2,
         postprocess: ({ content }) => content.replace(/^/gm, '    ')
       }
     }
@@ -164,11 +190,12 @@ export const defaultTranslators: TranslatorConfigObject = {
   /* Link */
   'a': ({ node }) => {
     const href = node.getAttribute('href');
-    if (!href) return { ignore: true };
+    if (!href) return {};
 
     const title = node.getAttribute('title');
 
     return {
+      postprocess: ({ content }) => content.replace(/(?:\r?\n)+/g, ''),
       prefix: '[',
       postfix: `](${href}${title ? ` "${title}"` : ''})`
     }
