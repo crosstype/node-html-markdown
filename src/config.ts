@@ -143,6 +143,7 @@ export const defaultTranslators: TranslatorConfigObject = {
         isWhiteSpaceOnly(content)
         ? PostProcessResult.RemoveNode
         : content
+          .trim()
           .replace(/([^\r\n])(?:\r?\n)+/g, `$1  \n${'   '.repeat(indentationLevel)}`)
           .replace(/(\S+?)[^\S\r\n]+$/gm, '$1  ')
     }
@@ -202,9 +203,9 @@ export const defaultTranslators: TranslatorConfigObject = {
   },
 
   /* Image */
-  'img': ({ node }) => {
+  'img': ({ node, options }) => {
     const src = node.getAttribute('src') || '';
-    if (!src) return { ignore: true };
+    if (!src || (!options.keepDataImages && /^data:/i.test(src))) return { ignore: true };
 
     const alt = node.getAttribute('alt') || '';
     const title = node.getAttribute('title') || '';
@@ -231,7 +232,7 @@ export const nodeHtmlParserConfig: NodeHtmlParserOptions = {
   script: false,
   style: false,
   pre: true,
-  comment: false
+  comment: false,
 };
 
 // endregion

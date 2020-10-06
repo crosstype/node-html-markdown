@@ -77,6 +77,14 @@ export interface NodeHtmlMarkdownOptions {
    * User-defined text replacement pattern (Replaces matching text retrieved from nodes)
    */
   textReplace?: [ pattern: RegExp, replacement: string ][]
+
+  /**
+   * Keep images with data: URI (Note: These can be up to 1MB each)
+   * @example
+   * <img src="data:image/gif;base64,R0lGODlhEAAQAMQAAORHHOVSK......0o/">
+   * @default false
+   */
+  keepDataImages?: boolean
 }
 
 // endregion

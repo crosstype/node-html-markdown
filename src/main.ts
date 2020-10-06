@@ -36,6 +36,10 @@ export class NodeHtmlMarkdown {
     /* Add and merge bases with default and custom translator configs */
     for (const [ elems, cfg ] of Object.entries({ ...defaultTranslators, ...customTranslators }))
       this.translators.set(elems, cfg, true);
+
+    // TODO - Remove this temporary workaround when node-html-parser bug is fixed
+    if (!this.options.textReplace) this.options.textReplace = [];
+    this.options.textReplace.push([ /^<!DOCTYPE.*>/gmi, '' ]);
   }
 
 
