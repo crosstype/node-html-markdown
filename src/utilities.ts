@@ -10,31 +10,15 @@ import { nodeHtmlParserConfig } from './config';
 export const trimNewLines = (s: string) => s.replace(/^\n+|\n+$/g, '');
 export const surround = (source: string, surroundStr: string) => `${surroundStr}${source}${surroundStr}`;
 export const isWhiteSpaceOnly = (s: string) => !/\S/.test(s);
+
 export const getWhitespaceStats = (s: string, pos: 'start' | 'end'): { length: number, newLines: number } => {
-  const regexp = new RegExp(String.raw`${truthyStr(pos === 'start','^')}(\r?\n\s*)+${truthyStr(pos === 'end', '$')}`);
+  const regexp = new RegExp(
+    String.raw`${truthyStr(pos === 'start','^')}(\r?\n\s*)${truthyStr(pos === 'end', '$')}`,
+    's'
+  );
   const whitespace = s.match(regexp);
   if (!whitespace) return { length: 0, newLines: 0 };
   return { length: whitespace[0].length, newLines: whitespace[0].match(/\r?\n/g)!.length }
-}
-export const getParenthesesRange = (s: string): { start: number, close: number } | undefined => {
-  const start = findNeedle('(');
-  if (!start) return;
-
-  const close = findNeedle(')', start);
-  if (!close) return;
-
-  return { start, close };
-
-  function findNeedle(needle: string, startPos: number = 0): number | undefined {
-    for (let i = startPos, backslashes = 0; i < s.length; ++i) {
-      const char = s.charAt(i);
-      if (char === '\\') ++backslashes;
-      else {
-        if ((char === needle) && (!backslashes || (backslashes === 2))) return i;
-        backslashes = 0;
-      }
-    }
-  }
 }
 
 /**
