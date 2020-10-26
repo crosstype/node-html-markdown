@@ -78,7 +78,7 @@ export const defaultTranslators: TranslatorConfigObject = {
   /* Pre-formatted text */
   'pre': {
     noEscape: true,
-    // TODO - Remove this workaround when node-html-parser fixes PRE bug
+    // TODO - Temporary workaround until upstream issue fixed - https://github.com/taoqf/node-html-parser/issues/78
     postprocess: ({ visitor, content, options, nodeMetadata }) => {
       if (content.indexOf('<') < 0) return content;
       const startPos = visitor.result.text.length;
@@ -229,10 +229,7 @@ export const defaultTranslators: TranslatorConfigObject = {
  */
 export const nodeHtmlParserConfig: NodeHtmlParserOptions = {
   lowerCaseTagName: false,
-  script: false,
-  style: false,
-  pre: true,
-  comment: false,
+  comment: false
 };
 
 // endregion
