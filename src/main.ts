@@ -37,7 +37,7 @@ export class NodeHtmlMarkdown {
     for (const [ elems, cfg ] of Object.entries({ ...defaultTranslators, ...customTranslators }))
       this.translators.set(elems, cfg, true);
 
-    // TODO - Temporary workaround until upstream issue fixed - https://github.com/taoqf/node-html-parser/issues/78
+    // TODO - Workaround for upstream issue (may not be fixed) - https://github.com/taoqf/node-html-parser/issues/78
     if (!this.options.textReplace) this.options.textReplace = [];
     this.options.textReplace.push([ /^<!DOCTYPE.*>/gmi, '' ]);
   }

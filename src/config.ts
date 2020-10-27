@@ -1,4 +1,4 @@
-import { isWhiteSpaceOnly, parseHTML, surround, trimNewLines } from './utilities';
+import { isWhiteSpaceOnly, surround, trimNewLines } from './utilities';
 import { PostProcessResult, TranslatorConfigObject } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
 import { Options as NodeHtmlParserOptions } from 'node-html-parser'
@@ -76,18 +76,7 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
 
 export const defaultTranslators: TranslatorConfigObject = {
   /* Pre-formatted text */
-  'pre': {
-    noEscape: true,
-    // TODO - Temporary workaround until upstream issue fixed - https://github.com/taoqf/node-html-parser/issues/78
-    postprocess: ({ visitor, content, options, nodeMetadata }) => {
-      if (content.indexOf('<') < 0) return content;
-      const startPos = visitor.result.text.length;
-
-      const wrappedContent = `<wrapped-pre>${content}</wrapped-pre>`;
-      visitor.visitNode(parseHTML(wrappedContent, options), false, { ...nodeMetadata, noEscape: true });
-      return visitor.result.text.substr(startPos);
-    }
-  },
+  'pre': { noEscape: true },
 
   /* Line break */
   'br': { content: `  \n`, recurse: false },
@@ -229,7 +218,12 @@ export const defaultTranslators: TranslatorConfigObject = {
  */
 export const nodeHtmlParserConfig: NodeHtmlParserOptions = {
   lowerCaseTagName: false,
-  comment: false
+  comment: false,
+  blockTextElements: {
+    script: false,
+    noscript: false,
+    style: false
+  }
 };
 
 // endregion
