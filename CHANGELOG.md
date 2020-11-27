@@ -2,24 +2,9 @@
 
 - _Notable_ changes are documented in this file.
 
-<!-- Format
+## [0.0.4] - 2020-11-26
 
-## [1.0.1] - 2019-10-31
-
-### Fixed
-- Something
-
-## Added
-- Something else
-
-## Changed
-- Another thing
-
-## [1.0.0] - 2019-10-14
-
-- Initial release
+- Released initial version
 
 [Unreleased]: https://github.com/nonara/@crosstype/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/nonara/@crosstype/compare/v0.3.0...v1.0.0
-
--->
+[0.0.4]: https://github.com/nonara/@crosstype/compare/v0.0.0...v0.0.4
