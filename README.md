@@ -4,10 +4,10 @@
 
 # HTML to Markdown
 
-This library is a _fast_ HTML to markdown cross-compiler. It is compatible with both node or the browser.
+_Fast_ HTML to markdown cross-compiler, compatible with both node and the browser.
 
-It was born out of a need to convert gigabytes of HTML daily very quickly, when all other libraries were far too slow 
-with node. A low-level language was considered, but we attempted to write something that would squeeze every
+This library was born out of a need to convert gigabytes of HTML daily very quickly. All other libraries were far too 
+slow with node. A low-level language was considered, but we attempted to write something that would squeeze every
 ounce of performance out of JS and the result was fast enough to make the cut!
 
 ## Install
@@ -164,7 +164,7 @@ Custom translators are an advanced option to allow handling certain elements a s
 
 These can be modified via the `nhm.translators` property, or added during creation.
 
-For detail on how to use see:
+__For detail on how to use see__:
 
-- Documentation comments for `TranslatorConfig` in [translator.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/translator.ts)
-- Translators `defaultTranslators` in [config.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/config.ts)
+- [translator.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/translator.ts) - Documentation for `TranslatorConfig`
+- [config.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/config.ts) - Translators in `defaultTranslators`
