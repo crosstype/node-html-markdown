@@ -168,3 +168,9 @@ __For detail on how to use see__:
 
 - [translator.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/translator.ts) - Documentation for `TranslatorConfig`
 - [config.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/config.ts) - Translators in `defaultTranslators`
+
+## Help Wanted!
+
+We'd love some help! There are several enhancements ranging from beginner to moderate difficulty.
+
+Please check out our [help wanted](https://github.com/crosstype/node-html-markdown/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) list.
