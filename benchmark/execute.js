@@ -19,7 +19,7 @@ const wrappers = fs.readdirSync(path.join(__dirname, 'wrapper'))
 
 const MAX_WIDTH = Math.max(...wrappers.map(wrapper => wrapper.name.length));
 
-const SEPARATOR = '\n' + '-'.repeat(MAX_WIDTH + 50) + '\n';
+const SEPARATOR = '\n' + '-'.repeat(MAX_WIDTH + 43) + '\n';
 
 // endregion
 
@@ -79,10 +79,10 @@ function humanTime(seconds) {
         const name = formatName(item.name);
         const mean = stat.mean.toPrecision(6);
         const sd = stat.sd.toPrecision(6);
-        const avgBytesPerSec = (stat.avgBytesPerMs / 1000).toPrecision(4);
+        const avgBytesPerSec = (stat.avgBytesPerMs * 1000);
 
         stats.push({ name, ...stat });
-        console.log(`${name}: ${mean} ms/file ± ${sd} (avg bytes/sec: ${avgBytesPerSec})`);
+        console.log(`${name}: ${mean} ms/file ± ${sd} (${humanFileSize(avgBytesPerSec)}/s)`);
       });
 
       runner.on('close', function (n) {

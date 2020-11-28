@@ -35,40 +35,40 @@ npm i -S node-html-parser
 
 ## Benchmarks
 ```
---------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
-node-html-makrdown (reused instance): 45.6265 ms/file ± 26.8280 (avg bytes/sec: 2.159)
-node-html-markdown                  : 49.7005 ms/file ± 29.8097 (avg bytes/sec: 1.982)
-turndown                            : 76.7837 ms/file ± 38.8597 (avg bytes/sec: 1.283)
-turndown (reused instance)          : 67.0672 ms/file ± 32.5577 (avg bytes/sec: 1.469)
+node-html-makrdown (reused instance): 43.7098 ms/file ± 25.5440 (2.15 MB/s)
+node-html-markdown                  : 44.6477 ms/file ± 26.7243 (2.1 MB/s)
+turndown                            : 71.5919 ms/file ± 36.7715 (1.31 MB/s)
+turndown (reused instance)          : 67.5310 ms/file ± 36.7826 (1.39 MB/s)
 
---------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 Estimated processing times (fastest to slowest):
 
   [node-html-makrdown (reused instance)]
-    100 kB:  47ms
-    1 MB:    486ms
-    50 MB:   24.29sec
-    1 GB:    8min, 17sec
-    50 GB:   6hr, 54min, 28sec
+    100 kB:  45ms
+    1 MB:    465ms
+    50 MB:   23.27sec
+    1 GB:    7min, 56sec
+    50 GB:   6hr, 37min, 3sec
 
   [turndown (reused instance)]
     100 kB:  70ms
-    1 MB:    714ms
-    50 MB:   35.70sec
-    1 GB:    12min, 11sec
-    50 GB:   10hr, 9min, 14sec
+    1 MB:    719ms
+    50 MB:   35.94sec
+    1 GB:    12min, 16sec
+    50 GB:   10hr, 13min, 27sec
 
---------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 
 Comparison to fastest (node-html-makrdown (reused instance)):
 
-  node-html-markdown: -8.20%
-  turndown (reused instance): -31.97%
-  turndown: -40.58%
+  node-html-markdown: -2.10%
+  turndown (reused instance): -35.27%
+  turndown: -38.95%
 
---------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
 ```
 
 ## Usage
