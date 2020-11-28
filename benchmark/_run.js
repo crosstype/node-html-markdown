@@ -16,7 +16,8 @@ process.on('message', function (item) {
 		total: Benchmark.TOTAL,
 		complete: '=',
 		incomplete: ' ',
-		width: 50
+		width: 50,
+    clear: true
 	});
 
   const parser = require(item.parser);

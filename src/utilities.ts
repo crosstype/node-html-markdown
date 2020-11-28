@@ -1,5 +1,5 @@
 import { NodeHtmlMarkdownOptions } from './options';
-import { ElementNode } from './nodes';
+import { ElementNode, HtmlNode } from './nodes';
 import { nodeHtmlParserConfig } from './config';
 
 
@@ -78,6 +78,7 @@ export function parseHTML(html: string, options: NodeHtmlMarkdownOptions): Eleme
   let nodeHtmlParse: ReturnType<typeof getNodeHtmlParser>;
 
   /* If specified, try to parse with native engine, fallback to node-html-parser */
+  perfStart('parse');
   let el: ElementNode | undefined;
   if (options.preferNativeParser) {
     try {
@@ -86,12 +87,44 @@ export function parseHTML(html: string, options: NodeHtmlMarkdownOptions): Eleme
     catch (e) {
       nodeHtmlParse = getNodeHtmlParser();
       if (nodeHtmlParse) console.warn('Native DOM parser encountered an error during parse', e);
-      throw e;
+      else throw e;
     }
   }
   else nodeHtmlParse = getNodeHtmlParser();
 
-  return el || nodeHtmlParse!(html, nodeHtmlParserConfig).removeWhitespace();
+  if (!el) el = nodeHtmlParse!(html, nodeHtmlParserConfig).removeWhitespace();
+  perfStop('parse');
+
+  return el;
+}
+
+// endregion
+
+
+/* ****************************************************************************************************************** */
+// region: General
+/* ****************************************************************************************************************** */
+
+export function getChildNodes<T extends HtmlNode | Node>(node: T): T[]
+export function getChildNodes(node: HtmlNode | Node): (Node | HtmlNode)[] {
+  if (!isNodeList(node.childNodes)) return node.childNodes;
+
+  const res: (ChildNode)[] = [];
+  node.childNodes.forEach(n => res.push(n));
+
+  return res;
+
+  function isNodeList(v: any): v is NodeListOf<ChildNode> {
+    return (v != null) || (typeof v[Symbol.iterator] === 'function');
+  }
+}
+
+export function perfStart(label: string) {
+  if (process.env.LOG_PERF) console.time(label);
+}
+
+export function perfStop(label: string) {
+  if (process.env.LOG_PERF) console.timeEnd(label);
 }
 
 // endregion

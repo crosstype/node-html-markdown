@@ -20,6 +20,8 @@ export const defaultIgnoreElements = [
   'SOURCE', 'STYLE', 'TRACK', 'WBR'
 ];
 
+export const contentlessElements = [ 'BR', 'HR', 'IMG' ];
+
 // endregion
 
 

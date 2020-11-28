@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "async": "^3.1.0",
+    "node-html-markdown": "link:../",
     "summary": "^1.0.0",
-    "turndown": "^7.0.0",
-    "node-html-markdown": "link:../"
+    "turndown": "^7.0.0"
   },
   "devDependencies": {
     "progress": "^2.0.3"

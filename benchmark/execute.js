@@ -19,6 +19,8 @@ const wrappers = fs.readdirSync(path.join(__dirname, 'wrapper'))
 
 const MAX_WIDTH = Math.max(...wrappers.map(wrapper => wrapper.name.length));
 
+const SEPARATOR = '\n' + '-'.repeat(MAX_WIDTH + 50) + '\n';
+
 // endregion
 
 
@@ -50,7 +52,9 @@ function humanTime(seconds) {
 
   for (const n of [ hours, minutes, s ]) if (!isFinite(n) || isNaN(n)) return 'N/A';
 
-  return `${hours ? hours + 'hr, ' : ''}${minutes ? minutes + 'min, ' : ''}${s.toFixed(2)}sec`;
+  return (!hours && !minutes && seconds < 1) ? `${Math.round((s % 1) * 1000)}ms` :
+         (!hours && !minutes) ? `${s.toFixed(2)}sec` :
+         `${hours ? hours + 'hr, ' : ''}${minutes ? minutes + 'min, ' : ''}${Math.round(s)}sec`;
 }
 
 // endregion
@@ -64,10 +68,12 @@ function humanTime(seconds) {
   if (!quickMode) console.log('NOTE: Large mode is generally less reliable in most environments!');
   const stats = [];
 
+  console.log(SEPARATOR);
+
   async.eachSeries(
     wrappers,
     function (item, done) {
-      const runner = fork(path.join(__dirname, '_run.js'), void 0, { env: { QUICK_MODE: quickMode }});
+      const runner = fork(path.join(__dirname, '_run.js'), void 0, { env: { QUICK_MODE: quickMode, LOG_PERF: true }});
       runner.send(item);
       runner.on('message', function (stat) {
         const name = formatName(item.name);
@@ -76,7 +82,7 @@ function humanTime(seconds) {
         const avgBytesPerSec = (stat.avgBytesPerMs / 1000).toPrecision(4);
 
         stats.push({ name, ...stat });
-        console.log(`\n${name}: ${mean} ms/file ± ${sd} (avg bytes/sec: ${avgBytesPerSec})`);
+        console.log(`${name}: ${mean} ms/file ± ${sd} (avg bytes/sec: ${avgBytesPerSec})`);
       });
 
       runner.on('close', function (n) {
@@ -85,10 +91,14 @@ function humanTime(seconds) {
       });
     },
     function () {
+      console.log(SEPARATOR);
       console.log(
-        `\nTotal Files: ${stats[0].totalFiles}\nAvg. file size: ${humanFileSize(stats[0].avgFileSize)}\n`);
+        `Total Files: ${stats[0].totalFiles}\n`+
+        `Avg. file size: ${humanFileSize(stats[0].avgFileSize)}`
+      );
 
       /* Get speed estimates */
+      console.log(SEPARATOR);
       console.log(`Estimated processing times (fastest to slowest):`);
       const sortedStats = [ ...stats ].sort((a,b) => b.avgBytesPerMs - a.avgBytesPerMs)
       sortedStats.forEach(({ name, avgBytesPerMs }) => {
@@ -103,13 +113,14 @@ function humanTime(seconds) {
       });
 
       /* Get comparisons */
-      console.log(`\nComparison to fastest (${sortedStats[0].name.trim()}): `);
+      console.log(SEPARATOR);
+      console.log(`Comparison to fastest (${sortedStats[0].name.trim()}): \n`);
       const fastestMean = sortedStats[0].mean;
       sortedStats.slice(1).forEach(({ name, mean }) =>
         console.log(`  ${name.trim()}: -${((1 - (fastestMean / mean)) * 100).toFixed(2)}%`)
       );
 
-      console.log('');
+      console.log(SEPARATOR);
     }
   );
 })();

@@ -1,11 +1,12 @@
 import { NodeHtmlMarkdown } from './main';
 import { ElementNode, HtmlNode, isElementNode, isTextNode } from './nodes';
-import { getWhitespaceStats, trimNewLines } from './utilities';
+import { getChildNodes, getWhitespaceStats, perfStart, perfStop, trimNewLines } from './utilities';
 import {
   createTranslatorContext, isTranslatorConfig, PostProcessResult, TranslatorConfig, TranslatorConfigFactory,
   TranslatorContext
 } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
+import { contentlessElements } from './config';
 
 
 /* ****************************************************************************************************************** */
@@ -53,6 +54,8 @@ export class Visitor {
       }
     };
     this.options = instance.options;
+
+    this.optimizeTree(rootNode);
     this.visitNode(rootNode);
   }
 
@@ -82,6 +85,27 @@ export class Visitor {
   /* ********************************************************* */
 
   /**
+   * Optimize tree, flagging nodes that have usable content
+   */
+  private optimizeTree(node: HtmlNode) {
+    perfStart('Optimize tree');
+    (function visit(node: HtmlNode): boolean {
+      let res = false
+      if (isTextNode(node) || (isElementNode(node) && contentlessElements.includes(node.tagName))) {
+        res = true;
+      }
+      else {
+        for (const child of getChildNodes(node)) {
+          if (!res) res = visit(child);
+          else visit(child);
+        }
+      }
+      return node.preserve = res;
+    })(node);
+    perfStop('Optimize tree');
+  }
+
+  /**
    * Apply escaping and custom replacement rules
    */
   private processText(text: string) {
@@ -105,84 +129,86 @@ export class Visitor {
     if (isTextNode(node) && !node.isWhitespace)
       return this.appendResult(metadata?.noEscape ? node.text : this.processText(node.text));
 
-    if (textOnly) return;
+    if (!node.preserve) return;
+    if (textOnly || !isElementNode(node)) return;
 
     /* Handle element node */
-    if (isElementNode(node)) {
-      const { instance: { translators } } = this;
-      const translatorCfgOrFactory = translators[node.tagName] as TranslatorConfig | TranslatorConfigFactory;
+    const { instance: { translators } } = this;
+    const translatorCfgOrFactory = translators[node.tagName] as TranslatorConfig | TranslatorConfigFactory;
 
-      /* Update metadata with list detail */
-      switch (node.tagName) {
-        case 'UL':
-        case 'OL':
-          metadata = {
-            ...metadata,
-            listItemNumber: 0,
-            listKind: (<any>node.tagName),
-            indentLevel: (metadata?.indentLevel ?? -1) + 1
-          };
-          break;
-        case 'LI':
-          if (metadata?.listKind === 'OL') metadata.listItemNumber = (metadata.listItemNumber ?? 0) + 1;
-      }
-      if (metadata) this.nodeMetadata.set(node, metadata);
-
-      // If no translator for element, visit children
-      if (!translatorCfgOrFactory) return node.childNodes.forEach((n: HtmlNode) => this.visitNode(n, textOnly, metadata));
-
-      /* Get Translator Config */
-      let cfg: TranslatorConfig;
-      let ctx: TranslatorContext | undefined;
-      if (!isTranslatorConfig(translatorCfgOrFactory)) {
-        ctx = createTranslatorContext(this, node, metadata, translatorCfgOrFactory.base);
-        cfg = { ...translatorCfgOrFactory.base, ...translatorCfgOrFactory(ctx) };
-      } else cfg = translatorCfgOrFactory;
-
-      // Skip and don't check children if ignore flag set
-      if (cfg.ignore) return;
-
-      /* Update metadata for noEscape flag */
-      if (cfg.noEscape && !metadata?.noEscape) {
-        metadata = { ...metadata, noEscape: true };
-        this.nodeMetadata.set(node, metadata);
-      }
-
-      const startPosOuter = result.text.length;
-
-      /* Write opening */
-      if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
-      if (cfg.prefix) this.appendResult(cfg.prefix);
-
-      /* Write inner content */
-      if (typeof cfg.content === 'string') this.appendResult(cfg.content, void 0, cfg.spaceIfRepeatingChar);
-      else {
-        const startPos = result.text.length;
-
-        // Process child nodes
-        node.childNodes.forEach((n: HtmlNode) => this.visitNode(n, (cfg.recurse === false), metadata));
-
-        /* Apply translator post-processing */
-        if (cfg.postprocess) {
-          const postRes = cfg.postprocess({
-            ...(ctx || createTranslatorContext(this, node, metadata)),
-            content: result.text.substr(startPos)
-          });
-
-          // If remove flag sent, remove / omit everything for this node (prefix, newlines, content, postfix)
-          if (postRes === PostProcessResult.RemoveNode) {
-            if (node.tagName === 'LI' && metadata?.listItemNumber) --metadata.listItemNumber;
-            return this.appendResult('', startPosOuter);
-          }
-
-          if (typeof postRes === 'string') this.appendResult(postRes, startPos, cfg.spaceIfRepeatingChar);
-        }
-      }
-
-      /* Write closing */
-      if (cfg.postfix) this.appendResult(cfg.postfix);
-      if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
+    /* Update metadata with list detail */
+    switch (node.tagName) {
+      case 'UL':
+      case 'OL':
+        metadata = {
+          ...metadata,
+          listItemNumber: 0,
+          listKind: (<any>node.tagName),
+          indentLevel: (metadata?.indentLevel ?? -1) + 1
+        };
+        break;
+      case 'LI':
+        if (metadata?.listKind === 'OL') metadata.listItemNumber = (metadata.listItemNumber ?? 0) + 1;
     }
+    if (metadata) this.nodeMetadata.set(node, metadata);
+
+    // If no translator for element, visit children
+    if (!translatorCfgOrFactory) {
+      for (const child of getChildNodes(node)) this.visitNode(child, textOnly, metadata);
+      return;
+    }
+
+    /* Get Translator Config */
+    let cfg: TranslatorConfig;
+    let ctx: TranslatorContext | undefined;
+    if (!isTranslatorConfig(translatorCfgOrFactory)) {
+      ctx = createTranslatorContext(this, node, metadata, translatorCfgOrFactory.base);
+      cfg = { ...translatorCfgOrFactory.base, ...translatorCfgOrFactory(ctx) };
+    } else cfg = translatorCfgOrFactory;
+
+    // Skip and don't check children if ignore flag set
+    if (cfg.ignore) return;
+
+    /* Update metadata for noEscape flag */
+    if (cfg.noEscape && !metadata?.noEscape) {
+      metadata = { ...metadata, noEscape: true };
+      this.nodeMetadata.set(node, metadata);
+    }
+
+    const startPosOuter = result.text.length;
+
+    /* Write opening */
+    if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
+    if (cfg.prefix) this.appendResult(cfg.prefix);
+
+    /* Write inner content */
+    if (typeof cfg.content === 'string') this.appendResult(cfg.content, void 0, cfg.spaceIfRepeatingChar);
+    else {
+      const startPos = result.text.length;
+
+      // Process child nodes
+      for (const child of getChildNodes(node)) this.visitNode(child, (cfg.recurse === false), metadata);
+
+      /* Apply translator post-processing */
+      if (cfg.postprocess) {
+        const postRes = cfg.postprocess({
+          ...(ctx || createTranslatorContext(this, node, metadata)),
+          content: result.text.substr(startPos)
+        });
+
+        // If remove flag sent, remove / omit everything for this node (prefix, newlines, content, postfix)
+        if (postRes === PostProcessResult.RemoveNode) {
+          if (node.tagName === 'LI' && metadata?.listItemNumber) --metadata.listItemNumber;
+          return this.appendResult('', startPosOuter);
+        }
+
+        if (typeof postRes === 'string') this.appendResult(postRes, startPos, cfg.spaceIfRepeatingChar);
+      }
+    }
+
+    /* Write closing */
+    if (cfg.postfix) this.appendResult(cfg.postfix);
+    if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
   }
 
   // endregion
@@ -196,7 +222,9 @@ export class Visitor {
 /* ****************************************************************************************************************** */
 
 export function getMarkdownForHtmlNodes(instance: NodeHtmlMarkdown, rootNode: HtmlNode, fileName?: string): string {
+  perfStart('walk');
   let result = new Visitor(instance, rootNode, fileName).result.text;
+  perfStop('walk');
 
   const { maxConsecutiveNewlines } = instance.options;
   if (maxConsecutiveNewlines) result = result.replace(

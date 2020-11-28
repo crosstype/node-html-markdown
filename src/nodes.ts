@@ -1,19 +1,22 @@
 import * as NHParser from 'node-html-parser';
-import { CommentNode, NodeType, TextNode } from 'node-html-parser';
+import { CommentNode, NodeType } from 'node-html-parser';
 
 
 /* ****************************************************************************************************************** */
 // region: Types
 /* ****************************************************************************************************************** */
 
-export { TextNode, NodeType, CommentNode }
+export { NodeType, CommentNode }
 
 /* ********************************************************* *
  * Merged Nodes - Unions of node-html-parser and common DOM
  * ********************************************************* */
 
-export type HtmlNode = NHParser.Node | Node
-export type ElementNode = NHParser.HTMLElement | HTMLElement
+type NodeBase = { preserve?: boolean }
+
+export type HtmlNode = (NHParser.Node | Node) & NodeBase
+export type ElementNode = (NHParser.HTMLElement | HTMLElement) & NodeBase
+export type TextNode = (NHParser.TextNode) & NodeBase
 
 // endregion
 

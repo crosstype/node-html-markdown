@@ -35,31 +35,39 @@ npm i -S node-html-parser
 
 ## Benchmarks
 ```
-node-html-makrdown (reused instance): 47.2261 ms/file ± 29.1069 (avg bytes/sec: 2.086)
-node-html-markdown                  : 55.2654 ms/file ± 38.2978 (avg bytes/sec: 1.782)
-turndown (reused instance)          : 66.8692 ms/file ± 30.9974 (avg bytes/sec: 1.473)
-turndown                            : 68.9757 ms/file ± 35.0430 (avg bytes/sec: 1.428)
+--------------------------------------------------------------------------------------
 
-Comparison to fastest (node-html-makrdown (reused instance)):
-  node-html-markdown: -14.55%
-  turndown (reused instance): -29.38%
-  turndown: -31.53%
+node-html-makrdown (reused instance): 46.0008 ms/file ± 27.3827 (avg bytes/sec: 2.141)
+node-html-markdown                  : 47.0208 ms/file ± 28.4478 (avg bytes/sec: 2.095)
+turndown                            : 80.7753 ms/file ± 33.3519 (avg bytes/sec: 1.219)
+turndown (reused instance)          : 65.9743 ms/file ± 32.3411 (avg bytes/sec: 1.493)
+
+--------------------------------------------------------------------------------------
 
 Estimated processing times (fastest to slowest):
 
   [node-html-makrdown (reused instance)]
-    100 kB:  0.05sec
-    1 MB:    0.50sec
-    50 MB:   25.14sec
-    1 GB:    8min, 34.80sec
-    50 GB:   7hr, 8min, 59.91sec
+    100 kB:  48ms
+    1 MB:    490ms
+    50 MB:   24.48sec
+    1 GB:    8min, 21sec
+    50 GB:   6hr, 57min, 52sec
 
   [turndown (reused instance)]
-    100 kB:  0.07sec
-    1 MB:    0.71sec
-    50 MB:   35.59sec
-    1 GB:    12min, 8.92sec
-    50 GB:   10hr, 7min, 26.09sec
+    100 kB:  69ms
+    1 MB:    702ms
+    50 MB:   35.12sec
+    1 GB:    11min, 59sec
+    50 GB:   9hr, 59min, 18sec
+
+--------------------------------------------------------------------------------------
+
+Comparison to fastest (node-html-makrdown (reused instance)):
+  node-html-markdown: -2.17%
+  turndown (reused instance): -30.27%
+  turndown: -43.05%
+
+--------------------------------------------------------------------------------------
 ```
 
 ## Usage

@@ -4,6 +4,12 @@
 
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "plugins": [
+      {
+        "transform": "./transformer.js",
+        "enable": true
+      }
+    ]
   }
 }
