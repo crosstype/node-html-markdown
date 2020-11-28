@@ -2,7 +2,7 @@
 module.exports = function (program, cfg, { ts }) {
   return (ctx) => {
     return function visit(node) {
-      if (!cfg.enable) return node;
+      if (!cfg.removePerf) return node;
       if (
         ts.isExpressionStatement(node) && ts.isCallExpression(node.expression) &&
         [ 'perfStart', 'perfStop' ].includes(node.expression.expression.text)

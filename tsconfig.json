@@ -8,7 +8,7 @@
     "plugins": [
       {
         "transform": "./transformer.js",
-        "enable": true
+        "removePerf": true
       }
     ]
   }
