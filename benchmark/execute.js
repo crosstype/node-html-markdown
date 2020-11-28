@@ -117,7 +117,7 @@ function humanTime(seconds) {
       console.log(`Comparison to fastest (${sortedStats[0].name.trim()}): \n`);
       const fastestMean = sortedStats[0].mean;
       sortedStats.slice(1).forEach(({ name, mean }) =>
-        console.log(`  ${name.trim()}: -${((1 - (fastestMean / mean)) * 100).toFixed(2)}%`)
+        console.log(`  ${name.trim()}: ${(((mean / fastestMean) - 1) * 100).toFixed(2)}% slower`)
       );
 
       console.log(SEPARATOR);
