@@ -61,6 +61,7 @@ function humanTime(seconds) {
 /* ****************************************************************************************************************** */
 
 (function run() {
+  if (!quickMode) console.log('NOTE: Large mode is generally less reliable in most environments!');
   const stats = [];
 
   async.eachSeries(
