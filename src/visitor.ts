@@ -1,6 +1,6 @@
 import { NodeHtmlMarkdown } from './main';
 import { ElementNode, HtmlNode, isElementNode, isTextNode } from './nodes';
-import { getChildNodes, getWhitespaceStats, perfStart, perfStop, trimNewLines } from './utilities';
+import { getChildNodes, getTrailingWhitespaceInfo, perfStart, perfStop, trimNewLines } from './utilities';
 import {
   createTranslatorContext, isTranslatorConfig, PostProcessResult, TranslatorConfig, TranslatorConfigFactory,
   TranslatorContext
@@ -19,7 +19,7 @@ export type NodeMetadataMap = Map<ElementNode, NodeMetadata>
 type VisitorResult = {
   text: string
   trailingNewlineStats: {
-    length: number
+    whitespace: number
     newLines: number
   }
 }
@@ -49,7 +49,7 @@ export class Visitor {
     this.result = {
       text: '',
       trailingNewlineStats: {
-        length: 0,
+        whitespace: 0,
         newLines: 0
       }
     };
@@ -70,7 +70,7 @@ export class Visitor {
     if (startPos !== undefined) result.text = result.text.substr(0, startPos);
     result.text += (spaceIfRepeatingChar && result.text.slice(-1) === s[0] ? ' ' : '') + s;
 
-    result.trailingNewlineStats = getWhitespaceStats(result.text, 'end');
+    result.trailingNewlineStats = getTrailingWhitespaceInfo(result.text);
   }
 
   public appendNewlines(count: number) {

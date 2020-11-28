@@ -11,14 +11,16 @@ export const trimNewLines = (s: string) => s.replace(/^\n+|\n+$/g, '');
 export const surround = (source: string, surroundStr: string) => `${surroundStr}${source}${surroundStr}`;
 export const isWhiteSpaceOnly = (s: string) => !/\S/.test(s);
 
-export const getWhitespaceStats = (s: string, pos: 'start' | 'end'): { length: number, newLines: number } => {
-  const regexp = new RegExp(
-    String.raw`${truthyStr(pos === 'start','^')}(\r?\n\s*)${truthyStr(pos === 'end', '$')}`,
-    's'
-  );
-  const whitespace = s.match(regexp);
-  if (!whitespace) return { length: 0, newLines: 0 };
-  return { length: whitespace[0].length, newLines: whitespace[0].match(/\r?\n/g)!.length }
+export const getTrailingWhitespaceInfo = (s: string): { whitespace: number, newLines: number } => {
+  const res = { whitespace: 0, newLines: 0 };
+  const minI = Math.max(s.length - 10, 0);
+  for (let i = s.length-1; i >= minI; i--) {
+    const token = s.slice(i, i+1);
+    if (!/\s/.test(token)) break;
+    res.whitespace++;
+    if ([ '\r', '\n' ].includes(token)) ++res.newLines;
+  }
+  return res;
 }
 
 /**
