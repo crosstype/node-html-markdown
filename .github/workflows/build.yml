@@ -36,6 +36,8 @@ jobs:
 
       - name: Build
         run: yarn build
+        env:
+          CI: true
 
       - name: Test (with coverage)
         run: yarn run test:coverage
