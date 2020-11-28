@@ -29,14 +29,14 @@ const SEPARATOR = '\n' + '-'.repeat(MAX_WIDTH + 43) + '\n';
 /* ****************************************************************************************************************** */
 
 function formatName(name) {
-  var left = MAX_WIDTH - name.length;
-  var str = name;
-  for (var i = 0; i < left; i++) str += ' ';
+  const left = MAX_WIDTH - name.length;
+  let str = name;
+  for (let i = 0; i < left; i++) str += ' ';
   return str;
 }
 
 function humanFileSize(size) {
-  var i = Math.floor( Math.log(size) / Math.log(1024) );
+  const i = Math.floor( Math.log(size) / Math.log(1024) );
   return ( size / Math.pow(1024, i) ).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
 }
 
