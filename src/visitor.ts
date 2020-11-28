@@ -171,7 +171,7 @@ export class Visitor {
 
           // If remove flag sent, remove / omit everything for this node (prefix, newlines, content, postfix)
           if (postRes === PostProcessResult.RemoveNode) {
-            if (node.tagName === 'LI' && metadata?.listItemNumber) metadata.listItemNumber--;
+            if (node.tagName === 'LI' && metadata?.listItemNumber) --metadata.listItemNumber;
             return this.appendResult('', startPosOuter);
           }
 
