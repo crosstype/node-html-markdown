@@ -27,10 +27,10 @@ This library produces a _very_ clean result with consistent spacing rules for va
 
 ```sh
 # Yarn
-yarn add node-html-parser
+yarn add node-html-markdown
 
 # NPM
-npm i -S node-html-parser
+npm i -S node-html-markdown
 ```
 
 ## Benchmarks
