@@ -1,0 +1,26 @@
+{
+  "name": "benchmark-tool",
+  "private": true,
+  "description": "Simple benchmark tool for JS html to markdown compilers",
+  "main": "./index.js",
+  "scripts": {
+    "benchmark": "node execute.js",
+    "benchmark:quick": "node execute.js quick"
+  },
+  "bin": {
+    "htmltomarkdown-benchmark": "./execute.js"
+  },
+  "dependencies": {
+    "async": "^3.1.0",
+    "summary": "^1.0.0",
+    "turndown": "^7.0.0",
+    "node-html-markdown": "link:../"
+  },
+  "devDependencies": {
+    "progress": "^2.0.3"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "0.10 || 0.11"
+  }
+}

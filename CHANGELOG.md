@@ -2,7 +2,7 @@
 
 - _Notable_ changes are documented in this file.
 
-## [0.0.4] - 2020-11-26
+## [0.0.5] - 2020-11-27
 
 - Released initial version
 
