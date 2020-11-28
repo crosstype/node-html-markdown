@@ -105,7 +105,10 @@ NodeHtmlMarkdown.translate(
  * If using it several times, creating an instance saves time
  * ********************************************************* */
 
-const nhm = new NodeHtmlMarkdown(/* options */ {}, /* customTransformers */ undefined);
+const nhm = new NodeHtmlMarkdown(
+  /* options (optional) */ {}, 
+  /* customTransformers (optional) */ undefined
+);
 
 // Single file
 nhm.translate(/* html */ `<b>hello</b>`);
