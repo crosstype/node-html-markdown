@@ -10,7 +10,7 @@
     "clean": "rimraf coverage dist **/*.tsbuildinfo",
     "------------- ": "-------------",
     "benchmark": "cd benchmark && yarn run benchmark quick",
-    "benchmark:large": "cd benchmark && yarn run benchmark",
+    "benchmark:large": "echo NOTE: Large mode is generally less reliable in most environments && cd benchmark && yarn run benchmark",
     "test": "jest",
     "test:coverage": "jest --collect-coverage",
     "-------------  ": "-------------",

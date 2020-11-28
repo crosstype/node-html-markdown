@@ -12,7 +12,7 @@ const quickMode = process.argv[2] === 'quick'
 
 const wrappers = fs.readdirSync(path.join(__dirname, 'wrapper'))
   .map(filename => ({
-      name: path.basename(filename, '.js'),
+      name: path.basename(filename, '.js').replace('_reuse', ' (reused instance)'),
       parser: path.join(__dirname, 'wrapper', filename)
     })
   );
@@ -27,7 +27,6 @@ const MAX_WIDTH = Math.max(...wrappers.map(wrapper => wrapper.name.length));
 /* ****************************************************************************************************************** */
 
 function formatName(name) {
-  name = name.replace('_reuse', ' (reused instance)');
   var left = MAX_WIDTH - name.length;
   var str = name;
   for (var i = 0; i < left; i++) str += ' ';
