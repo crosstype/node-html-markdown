@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/crosstype/node-html-markdown/compare/v0.1.2...v0.1.3) (2020-11-28)
+
+
+### Fixes
+
+* Fixed performance bottleneck (doubled speed) ([6d59c27](https://github.com/crosstype/node-html-markdown/commit/6d59c275f5f812d998ad36c09aeafa84191ed0a9))
+
 ### [0.1.2](https://github.com/crosstype/node-html-markdown/compare/v0.1.1...v0.1.2) (2020-11-28)
 
 
