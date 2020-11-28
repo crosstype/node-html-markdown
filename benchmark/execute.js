@@ -10,7 +10,9 @@ const { fork } = require('child_process');
 
 const quickMode = process.argv[2] === 'quick'
 
-const wrappers = fs.readdirSync(path.join(__dirname, 'wrapper'))
+const wrappers = fs
+  .readdirSync(path.join(__dirname, 'wrapper'))
+  .sort((a, b) => a.localeCompare(b))
   .map(filename => ({
       name: path.basename(filename, '.js').replace('_reuse', ' (reused instance)'),
       parser: path.join(__dirname, 'wrapper', filename)
@@ -19,7 +21,7 @@ const wrappers = fs.readdirSync(path.join(__dirname, 'wrapper'))
 
 const MAX_WIDTH = Math.max(...wrappers.map(wrapper => wrapper.name.length));
 
-const SEPARATOR = '\n' + '-'.repeat(MAX_WIDTH + 43) + '\n';
+const SEPARATOR = '\n' + '-'.repeat(MAX_WIDTH + 41) + '\n';
 
 // endregion
 

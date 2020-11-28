@@ -37,36 +37,36 @@ npm i -S node-html-markdown
 ```
 -------------------------------------------------------------------------------
 
-node-html-makrdown (reused instance): 43.7098 ms/file ± 25.5440 (2.15 MB/s)
-node-html-markdown                  : 44.6477 ms/file ± 26.7243 (2.1 MB/s)
-turndown                            : 71.5919 ms/file ± 36.7715 (1.31 MB/s)
-turndown (reused instance)          : 67.5310 ms/file ± 36.7826 (1.39 MB/s)
+node-html-makrdown (reused instance): 22.7441 ms/file ± 12.5888 (4.13 MB/s)
+node-html-markdown                  : 23.9525 ms/file ± 13.1008 (3.92 MB/s)
+turndown                            : 67.3323 ms/file ± 30.3120 (1.4 MB/s)
+turndown (reused instance)          : 66.7893 ms/file ± 35.6442 (1.41 MB/s)
 
 -------------------------------------------------------------------------------
 
 Estimated processing times (fastest to slowest):
 
   [node-html-makrdown (reused instance)]
-    100 kB:  45ms
-    1 MB:    465ms
-    50 MB:   23.27sec
-    1 GB:    7min, 56sec
-    50 GB:   6hr, 37min, 3sec
+    100 kB:  24ms
+    1 MB:    242ms
+    50 MB:   12.11sec
+    1 GB:    4min, 8sec
+    50 GB:   3hr, 26min, 36sec
 
   [turndown (reused instance)]
-    100 kB:  70ms
-    1 MB:    719ms
-    50 MB:   35.94sec
-    1 GB:    12min, 16sec
-    50 GB:   10hr, 13min, 27sec
+    100 kB:  69ms
+    1 MB:    711ms
+    50 MB:   35.55sec
+    1 GB:    12min, 8sec
+    50 GB:   10hr, 6min, 43sec
 
 -------------------------------------------------------------------------------
 
 Comparison to fastest (node-html-makrdown (reused instance)):
 
-  node-html-markdown: -2.10%
-  turndown (reused instance): -35.27%
-  turndown: -38.95%
+  node-html-markdown: 5.31% slower
+  turndown (reused instance): 193.66% slower
+  turndown: 196.04% slower
 
 -------------------------------------------------------------------------------
 ```
