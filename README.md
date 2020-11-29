@@ -62,11 +62,11 @@ Estimated processing times (fastest to slowest):
 
 -------------------------------------------------------------------------------
 
-Comparison to fastest (node-html-makrdown (reused instance)):
+Speed comparison - node-html-makrdown (reused instance) is:
 
-  node-html-markdown: 5.31% slower
-  turndown (reused instance): 193.66% slower
-  turndown: 196.04% slower
+  1.05 times as fast as node-html-markdown
+  2.94 times as fast as turndown (reused instance)
+  2.96 times as fast as turndown
 
 -------------------------------------------------------------------------------
 ```
