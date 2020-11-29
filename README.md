@@ -16,12 +16,10 @@ of performance out of the JIT that we could. The end result was fast enough to m
 
 ### 2. Human Readability
 
-The other libraries we tested produced output that would break in numerous conditions, did not indent or number lists, 
-and produced text with many trailing line-feeds.
- 
-In other words, outside of a markdown viewer, the result was cluttered and not easy to read.
+The other libraries we tested produced output that would break in numerous conditions and produced output with many
+repeating linefeeds, etc. Generally speaking, outside of a markdown viewer, the result was not easy to read.
 
-This library produces a _very_ clean result with consistent spacing rules for various block elements.
+We took the approach of producing a _clean, concise_ result with consistent spacing rules.
 
 ## Install
 
@@ -218,10 +216,18 @@ Custom translators are an advanced option to allow handling certain elements a s
 
 These can be modified via the `nhm.translators` property, or added during creation.
 
-__For detail on how to use see__:
+__For detail on how to use them see__:
 
 - [translator.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/translator.ts) - Documentation for `TranslatorConfig`
 - [config.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/config.ts) - Translators in `defaultTranslators`
+
+## Further improvements
+
+We could gain _tremendous_ further gains writing a custom parser and integrating an async worker-thread based
+model for multi-threading in order to truly resemble a low-level approach. This may be something we do in the future, 
+but for now, this is sufficient for our needs.
+
+If you have need for something like that or ideas, feel free to discuss approaches in the issues.
 
 ## Help Wanted!
 
