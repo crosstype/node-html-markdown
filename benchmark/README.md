@@ -1,6 +1,6 @@
 # Benchmark Tool
 
-Simple benchmark for diffrent html to markdown compilers using real-life data.
+Simple benchmark for different html to markdown compilers using real-life data.
 
 Based on: https://github.com/AndreasMadsen/htmlparser-benchmark
 

@@ -4,13 +4,13 @@
 
 # node-html-markdown
 
-NHM is a _fast_ HTML to markdown cross-compiler, compatible with both node and the browser.
+NHM is a _fast_ HTML to markdown converter, compatible with both node and the browser.
 
 It was built with the following two goals in mind:
 
 ### 1. Speed
 
-We had a need to cross-compile gigabytes of HTML daily very quickly. All libraries we found were too slow with node. 
+We had a need to convert gigabytes of HTML daily very quickly. All libraries we found were too slow with node. 
 We considered using a low-level language but decided to attempt to write something that would squeeze every bit
 of performance out of the JIT that we could. The end result was fast enough to make the cut!
 
