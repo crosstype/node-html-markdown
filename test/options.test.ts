@@ -51,35 +51,6 @@ describe(`Options`, () => {
     instance.options.bulletMarker = originalBulletMarker;
   });
 
-  test(`indent`, () => {
-    const originalIndent = instance.options.indent;
-    const html = `<ul>
-      <li>item1</li>
-      <li>item2
-        <ul>
-          <li>subitem1</li>
-          <li>subitem2</li>
-        </ul>
-      </li>
-    </ul>`;
-
-    instance.options.indent = `  `;
-    const res2SpaceIndent = translate(html);
-    expect(res2SpaceIndent).toBe(`* item1
-* item2
-  * subitem1
-  * subitem2`);
-    
-    instance.options.indent = `-----`;
-    const res5DashIndent = translate(html);
-    expect(res5DashIndent).toBe(`* item1
-* item2
------ * subitem1
------ * subitem2`);
-
-    instance.options.indent = originalIndent;
-  });
-
   test(`codeBlockStyle`, () => {
     const originalCodeFence = instance.options.codeBlockStyle;
     const html = `<pre><code>line1\nline2</code></pre>`;
