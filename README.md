@@ -144,12 +144,6 @@ export interface NodeHtmlMarkdownOptions {
   bulletMarker: string,
 
   /**
-   * Indent string
-   * @default '  '
-   */
-  indent: string,
-
-  /**
    * Style for code block
    * @default fence
    */
