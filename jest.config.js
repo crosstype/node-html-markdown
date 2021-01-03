@@ -10,5 +10,6 @@ module.exports = {
   },
   modulePaths: [ "<rootDir>" ],
   testTimeout: 10000,
-  roots: [ '<rootDir>' ]
+  roots: [ '<rootDir>' ],
+  collectCoverageFrom: [ "src/**/*.ts" ]
 }
