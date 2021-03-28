@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.6](https://github.com/crosstype/node-html-markdown/compare/v0.1.5...v0.1.6) (2021-03-28)
+
+
+### Fixes
+
+* **tsconfig:** Set output target to es2017 to support Node v10+ (Fixes [#7](https://github.com/crosstype/node-html-markdown/issues/7)) ([#8](https://github.com/crosstype/node-html-markdown/issues/8)) ([dd63205](https://github.com/crosstype/node-html-markdown/commit/dd63205a5019ab84ac5010cf0e2f06cbc5ffabb2))
+
 ### [0.1.5](https://github.com/crosstype/node-html-markdown/compare/v0.1.4...v0.1.5) (2021-01-03)
 
 ### [0.1.3](https://github.com/crosstype/node-html-markdown/compare/v0.1.2...v0.1.3) (2020-11-28)
