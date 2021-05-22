@@ -125,11 +125,14 @@ export class Visitor {
   public visitNode(node: HtmlNode, textOnly?: boolean, metadata?: NodeMetadata): void {
     const { result } = this;
 
-    /* Handle text node */
-    if (isTextNode(node) && !node.isWhitespace)
-      return this.appendResult(metadata?.noEscape ? node.text : this.processText(node.text));
-
     if (!node.preserve) return;
+
+    /* Handle text node */
+    if (isTextNode(node))
+      return node.isWhitespace
+             ? void 0
+             : this.appendResult(metadata?.noEscape ? node.text : this.processText(node.text));
+
     if (textOnly || !isElementNode(node)) return;
 
     /* Handle element node */
