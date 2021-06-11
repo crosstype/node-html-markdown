@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/crosstype/node-html-markdown/compare/v0.1.6...v0.1.7) (2021-06-11)
+
+
+### Fixes
+
+* Allow for leading/trailing spaces in node content (fixes [#9](https://github.com/crosstype/node-html-markdown/issues/9)) ([ff61746](https://github.com/crosstype/node-html-markdown/commit/ff617463d9a0c18f5c58f31feda0c06a69a34d27))
+
 ### [0.1.6](https://github.com/crosstype/node-html-markdown/compare/v0.1.5...v0.1.6) (2021-03-28)
 
 
