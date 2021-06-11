@@ -34,8 +34,8 @@ describe(`Default Tags`, () => {
   });
 
   test(`Italic / Emphasis (em, i)`, () => {
-    const res = translate(`<em>a<s>b</s><br><br>c<br>d</em><i>a<s>b</s><br><br>c<br>d</i>`);
-    expect(res).toBe(`_a~~b~~_\n  \n_c_\n_d_ `.repeat(2).trim());
+    const res = translate(`<em>a <s>b</s><br><br>c<br>d</em><i>a <s>b</s><br><br>c<br>d</i>`);
+    expect(res).toBe(`_a ~~b~~_\n  \n_c_\n_d_ `.repeat(2).trim());
   });
 
   test(`Link (a)`, () => {
