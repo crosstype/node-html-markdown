@@ -1,4 +1,4 @@
-import { isWhiteSpaceOnly, surround, trimNewLines } from './utilities';
+import { isWhiteSpaceOnly, surround, tagSurround, trimNewLines } from './utilities';
 import { PostProcessResult, TranslatorConfigObject } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
 import { Options as NodeHtmlParserOptions } from 'node-html-parser'
@@ -29,6 +29,7 @@ export const contentlessElements = [ 'BR', 'HR', 'IMG' ];
 // region: Options
 /* ****************************************************************************************************************** */
 
+// noinspection RegExpUnnecessaryNonCapturingGroup
 export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
   preferNativeParser: false,
   codeFence: '```',
@@ -97,7 +98,7 @@ export const defaultTranslators: TranslatorConfigObject = {
     postprocess: ({ content, options: { strongDelimiter } }) =>
       isWhiteSpaceOnly(content)
       ? PostProcessResult.RemoveNode
-      : content.replace(/^[^\S\r\n]*?(\S+.*?)[^\S\r\n]*?$/gm, surround('$1', strongDelimiter))
+      : tagSurround(content, strongDelimiter)
   },
 
   /* Strikethrough */
@@ -106,7 +107,7 @@ export const defaultTranslators: TranslatorConfigObject = {
     postprocess: ({ content }) =>
       isWhiteSpaceOnly(content)
       ? PostProcessResult.RemoveNode
-      : content.replace(/^[^\S\r\n]*?(\S+.*?)[^\S\r\n]*?$/gm, '~~$1~~')
+      : tagSurround(content, '~~')
   },
 
   /* Italic / Emphasis */
@@ -115,7 +116,7 @@ export const defaultTranslators: TranslatorConfigObject = {
     postprocess: ({ content, options: { emDelimiter } }) =>
       isWhiteSpaceOnly(content)
       ? PostProcessResult.RemoveNode
-      : content.replace(/^[^\S\r\n]*?(\S+.*?)[^\S\r\n]*?$/gm, surround('$1', emDelimiter))
+      : tagSurround(content, emDelimiter)
   },
 
   /* Lists (ordered & unordered) */

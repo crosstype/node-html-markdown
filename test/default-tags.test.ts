@@ -24,18 +24,20 @@ describe(`Default Tags`, () => {
 
   test(`Bold (b, strong)`, () => {
     const res = translate(`<b>a<del>b</del><br><br>c<br>d</b><strong>a<del>b</del><br><br>c<br>d</strong>`);
-    const exp = `**a~~b~~**\n  \n**c**\n**d**`;
+    const exp = `**a~~b~~** \n  \n**c** \n**d**`;
     expect(res).toBe(exp + ' ' + exp);
   });
 
   test(`Strikethrough (del, s, strike)`, () => {
     const res = translate(`<del>a<em>b</em><br><br>c<br>d</del><s>a<em>b</em><br><br>c<br>d</s><strike>a<em>b</em><br><br>c<br>d</strike>`);
-    expect(res).toBe(`~~a_b_~~\n  \n~~c~~\n~~d~~ `.repeat(3).trim());
+    const exp = `~~a_b_~~ \n  \n~~c~~ \n~~d~~`;
+    expect(res).toBe(exp + ' ' + exp + ' ' + exp);
   });
 
   test(`Italic / Emphasis (em, i)`, () => {
     const res = translate(`<em>a <s>b</s><br><br>c<br>d</em><i>a <s>b</s><br><br>c<br>d</i>`);
-    expect(res).toBe(`_a ~~b~~_\n  \n_c_\n_d_ `.repeat(2).trim());
+    const exp = `_a ~~b~~_ \n  \n_c_ \n_d_`;
+    expect(res).toBe(exp + ' ' + exp);
   });
 
   test(`Link (a)`, () => {
