@@ -47,8 +47,9 @@ describe(`Default Tags`, () => {
     const res = translate(`
         <a href="${url}">a<br><br>b<strong>c</strong></a>
         <a>a<strong>b</strong></a> <!-- This node is treated as text due to no href -->
+        <a href="${url}">${url}</a>
     `);
-    expect(res).toBe(`[a    b**c**](${url})a**b**`);
+    expect(res).toBe(`[a    b**c**](${url})a**b**<${url}>`);
   });
 
   test(`Image (img)`, () => {

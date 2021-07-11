@@ -258,16 +258,21 @@ text`);
         <a href="${url}">a<br><br>b<strong>c</strong></a>
         <a>a<strong>b</strong></a> <!-- This node is treated as text due to no href -->
         <a href="${url}/other">link2</a>
-        <a href="${url}">repeat link</a>&nbsp;Goodbye!
+        <a href="${url}">repeat link</a>
+        <a href="${url}">${url}</a><!-- inline link -->&nbsp;Goodbye!
     `;
 
     instance.options.useLinkReferenceDefinitions = false;
     let res = translate(html);
-    expect(res).toBe(`Hello: [a    b**c**](${url})a**b**[link2](${url}/other)[repeat link](${url}) Goodbye!`);
+    expect(res).toBe(
+      `Hello: [a    b**c**](${url})a**b**[link2](${url}/other)[repeat link](${url})<${url}> Goodbye!`
+    );
 
     instance.options.useLinkReferenceDefinitions = true;
     res = translate(html);
-    expect(res).toBe(`Hello: [a    b**c**][1]a**b**[link2][2][repeat link][1] Goodbye!\n\n[1]: ${url}\n[2]: ${url}/other`);
+    expect(res).toBe(
+      `Hello: [a    b**c**][1]a**b**[link2][2][repeat link][1]<${url}> Goodbye!\n\n[1]: ${url}\n[2]: ${url}/other`
+    );
 
     instance.options.useLinkReferenceDefinitions = originalUseLinkReferenceDefinitions;
   });

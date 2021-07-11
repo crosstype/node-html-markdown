@@ -187,6 +187,10 @@ export const defaultTranslators: TranslatorConfigObject = {
 
     const title = node.getAttribute('title');
 
+    // Inline link, when possible
+    // See: https://github.com/crosstype/node-html-markdown/issues/17
+    if (node.textContent === href) return { content: `<${href}>` };
+
     return {
       postprocess: ({ content }) => content.replace(/(?:\r?\n)+/g, ''),
       prefix: '[',
