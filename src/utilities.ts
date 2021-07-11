@@ -92,10 +92,10 @@ export function tagSurround(content: string, surroundStr: string) {
 export const getTrailingWhitespaceInfo = (s: string): { whitespace: number, newLines: number } => {
   const res = { whitespace: 0, newLines: 0 };
   const minI = Math.max(s.length - 10, 0);
-  for (let i = s.length - 1; i >= minI; i--) {
+  for (let i = s.length - 1; i >= minI; --i) {
     const token = s.slice(i, i + 1);
     if (!/\s/.test(token)) break;
-    res.whitespace++;
+    ++res.whitespace;
     if ([ '\r', '\n' ].includes(token)) ++res.newLines;
   }
   return res;
