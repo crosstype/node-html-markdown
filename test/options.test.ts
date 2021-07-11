@@ -199,16 +199,15 @@ text`);
 
   test(`globalEscape`, () => {
     const originalGlobalEscape = instance.options.globalEscape;
-    const html = `<strong>text**text</strong>`;
 
-    const resEscapedStar = translate(html);
+    const resEscapedStar = translate(`<strong>text**text</strong>`);
     expect(resEscapedStar).toBe("**text\\*\\*text**");
 
     // No escape for star
     instance.options.globalEscape = [ /[_~\[\]]/gm, '\\$&' ];
 
-    const resNotEscapedStar = translate(html);
-    expect(resNotEscapedStar).toBe("**text**text**");
+    const resNotEscapedStar = translate(`<i>text**text</i>`);
+    expect(resNotEscapedStar).toBe("_text**text_");
 
     const resEscapedBrackets = translate(`<h1>title [more words]</h1>`);
     expect(resEscapedBrackets).toBe("# title \\[more words\\]");

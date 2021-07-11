@@ -47,6 +47,15 @@ export function splitSpecial(s: string) {
  * Surround tag content with delimiter (moving any leading/trailing space to outside the tag
  */
 export function tagSurround(content: string, surroundStr: string) {
+  // If un-escaped surroundStr already occurs, remove all instances
+  // See: https://github.com/crosstype/node-html-markdown/issues/18
+  const nestedSurroundStrIndex = content.indexOf(surroundStr);
+  if (nestedSurroundStrIndex >= 0)
+    content = content.replace(
+      new RegExp(`([^\\\\])\\${surroundStr.split('').join('\\')}`, 'gm'),
+      '$1'
+    );
+
   const lines = splitSpecial(content);
   let res = '';
 

@@ -51,4 +51,15 @@ describe(`Special Cases`, () => {
       expect(translate(`<p><${tag}>&nbsp; Label: &nbsp;</${tag}>Value</p>`)).toBe(` ${delim}Label:${delim} Value`);
     });
   });
+
+  // See: https://github.com/crosstype/node-html-markdown/issues/18
+  describe(`Removes nested text formatting tags`, () => {
+    test.each(textFormatTags)(`%s`, tag => {
+      const delim = delims[tag];
+
+      expect(translate(`<${tag}>My <${tag}>bold</${tag}> text</${tag}>`)).toBe(
+        `${delim}My bold text${delim}`
+      );
+    });
+  });
 });
