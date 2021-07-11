@@ -24,11 +24,7 @@ We took the approach of producing a _clean, concise_ result with consistent spac
 ## Install
 
 ```sh
-# Yarn
-yarn add node-html-markdown
-
-# NPM
-npm i -S node-html-markdown
+<yarn|npm|pnpm> add node-html-markdown
 ```
 
 ## Benchmarks
@@ -37,8 +33,8 @@ npm i -S node-html-markdown
 
 node-html-makrdown (reused instance): 22.7441 ms/file ± 12.5888 (4.13 MB/s)
 node-html-markdown                  : 23.9525 ms/file ± 13.1008 (3.92 MB/s)
-turndown                            : 67.3323 ms/file ± 30.3120 (1.4 MB/s)
 turndown (reused instance)          : 66.7893 ms/file ± 35.6442 (1.41 MB/s)
+turndown                            : 67.3323 ms/file ± 30.3120 (1.4 MB/s)
 
 -------------------------------------------------------------------------------
 
@@ -164,12 +160,12 @@ export interface NodeHtmlMarkdownOptions {
   /**
    * Supplied elements will be ignored (ignores inner text does not parse children)
    */
-  ignore?: string[],
+  readonly ignore?: string[],
 
   /**
    * Supplied elements will be treated as blocks (surrounded with blank lines)
    */
-  blockElements?: string[],
+  readonly blockElements?: string[],
 
   /**
    * Max consecutive new lines allowed
@@ -185,7 +181,7 @@ export interface NodeHtmlMarkdownOptions {
 
   /**
    * Global escape pattern
-   * (Note: Setting this will override the default escape settings, you might want to use replaceText option instead)
+   * (Note: Setting this will override the default escape settings, you might want to use textReplace option instead)
    */
   globalEscape: [ pattern: RegExp, replacement: string ]
 
@@ -201,6 +197,20 @@ export interface NodeHtmlMarkdownOptions {
    * @default false
    */
   keepDataImages?: boolean
+
+  /**
+   * Place URLS at the bottom and format links using link reference definitions
+   *
+   * @example
+   * Click <a href="/url1">here</a>. Or <a href="/url2">here</a>. Or <a href="/url1">this link</a>.
+   *
+   * Becomes:
+   * Click [here][1]. Or [here][2]. Or [this link][1].
+   *
+   * [1]: /url
+   * [2]: /url2
+   */
+  useLinkReferenceDefinitions?: boolean
 }
 ```
 
@@ -208,7 +218,7 @@ export interface NodeHtmlMarkdownOptions {
 
 Custom translators are an advanced option to allow handling certain elements a specific way.
 
-These can be modified via the `nhm.translators` property, or added during creation.
+These can be modified via the `NodeHtmlMarkdown#translators` property, or added during creation.
 
 __For detail on how to use them see__:
 
@@ -217,14 +227,22 @@ __For detail on how to use them see__:
 
 ## Further improvements
 
-We could gain _tremendous_ further gains writing a custom parser and integrating an async worker-thread based
-model for multi-threading in order to truly resemble a low-level approach. This may be something we do in the future, 
-but for now, this is sufficient for our needs.
+Being a performance-centric library, we're always interested in further improvements. 
+There are several probable routes by which we could gain substantial performance increases over the current model. 
 
-If you have need for something like that or ideas, feel free to discuss approaches in the issues.
+Such methods include:
+
+- Writing a custom parser
+- Integrating an async worker-thread based model for multi-threading
+- Fully replacing any remaining regex
+  
+These would be fun to implement; however, for the time being, the present library is fast enough for my purposes. That
+said, I welcome discussion and any PR toward the effort of further improving performance, and I may ultimately do more
+work in that capacity in the future!
 
 ## Help Wanted!
 
-We'd love some help! There are several enhancements ranging from beginner to moderate difficulty.
+Looking to contribute? Check out our [help wanted] list for a good place to start!
 
-Please check out our [help wanted](https://github.com/crosstype/node-html-markdown/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) list.
+
+[help wanted]: https://github.com/crosstype/node-html-markdown/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22
