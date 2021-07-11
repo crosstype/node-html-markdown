@@ -34,8 +34,8 @@ describe(`Options`, () => {
   test(`bulletMarker`, () => {
     const originalBulletMarker = instance.options.bulletMarker;
     const html = `<ul><li>item1</li><li>item2</li></ul>`;
-    
-    const resDefaultMarker = translate(html); 
+
+    const resDefaultMarker = translate(html);
     expect(resDefaultMarker).toBe(`* item1
 * item2`);
 
@@ -54,11 +54,11 @@ describe(`Options`, () => {
   test(`codeBlockStyle`, () => {
     const originalCodeFence = instance.options.codeBlockStyle;
     const html = `<pre><code>line1\nline2</code></pre>`;
-    
+
     instance.options.codeBlockStyle = 'fenced';
     const resFenced = translate(html);
     expect(resFenced).toBe('```\nline1\nline2\n```');
-  
+
     instance.options.codeBlockStyle = 'indented';
     const resIndented = translate(html);
     expect(resIndented).toBe('line1\nline2'.replace(/^/gm, '    '));
@@ -69,7 +69,7 @@ describe(`Options`, () => {
   test(`emDelimiter`, () => {
     const originalEmDelimiter = instance.options.emDelimiter;
     const html = `<em>some text</em><em>more text</em>`;
-    
+
     const resDefaultEmDelimiter = translate(html);
     expect(resDefaultEmDelimiter).toBe(`_some text_ _more text_`);
 
@@ -150,7 +150,7 @@ _x_text`);
 
 _x_
 
-text`);  
+text`);
   });
 
   test(`maxConsecutiveNewlines`, () => {
@@ -173,20 +173,20 @@ text`);
 
   test(`lineStartEscape`, () => {
     const originalLineStartEscape = instance.options.lineStartEscape;
-    
+
     const resEscapedPlus = translate(`<p>text\n+ text\n+ more text</p>`);
     expect(resEscapedPlus).toBe("text\n\\+ text\n\\+ more text");
 
     const resEscapedQuote = translate(`<p>text\n> text\n> more text</p>`);
     expect(resEscapedQuote).toBe("text\n\\> text\n\\> more text");
 
-    //no escape for +
+    // No escape for +
     instance.options.lineStartEscape = [/^(\s*?)((?:[=>-])|(?:#{1,6}\s))|(?:(\d+)(\.\s))/gm, '$1$3\\$2$4'];
 
     const resNotEscapedPlus = translate(`<p>text\n+ text\n+ more text</p>`);
     expect(resNotEscapedPlus).toBe("text\n+ text\n+ more text");
 
-    //no escape also for >
+    // No escape also for >
     instance.options.lineStartEscape = [/^(\s*?)((?:#{1,6}\s))|(?:(\d+)(\.\s))/gm, '$1$3\\$2$4'];
 
     const resNotEscapedQuote = translate(`<p>text\n> text\n> more text</p>`);
@@ -202,16 +202,16 @@ text`);
     const resEscapedStar = translate(html);
     expect(resEscapedStar).toBe("**text\\*\\*text**");
 
-    //no escape for star
+    // No escape for star
     instance.options.globalEscape = [ /[_~\[\]]/gm, '\\$&' ];
 
     const resNotEscapedStar = translate(html);
     expect(resNotEscapedStar).toBe("**text**text**");
-    
+
     const resEscapedBrackets = translate(`<h1>title [more words]</h1>`);
     expect(resEscapedBrackets).toBe("# title \\[more words\\]");
 
-    //no escape also for brackets
+    // No escape also for brackets
     instance.options.globalEscape = [ /[_~]/gm, '\\$&' ];
     const resNotEscapedBrackets = translate(`<h1>title [more words]</h1>`);
     expect(resNotEscapedBrackets).toBe("# title [more words]");
@@ -221,7 +221,7 @@ text`);
 
   test(`textReplace`, () => {
     const originalReplace = instance.options.textReplace;
-    
+
     instance.options.textReplace = [[/abc/g, "xyz"]];
     const replaced = translate('<h1>hello abc</h1>');
     expect(replaced).toBe(`# hello xyz`);
@@ -235,7 +235,7 @@ text`);
 
   test(`keepDataImages`, () => {
     const originalKeepDataImages = instance.options.keepDataImages;
-    
+
     instance.options.keepDataImages = true;
     const resKeep = translate(`<img alt="normal" src="normal_img.jpg">
       <img src="data:image/gif;base64,R0lGODlhEA"/>`);

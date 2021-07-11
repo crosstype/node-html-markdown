@@ -76,7 +76,7 @@ describe(`Default Tags`, () => {
     const res = translate(
       `<h1>a<b>b</b></h1><h2>a<b>b</b></h2><h3>a<b>b</b></h3><h4>a<b>b</b></h4><h5>a<b>b</b></h5><h6>a<b>b</b></h6>`
     );
-    expect(res).toBe(Array.from(Array(6), (v, i) => `#`.repeat(i+1) + ` a**b**\n\n`).join('').trim());
+    expect(res).toBe(Array.from(Array(6), (v, i) => `#`.repeat(i + 1) + ` a**b**\n\n`).join('').trim());
   });
 
   test(`Code (code)`, () => {
@@ -89,7 +89,7 @@ describe(`Default Tags`, () => {
 
     test(`Fenced`, () => {
       const res = translate(`<pre><code class="language-fortran">${str}</code></pre><pre><code>${str}</code></pre>`);
-      expect(res).toBe('```fortran\n'+str+'\n```\n\n```\n'+str+'\n```');
+      expect(res).toBe('```fortran\n' + str + '\n```\n\n```\n' + str + '\n```');
     });
 
     test(`Indented`, () => {

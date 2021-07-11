@@ -118,7 +118,8 @@ export const truthyStr = (v: any, value?: string): string => v ? ((value !== und
 function tryParseWithNativeDom(html: string): ElementNode | undefined {
   try {
     if (!(window?.DOMParser && (new window.DOMParser()).parseFromString('', 'text/html'))) return void 0;
-  } catch {
+  }
+  catch {
     return void 0;
   }
 
@@ -126,7 +127,8 @@ function tryParseWithNativeDom(html: string): ElementNode | undefined {
   let doc: Document;
   try {
     doc = document.implementation.createHTMLDocument('').open()
-  } catch (e) {
+  }
+  catch (e) {
     const { ActiveXObject } = (<any>window);
     if (ActiveXObject) {
       const doc = ActiveXObject('htmlfile');
@@ -146,7 +148,8 @@ function tryParseWithNativeDom(html: string): ElementNode | undefined {
 const getNodeHtmlParser = () => {
   try {
     return require('node-html-parser').parse as typeof import('node-html-parser').parse
-  } catch {
+  }
+  catch {
     return undefined;
   }
 }
@@ -169,8 +172,7 @@ export function parseHTML(html: string, options: NodeHtmlMarkdownOptions): Eleme
       if (nodeHtmlParse) console.warn('Native DOM parser encountered an error during parse', e);
       else throw e;
     }
-  }
-  else nodeHtmlParse = getNodeHtmlParser();
+  } else nodeHtmlParse = getNodeHtmlParser();
 
   if (!el) el = nodeHtmlParse!(html, nodeHtmlParserConfig).removeWhitespace();
   perfStop('parse');
