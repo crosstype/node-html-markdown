@@ -63,7 +63,7 @@ export interface NodeHtmlMarkdownOptions {
 
   /**
    * Global escape pattern
-   * (Note: Setting this will override the default escape settings, you might want to use replaceText option instead)
+   * (Note: Setting this will override the default escape settings, you might want to use textReplace option instead)
    */
   globalEscape: [ pattern: RegExp, replacement: string ]
 
