@@ -181,7 +181,7 @@ export const defaultTranslators: TranslatorConfigObject = {
   },
 
   /* Link */
-  'a': ({ node }) => {
+  'a': ({ node, options, visitor }) => {
     const href = node.getAttribute('href');
     if (!href) return {};
 
@@ -190,7 +190,9 @@ export const defaultTranslators: TranslatorConfigObject = {
     return {
       postprocess: ({ content }) => content.replace(/(?:\r?\n)+/g, ''),
       prefix: '[',
-      postfix: `](${href}${title ? ` "${title}"` : ''})`
+      postfix: ']' + (!options.useLinkReferenceDefinitions
+               ? `(${href}${title ? ` "${title}"` : ''})`
+               : `[${visitor.addOrGetUrlDefinition(href)}]`)
     }
   },
 

@@ -38,6 +38,7 @@ type VisitorResult = {
 export class Visitor {
   public result: VisitorResult
   public nodeMetadata: NodeMetadataMap = new Map();
+  public urlDefinitions: string[] = [];
   private options: NodeHtmlMarkdownOptions;
 
   constructor(
@@ -62,6 +63,12 @@ export class Visitor {
   /* ********************************************************* */
   // region: Methods
   /* ********************************************************* */
+
+  public addOrGetUrlDefinition(url: string): number {
+    let id = this.urlDefinitions.findIndex(u => u === url);
+    if (id < 0) id = this.urlDefinitions.push(url) - 1;
+    return id + 1;
+  }
 
   public appendResult(s: string, startPos?: number, spaceIfRepeatingChar?: boolean) {
     if (!s && startPos === undefined) return;
@@ -226,9 +233,20 @@ export class Visitor {
 
 export function getMarkdownForHtmlNodes(instance: NodeHtmlMarkdown, rootNode: HtmlNode, fileName?: string): string {
   perfStart('walk');
-  let result = new Visitor(instance, rootNode, fileName).result.text;
+  const visitor = new Visitor(instance, rootNode, fileName);
+  let result = visitor.result.text;
   perfStop('walk');
 
+  /* Post-processing */
+  // Add link references, if set
+  if (instance.options.useLinkReferenceDefinitions) {
+    if (/[^\r\n]/.test(result.slice(-1))) result += '\n';
+    visitor.urlDefinitions.forEach((url, idx) => {
+      result += `\n[${idx + 1}]: ${url}`;
+    });
+  }
+
+  // Fixup repeating newlines
   const { maxConsecutiveNewlines } = instance.options;
   if (maxConsecutiveNewlines) result = result.replace(
     new RegExp(String.raw`(?:\r?\n\s*)+((?:\r?\n\s*){${maxConsecutiveNewlines}})`, 'g'),

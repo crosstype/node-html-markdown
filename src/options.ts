@@ -79,6 +79,20 @@ export interface NodeHtmlMarkdownOptions {
    * @default false
    */
   keepDataImages?: boolean
+
+  /**
+   * Place URLS at the bottom and format links using link reference definitions
+   *
+   * @example
+   * Click <a href="/url1">here</a>. Or <a href="/url2">here</a>. Or <a href="/url1">this link</a>.
+   *
+   * Becomes:
+   * Click [here][1]. Or [here][2]. Or [this link][1].
+   *
+   * [1]: /url
+   * [2]: /url2
+   */
+  useLinkReferenceDefinitions?: boolean
 }
 
 // endregion
