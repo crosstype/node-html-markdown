@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/crosstype/node-html-markdown/compare/v0.1.7...v1.0.0) (2021-07-11)
+
+
+### Features
+
+* Add useLinkReferenceDefinitions option (closes [#15](https://github.com/crosstype/node-html-markdown/issues/15)) ([a7caef1](https://github.com/crosstype/node-html-markdown/commit/a7caef106a37a5de618e7072ed4e329a1c4c4f95))
+* Improved spacing in and around bold, italic, and strikethrough tags ([8198524](https://github.com/crosstype/node-html-markdown/commit/8198524680ec3e6e5d8578b18fe58067158774bb))
+* Prefer <inline> links when possible (closes [#17](https://github.com/crosstype/node-html-markdown/issues/17)) ([613e8bb](https://github.com/crosstype/node-html-markdown/commit/613e8bb5d39ca84efcce13c33c1fda8206a9d924))
+
+
+### Fixes
+
+* Ensure html entities are decoded (Fixes [#14](https://github.com/crosstype/node-html-markdown/issues/14)) ([1e59887](https://github.com/crosstype/node-html-markdown/commit/1e59887ea9baea37d72d977943cfda936e925924))
+* Nested text formatting tags can break formatting (fixes [#18](https://github.com/crosstype/node-html-markdown/issues/18)) ([7640e33](https://github.com/crosstype/node-html-markdown/commit/7640e334936e6cd678cc1ea960b77135832afd55))
+
 ### [0.1.7](https://github.com/crosstype/node-html-markdown/compare/v0.1.6...v0.1.7) (2021-06-11)
 
 
