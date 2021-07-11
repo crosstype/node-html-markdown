@@ -1,3 +1,5 @@
+// noinspection RegExpUnnecessaryNonCapturingGroup,HtmlUnknownTarget
+
 import { NodeHtmlMarkdown } from '../src';
 
 

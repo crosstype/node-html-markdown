@@ -1,3 +1,5 @@
+// noinspection HtmlUnknownTarget
+
 import { NodeHtmlMarkdown } from '../src';
 
 
