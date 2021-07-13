@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.1](https://github.com/crosstype/node-html-markdown/compare/v1.0.0...v1.0.1) (2021-07-13)
+
+
+### Fixes
+
+* Whitespace between some nodes not properly handled (fixes [#16](https://github.com/crosstype/node-html-markdown/issues/16)) ([a7abf81](https://github.com/crosstype/node-html-markdown/commit/a7abf81add691e199587ca85600fb0f4c6876a01))
+
 ## [1.0.0](https://github.com/crosstype/node-html-markdown/compare/v0.1.7...v1.0.0) (2021-07-11)
 
 
