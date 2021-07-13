@@ -49,7 +49,7 @@ describe(`Default Tags`, () => {
         <a>a<strong>b</strong></a> <!-- This node is treated as text due to no href -->
         <a href="${url}">${url}</a>
     `);
-    expect(res).toBe(`[a    b**c**](${url})a**b**<${url}>`);
+    expect(res).toBe(`[a    b**c**](${url}) a**b** <${url}> `);
   });
 
   test(`Image (img)`, () => {
@@ -61,7 +61,7 @@ describe(`Default Tags`, () => {
         <img src="${url}4" title="t4" alt="a4">
         <img src="data:image/gif;base64,R/"><!-- This node is elided due to default option keepDataImages = false -->
     `);
-    expect(res).toBe(`![](${url}1)` + `![](${url}3 "t3")` + `![a4](${url}4 "t4")`);
+    expect(res).toBe(`![](${url}1)` + ` ![](${url}3 "t3")` + ` ![a4](${url}4 "t4") `);
   });
 
   test(`Pre-formatted Text (pre)`, () => {

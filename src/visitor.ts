@@ -137,8 +137,8 @@ export class Visitor {
     /* Handle text node */
     if (isTextNode(node))
       return node.isWhitespace
-             ? void 0
-             : this.appendResult(metadata?.noEscape ? node.text : this.processText(node.text));
+             ? (!result.text.length || result.trailingNewlineStats.whitespace > 0) ? void 0 : this.appendResult(' ')
+             : this.appendResult(metadata?.noEscape ? node.trimmedText : this.processText(node.trimmedText));
 
     if (textOnly || !isElementNode(node)) return;
 

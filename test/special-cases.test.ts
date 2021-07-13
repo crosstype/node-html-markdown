@@ -47,7 +47,7 @@ describe(`Special Cases`, () => {
     test.each(textFormatTags)(`%s`, tag => {
       const delim = delims[tag];
 
-      expect(translate(`<p><${tag}> &nbsp;Label:&nbsp; </${tag}>Value</p>`)).toBe(` ${delim}Label:${delim} Value`);
+      expect(translate(`<p><${tag}> &nbsp;Label:&nbsp; </${tag}>Value</p>`)).toBe(` ${delim}Label:${delim} Value`);
       expect(translate(`<p><${tag}>&nbsp; Label: &nbsp;</${tag}>Value</p>`)).toBe(` ${delim}Label:${delim} Value`);
     });
   });
@@ -61,5 +61,11 @@ describe(`Special Cases`, () => {
         `${delim}My bold text${delim}`
       );
     });
+  });
+
+  // See: https://github.com/crosstype/node-html-markdown/issues/16
+  test(`Handles whitespace with single space`, () => {
+    const res = translate(`<span>test</span>  <span>test2 </span>\n<span>test3</span>\r\n\r\n\t\t\t<span>test4</span>`);
+    expect(res).toBe(`test test2 test3 test4`);
   });
 });

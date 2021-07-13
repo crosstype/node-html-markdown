@@ -183,7 +183,7 @@ export function parseHTML(html: string, options: NodeHtmlMarkdownOptions): Eleme
     }
   } else nodeHtmlParse = getNodeHtmlParser();
 
-  if (!el) el = nodeHtmlParse!(html, nodeHtmlParserConfig).removeWhitespace();
+  if (!el) el = nodeHtmlParse!(html, nodeHtmlParserConfig);
   perfStop('parse');
 
   return el;
