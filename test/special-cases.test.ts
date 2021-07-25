@@ -68,4 +68,15 @@ describe(`Special Cases`, () => {
     const res = translate(`<span>test</span>  <span>test2 </span>\n<span>test3</span>\r\n\r\n\t\t\t<span>test4</span>`);
     expect(res).toBe(`test test2 test3 test4`);
   });
+
+  // See: https://github.com/crosstype/node-html-markdown/issues/19
+  test(`Childless nodes visited if preserveIfEmpty set`, () => {
+    const html = `<span>Hello</span><iframe src="https://radio4000.com"/><span>World</span>`;
+
+    let res = NodeHtmlMarkdown.translate(html, void 0, { iframe: { content:'[iframe]' } });
+    expect(res).toBe(`HelloWorld`);
+
+    res = NodeHtmlMarkdown.translate(html, void 0, { iframe: { content:'[iframe]', preserveIfEmpty: true } });
+    expect(res).toBe(`Hello[iframe]World`);
+  });
 });

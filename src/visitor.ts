@@ -96,16 +96,23 @@ export class Visitor {
    */
   private optimizeTree(node: HtmlNode) {
     perfStart('Optimize tree');
+    const { translators } = this.instance;
     (function visit(node: HtmlNode): boolean {
       let res = false
       if (isTextNode(node) || (isElementNode(node) && contentlessElements.includes(node.tagName))) {
         res = true;
       }
       else {
-        for (const child of getChildNodes(node)) {
-          if (!res) res = visit(child);
-          else visit(child);
+        const childNodes = getChildNodes(node);
+        if (!childNodes.length) {
+          const translator = translators[(node as ElementNode).tagName];
+          if (translator?.preserveIfEmpty || typeof translator === 'function') res = true;
         }
+        else
+          for (const child of childNodes) {
+            if (!res) res = visit(child);
+            else visit(child);
+          }
       }
       return node.preserve = res;
     })(node);
