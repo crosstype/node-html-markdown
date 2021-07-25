@@ -67,6 +67,13 @@ export type TranslatorConfig = {
    * // becomes: **abc** **def**
    */
   spaceIfRepeatingChar?: boolean
+  /**
+   * Ensure translator is always visited, even if element is empty
+   * Note: For speed, trees are optimized beforehand to only visit elements which have child nodes or text content.
+   * In some cases, however, you may want to create or alter a translator to be triggered even if the element is empty.
+   * (If using a TranslatorConfigFactory, this value is always treated as true)
+   */
+  preserveIfEmpty?: boolean
 }
 
 export enum PostProcessResult {
