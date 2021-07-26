@@ -65,7 +65,7 @@ describe(`Default Tags`, () => {
   });
 
   test(`Pre-formatted Text (pre)`, () => {
-    const str = `* test\n1. test\n\\Test`;
+    const str = `*   test \t\n1. test\n\\Test`;
     const res = translate(`<pre>${str}<br><b># hello</b></pre>`);
     expect(res).toBe(str + '  \n**# hello**');
   });
@@ -84,7 +84,7 @@ describe(`Default Tags`, () => {
 
   test(`Code (code)`, () => {
     const res = translate('<code>```` a    \n\nb\n* c</code><code>d</code>');
-    expect(res).toBe('````` ```` a    \nb\n* c ````` `d`');
+    expect(res).toBe('````` ```` a b * c ````` `d`');
   });
 
   describe(`Code-block (pre + code)`, () => {

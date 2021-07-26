@@ -64,9 +64,10 @@ describe(`Special Cases`, () => {
   });
 
   // See: https://github.com/crosstype/node-html-markdown/issues/16
+  // See: https://github.com/crosstype/node-html-markdown/issues/21
   test(`Handles whitespace with single space`, () => {
-    const res = translate(`<span>test</span>  <span>test2 </span>\n<span>test3</span>\r\n\r\n\t\t\t<span>test4</span>`);
-    expect(res).toBe(`test test2 test3 test4`);
+    const res = translate(`<span>test</span>  <span>test2 </span>\n<span>test3</span>\r\n\r\n\t\t\t<span>test4</span>\t<span>test5\r\n\n\n\t\ttest6</span>`);
+    expect(res).toBe(`test test2 test3 test4 test5 test6`);
   });
 
   // See: https://github.com/crosstype/node-html-markdown/issues/19
@@ -78,5 +79,26 @@ describe(`Special Cases`, () => {
 
     res = NodeHtmlMarkdown.translate(html, void 0, { iframe: { content:'[iframe]', preserveIfEmpty: true } });
     expect(res).toBe(`Hello[iframe]World`);
+  });
+
+  // See: https://github.com/crosstype/node-html-markdown/issues/20
+  // See: https://github.com/crosstype/node-html-markdown/issues/22
+  test(`Code blocks preserve whitespace`, () => {
+    const html =
+      `<pre><code><span><span class="comment">// Get URL Path</span></span>\n` +
+      `<span><span class="declaration">function getURL(s: string): string {</span></span>\n` +
+      `<span>    <span class="return">return</span> \`https://myurl.com/\${s}\`;</span>\n` +
+      `<span>}</span>` +
+      `</pre></code>`;
+    const expected =
+      '```\n' +
+      `// Get URL Path\n` +
+      `function getURL(s: string): string {\n` +
+      `    return \`https://myurl.com/\${s}\`;\n` +
+      `}\n` +
+      '```';
+
+    const res = translate(html);
+    expect(res).toBe(expected);
   });
 });
