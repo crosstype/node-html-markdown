@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/crosstype/node-html-markdown/compare/v1.0.1...v1.1.0) (2021-07-26)
+
+
+### Features
+
+* Added `preserveIfEmpty` translator option to allow triggering translators that do not have children (closes [#19](https://github.com/crosstype/node-html-markdown/issues/19)) ([c3d8829](https://github.com/crosstype/node-html-markdown/commit/c3d88296de6c51b016524406021718218d0c412b))
+
+
+### Fixes
+
+* Codeblocks apply markdown formatting to contents (fixes [#22](https://github.com/crosstype/node-html-markdown/issues/22)) ([040f81e](https://github.com/crosstype/node-html-markdown/commit/040f81edde8ec21e393a2b38273f9427751bfad2))
+* Whitespace not always properly handled (fixes [#20](https://github.com/crosstype/node-html-markdown/issues/20) [#21](https://github.com/crosstype/node-html-markdown/issues/21)) ([8c43a22](https://github.com/crosstype/node-html-markdown/commit/8c43a22c3da5a5f5134fc52e08015b476cfbbb45))
+
 ### [1.0.1](https://github.com/crosstype/node-html-markdown/compare/v1.0.0...v1.0.1) (2021-07-13)
 
 
