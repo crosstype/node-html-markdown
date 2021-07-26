@@ -171,11 +171,13 @@ export const defaultTranslators: TranslatorConfigObject = {
         noEscape: true,
         prefix: codeFence + language + '\n',
         postfix: '\n' + codeFence,
+        childTranslators: visitor.instance.codeBlockTranslators
       }
     } else {
       return {
         noEscape: true,
-        postprocess: ({ content }) => content.replace(/^/gm, '    ')
+        postprocess: ({ content }) => content.replace(/^/gm, '    '),
+        childTranslators: visitor.instance.codeBlockTranslators
       }
     }
   },
@@ -213,6 +215,15 @@ export const defaultTranslators: TranslatorConfigObject = {
       recurse: false
     }
   },
+}
+
+export const defaultCodeBlockTranslators: TranslatorConfigObject = {
+  'br': { content: `\n`, recurse: false },
+  'hr': { content: '---', recurse: false },
+  'h1,h2,h3,h4,h5,h6': { prefix: '[', postfix: ']' },
+  'ol,ul': defaultTranslators['ol,ul'],
+  'li': defaultTranslators['li'],
+  'img': { recurse: false }
 }
 
 // endregion
