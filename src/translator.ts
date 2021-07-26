@@ -23,42 +23,50 @@ export type TranslatorContext = Partial<NodeMetadata> & {
   base?: TranslatorConfig
 }
 
-export type TranslatorConfig = {
+export interface TranslatorConfig {
   /**
    * Preceeds content, follows surroundingNewLines
    */
-  prefix?: string,
+  prefix?: string
+
   /**
    * Follows content, preceeds surroundingNewLines
    */
-  postfix?: string,
+  postfix?: string
+
   /**
    * Set fixed output content
    */
-  content?: string,
+  content?: string
+
   /**
    * Post-process content after inner nodes have been rendered.
    * Returning undefined will cause the content to not be updated
    */
   postprocess?: (ctx: TranslatorContext & { content: string }) => string | PostProcessResult
+
   /**
    * If false, no child elements will be scanned
    * @default true
    */
-  recurse?: boolean,
+  recurse?: boolean
+
   /**
    * Adds newline before and after (true, false, or number of newlines to add per side)
    * @default false
    */
   surroundingNewlines?: boolean | number
+
   /**
    * Ignore node entirely
    */
   ignore?: boolean
+
   /**
    * Do not escape content
    */
   noEscape?: boolean
+
   /**
    * If first character matches end of the last written data, add a space
    * @example
@@ -67,6 +75,7 @@ export type TranslatorConfig = {
    * // becomes: **abc** **def**
    */
   spaceIfRepeatingChar?: boolean
+
   /**
    * Ensure translator is always visited, even if element is empty
    * Note: For speed, trees are optimized beforehand to only visit elements which have child nodes or text content.
