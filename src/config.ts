@@ -79,7 +79,7 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
 
 export const defaultTranslators: TranslatorConfigObject = {
   /* Pre-formatted text */
-  'pre': { noEscape: true },
+  'pre': { noEscape: true, preserveWhitespace: true },
 
   /* Line break */
   'br': { content: `  \n`, recurse: false },
@@ -147,7 +147,7 @@ export const defaultTranslators: TranslatorConfigObject = {
   },
 
   /* Code (block / inline) */
-  'code': ({ node, parent, options: { codeFence, codeBlockStyle } }) => {
+  'code': ({ node, parent, options: { codeFence, codeBlockStyle }, visitor }) => {
     const isCodeBlock = [ 'PRE', 'WRAPPED-PRE' ].includes(parent?.tagName!) && parent!.childNodes.length < 2;
 
     /* Handle code (non-block) */
@@ -160,7 +160,7 @@ export const defaultTranslators: TranslatorConfigObject = {
           const delimiter = '`' + (content.match(/`+/g)?.sort((a, b) => b.length - a.length)?.[0] || '');
           const padding = delimiter.length > 1 ? ' ' : '';
 
-          return surround(surround(content.replace(/(?:\r?\n){2,}/g, `\n`), padding), delimiter)
+          return surround(surround(content, padding), delimiter)
         }
       }
 

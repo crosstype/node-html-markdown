@@ -13,7 +13,14 @@ import { contentlessElements } from './config';
 // region: Types
 /* ****************************************************************************************************************** */
 
-export type NodeMetadata = { indentLevel?: number, listKind?: 'OL' | 'UL', listItemNumber?: number, noEscape?: boolean }
+export interface NodeMetadata {
+  indentLevel?: number
+  listKind?: 'OL' | 'UL'
+  listItemNumber?: number
+  noEscape?: boolean
+  preserveWhitespace?: boolean
+}
+
 export type NodeMetadataMap = Map<ElementNode, NodeMetadata>
 
 type VisitorResult = {
@@ -122,16 +129,19 @@ export class Visitor {
   /**
    * Apply escaping and custom replacement rules
    */
-  private processText(text: string) {
-    const { lineStartEscape, globalEscape, textReplace } = this.options;
-    let res = text
-      .replace(globalEscape[0], globalEscape[1])
-      .replace(lineStartEscape[0], lineStartEscape[1]);
+  private processText(text: string, metadata: NodeMetadata | undefined) {
+    let res = text;
+    if (!metadata?.preserveWhitespace) res = res.replace(/\s+/g, ' ');
+    if (metadata?.noEscape) return res;
 
-    if (!textReplace) return res;
+    const { lineStartEscape, globalEscape, textReplace } = this.options;
+    res = res
+      .replace(globalEscape[0], globalEscape[1])
+      .replace(lineStartEscape[0], lineStartEscape[1])
 
     /* If specified, apply custom replacement patterns */
-    for (const [ pattern, r ] of textReplace) res = res.replace(pattern, r);
+    if (textReplace)
+      for (const [ pattern, r ] of textReplace) res = res.replace(pattern, r);
 
     return res;
   }
@@ -143,9 +153,9 @@ export class Visitor {
 
     /* Handle text node */
     if (isTextNode(node))
-      return node.isWhitespace
+      return node.isWhitespace && !metadata?.preserveWhitespace
              ? (!result.text.length || result.trailingNewlineStats.whitespace > 0) ? void 0 : this.appendResult(' ')
-             : this.appendResult(metadata?.noEscape ? node.trimmedText : this.processText(node.trimmedText));
+             : this.appendResult(this.processText(node.trimmedText, metadata));
 
     if (textOnly || !isElementNode(node)) return;
 
@@ -166,6 +176,12 @@ export class Visitor {
         break;
       case 'LI':
         if (metadata?.listKind === 'OL') metadata.listItemNumber = (metadata.listItemNumber ?? 0) + 1;
+        break;
+      case 'PRE':
+        metadata = {
+          ...metadata,
+          preserveWhitespace: true
+        }
     }
     if (metadata) this.nodeMetadata.set(node, metadata);
 

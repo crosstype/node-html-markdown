@@ -176,23 +176,23 @@ text`);
   test(`lineStartEscape`, () => {
     const originalLineStartEscape = instance.options.lineStartEscape;
 
-    const resEscapedPlus = translate(`<p>text\n+ text\n+ more text</p>`);
-    expect(resEscapedPlus).toBe("text\n\\+ text\n\\+ more text");
+    const resEscapedPlus = translate(`<p>text<br>+ text<br>+ more text</p>`);
+    expect(resEscapedPlus).toBe("text  \n\\+ text  \n\\+ more text");
 
-    const resEscapedQuote = translate(`<p>text\n> text\n> more text</p>`);
-    expect(resEscapedQuote).toBe("text\n\\> text\n\\> more text");
+    const resEscapedQuote = translate(`<p>text<br>> text<br>> more text</p>`);
+    expect(resEscapedQuote).toBe("text  \n\\> text  \n\\> more text");
 
     // No escape for +
     instance.options.lineStartEscape = [/^(\s*?)((?:[=>-])|(?:#{1,6}\s))|(?:(\d+)(\.\s))/gm, '$1$3\\$2$4'];
 
-    const resNotEscapedPlus = translate(`<p>text\n+ text\n+ more text</p>`);
-    expect(resNotEscapedPlus).toBe("text\n+ text\n+ more text");
+    const resNotEscapedPlus = translate(`<p>text<br>+ text<br>+ more text</p>`);
+    expect(resNotEscapedPlus).toBe("text  \n+ text  \n+ more text");
 
     // No escape also for >
     instance.options.lineStartEscape = [/^(\s*?)((?:#{1,6}\s))|(?:(\d+)(\.\s))/gm, '$1$3\\$2$4'];
 
-    const resNotEscapedQuote = translate(`<p>text\n> text\n> more text</p>`);
-    expect(resNotEscapedQuote).toBe("text\n> text\n> more text");
+    const resNotEscapedQuote = translate(`<p>text<br>> text<br>> more text</p>`);
+    expect(resNotEscapedQuote).toBe("text  \n> text  \n> more text");
 
     instance.options.lineStartEscape = originalLineStartEscape;
   });

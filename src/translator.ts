@@ -74,6 +74,11 @@ export type TranslatorConfig = {
    * (If using a TranslatorConfigFactory, this value is always treated as true)
    */
   preserveIfEmpty?: boolean
+
+  /**
+   * Keep whitespace as it is
+   */
+  preserveWhitespace?: boolean
 }
 
 export enum PostProcessResult {
