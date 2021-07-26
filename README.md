@@ -29,40 +29,33 @@ We took the approach of producing a _clean, concise_ result with consistent spac
 
 ## Benchmarks
 ```
--------------------------------------------------------------------------------
-
-node-html-makrdown (reused instance): 22.7441 ms/file ± 12.5888 (4.13 MB/s)
-node-html-markdown                  : 23.9525 ms/file ± 13.1008 (3.92 MB/s)
-turndown (reused instance)          : 66.7893 ms/file ± 35.6442 (1.41 MB/s)
-turndown                            : 67.3323 ms/file ± 30.3120 (1.4 MB/s)
-
--------------------------------------------------------------------------------
+-----------------------------------------------------------------------------
 
 Estimated processing times (fastest to slowest):
 
   [node-html-makrdown (reused instance)]
-    100 kB:  24ms
-    1 MB:    242ms
-    50 MB:   12.11sec
-    1 GB:    4min, 8sec
-    50 GB:   3hr, 26min, 36sec
+    100 kB:  35ms
+    1 MB:    360ms
+    50 MB:   18.01sec
+    1 GB:    6min, 9sec
+    50 GB:   5hr, 7min, 24sec
 
   [turndown (reused instance)]
-    100 kB:  69ms
-    1 MB:    711ms
-    50 MB:   35.55sec
-    1 GB:    12min, 8sec
-    50 GB:   10hr, 6min, 43sec
+    100 kB:  89ms
+    1 MB:    906ms
+    50 MB:   45.32sec
+    1 GB:    15min, 28sec
+    50 GB:   12hr, 53min, 28sec
 
--------------------------------------------------------------------------------
+-----------------------------------------------------------------------------
 
 Speed comparison - node-html-makrdown (reused instance) is:
 
-  1.05 times as fast as node-html-markdown
-  2.94 times as fast as turndown (reused instance)
-  2.96 times as fast as turndown
+  1.08 times as fast as node-html-markdown
+  2.52 times as fast as turndown (reused instance)
+  2.71 times as fast as turndown
 
--------------------------------------------------------------------------------
+-----------------------------------------------------------------------------
 ```
 
 ## Usage
