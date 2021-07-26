@@ -79,6 +79,11 @@ export type TranslatorConfig = {
    * Keep whitespace as it is
    */
   preserveWhitespace?: boolean
+
+  /**
+   * Custom translator collection to use for child HTML nodes
+   */
+  childTranslators?: TranslatorCollection
 }
 
 export enum PostProcessResult {

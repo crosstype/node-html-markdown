@@ -80,7 +80,8 @@ import { NodeHtmlMarkdown, NodeHtmlMarkdownOptions } from 'node-html-markdown'
 NodeHtmlMarkdown.translate(
   /* html */ `<b>hello</b>`, 
   /* options (optional) */ {}, 
-  /* customTranslators (optional) */ undefined
+  /* customTranslators (optional) */ undefined,
+  /* customCodeBlockTranslators (optional) */ undefined
 );
 
 // Multiple files
@@ -90,7 +91,8 @@ NodeHtmlMarkdown.translate(
     'file2.html': `<b>goodbye</b>` 
   }, 
   /* options (optional) */ {}, 
-  /* customTranslators (optional) */ undefined
+  /* customTranslators (optional) */ undefined,
+  /* customCodeBlockTranslators (optional) */ undefined
 );
 
 
@@ -101,7 +103,8 @@ NodeHtmlMarkdown.translate(
 
 const nhm = new NodeHtmlMarkdown(
   /* options (optional) */ {}, 
-  /* customTransformers (optional) */ undefined
+  /* customTransformers (optional) */ undefined,
+  /* customCodeBlockTranslators (optional) */ undefined
 );
 
 // Single file
@@ -160,12 +163,12 @@ export interface NodeHtmlMarkdownOptions {
   /**
    * Supplied elements will be ignored (ignores inner text does not parse children)
    */
-  readonly ignore?: string[],
+  ignore?: string[],
 
   /**
    * Supplied elements will be treated as blocks (surrounded with blank lines)
    */
-  readonly blockElements?: string[],
+  blockElements?: string[],
 
   /**
    * Max consecutive new lines allowed
@@ -224,6 +227,8 @@ __For detail on how to use them see__:
 
 - [translator.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/translator.ts) - Documentation for `TranslatorConfig`
 - [config.ts](https://github.com/crosstype/node-html-markdown/blob/master/src/config.ts) - Translators in `defaultTranslators`
+
+The `NodeHtmlMarkdown#codeBlockTranslators` property is a collection of translators which handles elements within a `<pre><code>` block.
 
 ## Further improvements
 

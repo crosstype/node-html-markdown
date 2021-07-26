@@ -3,7 +3,7 @@ import { ElementNode, HtmlNode, isElementNode, isTextNode } from './nodes';
 import { getChildNodes, getTrailingWhitespaceInfo, perfStart, perfStop, trimNewLines } from './utilities';
 import {
   createTranslatorContext, isTranslatorConfig, PostProcessResult, TranslatorConfig, TranslatorConfigFactory,
-  TranslatorContext
+  TranslatorConfigObject, TranslatorContext
 } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
 import { contentlessElements } from './config';
@@ -19,6 +19,7 @@ export interface NodeMetadata {
   listItemNumber?: number
   noEscape?: boolean
   preserveWhitespace?: boolean
+  translators?: TranslatorConfigObject
 }
 
 export type NodeMetadataMap = Map<ElementNode, NodeMetadata>
@@ -160,7 +161,7 @@ export class Visitor {
     if (textOnly || !isElementNode(node)) return;
 
     /* Handle element node */
-    const { instance: { translators } } = this;
+    const translators = metadata?.translators ?? this.instance.translators;
     const translatorCfgOrFactory = translators[node.tagName] as TranslatorConfig | TranslatorConfigFactory;
 
     /* Update metadata with list detail */
@@ -202,9 +203,9 @@ export class Visitor {
     // Skip and don't check children if ignore flag set
     if (cfg.ignore) return;
 
-    /* Update metadata for noEscape flag */
-    if (cfg.noEscape && !metadata?.noEscape) {
-      metadata = { ...metadata, noEscape: true };
+    /* Update metadata if needed */
+    if ((cfg.noEscape && !metadata?.noEscape) || (cfg.childTranslators && !metadata?.translators)) {
+      metadata = { ...metadata, noEscape: cfg.noEscape, translators: cfg.childTranslators };
       this.nodeMetadata.set(node, metadata);
     }
 
