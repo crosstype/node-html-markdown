@@ -156,7 +156,7 @@ export class Visitor {
     if (isTextNode(node))
       return node.isWhitespace && !metadata?.preserveWhitespace
              ? (!result.text.length || result.trailingNewlineStats.whitespace > 0) ? void 0 : this.appendResult(' ')
-             : this.appendResult(this.processText(node.trimmedText, metadata));
+             : this.appendResult(this.processText(metadata?.preserveWhitespace ? node.text : node.trimmedText, metadata));
 
     if (textOnly || !isElementNode(node)) return;
 

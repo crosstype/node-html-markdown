@@ -83,16 +83,16 @@ describe(`Special Cases`, () => {
 
   // See: https://github.com/crosstype/node-html-markdown/issues/20
   // See: https://github.com/crosstype/node-html-markdown/issues/22
-  test(`Code blocks preserve whitespace`, () => {
+  test(`Code blocks preserve whitespace & decode entities`, () => {
     const html =
-      `<pre><code><span><span class="comment">// Get URL Path</span></span>\n` +
-      `<span><span class="declaration">function getURL(s: string): string {</span></span>\n` +
+      `<pre><code><span><span class="comment">// &gt; Get URL Path</span></span>\n` +
+      `<span><span class="declaration">function getURL(s: string): string {\n</span></span>` +
       `<span>    <span class="return">return</span> \`https://myurl.com/\${s}\`;</span>\n` +
       `<span>}</span>` +
       `</pre></code>`;
     const expected =
       '```\n' +
-      `// Get URL Path\n` +
+      `// > Get URL Path\n` +
       `function getURL(s: string): string {\n` +
       `    return \`https://myurl.com/\${s}\`;\n` +
       `}\n` +
