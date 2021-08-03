@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/crosstype/node-html-markdown/compare/v1.1.0...v1.1.1) (2021-08-03)
+
+
+### Fixes
+
+* Preformatted code block node contents getting trimmed (fixes [#20](https://github.com/crosstype/node-html-markdown/issues/20)) ([af79995](https://github.com/crosstype/node-html-markdown/commit/af799956d94d7a06c50df71746bcfac8f31e342e))
+
 ## [1.1.0](https://github.com/crosstype/node-html-markdown/compare/v1.0.1...v1.1.0) (2021-07-26)
 
 
