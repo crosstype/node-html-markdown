@@ -60,7 +60,7 @@ describe(`Default Tags`, () => {
           </li>
         </ol>
       `);
-      expect(res).toBe(getExpected(`        \n          \n1. a  \nb\n           \n          \n2. b  \n   1. c  \n   d  \n              \n   * e  \n   f\n        \n      `));
+      expect(res).toBe(getExpected(`        \n          \n1. a  \nb\n           \n          \n2. b  \n              \n   1. c  \n   d  \n              \n   * e  \n   f\n        \n      `));
     });
 
     test(`Multi-level Unordered List`, () => {
@@ -74,7 +74,7 @@ describe(`Default Tags`, () => {
           </li>
         </ul>
       `);
-      expect(res).toBe(getExpected(`        \n          \n* a  \nb\n           \n          \n* b  \n   * c  \n   d  \n              \n   1. e  \n   f\n        \n      `));
+      expect(res).toBe(getExpected(`        \n          \n* a  \nb\n           \n          \n* b  \n              \n   * c  \n   d  \n              \n   1. e  \n   f\n        \n      `));
     });
   });
 });
