@@ -1,7 +1,8 @@
 import { NodeHtmlMarkdownOptions } from './options';
 import { TranslatorCollection, TranslatorConfigObject } from './translator';
 import {
-  defaultBlockElements, defaultCodeBlockTranslators, defaultIgnoreElements, defaultOptions, defaultTranslators
+  aTagTranslatorConfig, defaultBlockElements, defaultCodeBlockTranslators, defaultIgnoreElements, defaultOptions,
+  defaultTranslators
 } from './config';
 import { parseHTML } from './utilities';
 import { getMarkdownForHtmlNodes } from './visitor';
@@ -23,6 +24,7 @@ type Options = Partial<NodeHtmlMarkdownOptions>
 
 export class NodeHtmlMarkdown {
   public translators = new TranslatorCollection();
+  public aTagTranslators = new TranslatorCollection();
   public codeBlockTranslators = new TranslatorCollection();
   public readonly options: NodeHtmlMarkdownOptions
 
@@ -49,6 +51,9 @@ export class NodeHtmlMarkdown {
 
     for (const [ elems, cfg ] of Object.entries({ ...defaultCodeBlockTranslators, ...customCodeBlockTranslators }))
       this.codeBlockTranslators.set(elems, cfg, true);
+
+    for (const [ elems, cfg ] of Object.entries(aTagTranslatorConfig))
+      this.aTagTranslators.set(elems, cfg, true);
 
     // TODO - Workaround for upstream issue (may not be fixed) - https://github.com/taoqf/node-html-parser/issues/78
     if (!this.options.textReplace) this.options.textReplace = [];

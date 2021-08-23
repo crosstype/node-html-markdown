@@ -161,8 +161,8 @@ export class Visitor {
     if (textOnly || !isElementNode(node)) return;
 
     /* Handle element node */
-    const translators = metadata?.translators ?? this.instance.translators;
-    const translatorCfgOrFactory = translators[node.tagName] as TranslatorConfig | TranslatorConfigFactory;
+    const translatorCfgOrFactory: TranslatorConfig | TranslatorConfigFactory | undefined =
+      metadata?.translators ? metadata.translators[node.tagName] : this.instance.translators[node.tagName];
 
     /* Update metadata with list detail */
     switch (node.tagName) {
@@ -183,6 +183,7 @@ export class Visitor {
           ...metadata,
           preserveWhitespace: true
         }
+        break;
     }
     if (metadata) this.nodeMetadata.set(node, metadata);
 

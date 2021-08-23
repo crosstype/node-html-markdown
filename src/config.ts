@@ -194,7 +194,8 @@ export const defaultTranslators: TranslatorConfigObject = {
     if (node.textContent === href) return { content: `<${href}>` };
 
     return {
-      postprocess: ({ content }) => content.replace(/(?:\r?\n)+/g, ''),
+      postprocess: ({ content }) => content.replace(/(?:\r?\n)+/g, ' '),
+      childTranslators: visitor.instance.aTagTranslators,
       prefix: '[',
       postfix: ']' + (!options.useLinkReferenceDefinitions
                ? `(${href}${title ? ` "${title}"` : ''})`
@@ -224,6 +225,16 @@ export const defaultCodeBlockTranslators: TranslatorConfigObject = {
   'ol,ul': defaultTranslators['ol,ul'],
   'li': defaultTranslators['li'],
   'img': { recurse: false }
+}
+
+export const aTagTranslatorConfig: TranslatorConfigObject = {
+  'br': { content: '\n', recurse: false },
+  'hr': { content: '\n', recurse: false },
+  'pre': defaultTranslators['pre'],
+  'strong,b': defaultTranslators['strong,b'],
+  'del,s,strike': defaultTranslators['del,s,strike'],
+  'em,i': defaultTranslators['em,i'],
+  'img': defaultTranslators['img']
 }
 
 // endregion

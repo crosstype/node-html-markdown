@@ -48,8 +48,10 @@ describe(`Default Tags`, () => {
         <a href="${url}">a<br><br>b<strong>c</strong></a>
         <a>a<strong>b</strong></a> <!-- This node is treated as text due to no href -->
         <a href="${url}">${url}</a>
+        <!-- see: https://github.com/crosstype/node-html-markdown/issues/25 -->
+        <a href="${url}">a<a href="2">nested</a><img src="${url}">b</a>
     `);
-    expect(res).toBe(`[a    b**c**](${url}) a**b** <${url}> `);
+    expect(res).toBe(`[a b**c**](${url}) a**b** <${url}> [anested![](${url})b](${url}) `);
   });
 
   test(`Image (img)`, () => {

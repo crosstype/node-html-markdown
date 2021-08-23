@@ -265,13 +265,13 @@ text`);
     instance.options.useLinkReferenceDefinitions = false;
     let res = translate(html);
     expect(res).toBe(
-      `Hello: [a    b**c**](${url}) a**b** [link2](${url}/other) [repeat link](${url}) <${url}> Goodbye!`
+      `Hello: [a b**c**](${url}) a**b** [link2](${url}/other) [repeat link](${url}) <${url}> Goodbye!`
     );
 
     instance.options.useLinkReferenceDefinitions = true;
     res = translate(html);
     expect(res).toBe(
-      `Hello: [a    b**c**][1] a**b** [link2][2] [repeat link][1] <${url}> Goodbye!\n\n[1]: ${url}\n[2]: ${url}/other`
+      `Hello: [a b**c**][1] a**b** [link2][2] [repeat link][1] <${url}> Goodbye!\n\n[1]: ${url}\n[2]: ${url}/other`
     );
 
     instance.options.useLinkReferenceDefinitions = originalUseLinkReferenceDefinitions;
