@@ -1,4 +1,5 @@
 [![npm version](https://badge.fury.io/js/node-html-markdown.svg)](https://badge.fury.io/js/ts-patch)
+[![NPM Downloads](https://img.shields.io/npm/dm/node-html-markdown.svg?style=flat)](https://npmjs.org/package/node-html-markdown)
 ![Build Status](https://github.com/crosstype/node-html-markdown/workflows/Build%20(CI)/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/crosstype/node-html-markdown/badge.svg?branch=master)](https://coveralls.io/github/crosstype/node-html-markdown?branch=master)
 
