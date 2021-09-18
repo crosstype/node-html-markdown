@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/crosstype/node-html-markdown/compare/v1.1.1...v1.1.2) (2021-09-18)
+
+
+### Fixes
+
+* **upstream:** Parser dependency parses invalid nested A improperly (closes [#25](https://github.com/crosstype/node-html-markdown/issues/25)) ([bdc7caa](https://github.com/crosstype/node-html-markdown/commit/bdc7caaac615428c89729f30b23fa2a29d9a6c56))
+* Correct nesting and other possible issues in child nodes of A tag (closes [#25](https://github.com/crosstype/node-html-markdown/issues/25)) ([dcd6b20](https://github.com/crosstype/node-html-markdown/commit/dcd6b209f630335c314d67e47fd2290218bd6e79))
+
 ### [1.1.1](https://github.com/crosstype/node-html-markdown/compare/v1.1.0...v1.1.1) (2021-08-03)
 
 
