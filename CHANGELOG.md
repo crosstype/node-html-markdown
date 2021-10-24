@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/crosstype/node-html-markdown/compare/v1.1.2...v1.1.3) (2021-10-24)
+
+
+### Fixes
+
+* Percent-encode Markdown reserved symbols in URLs ([#26](https://github.com/crosstype/node-html-markdown/issues/26)) ([83d4fff](https://github.com/crosstype/node-html-markdown/commit/83d4fff866eb027ebba052ab45996f679412c42b))
+
 ### [1.1.2](https://github.com/crosstype/node-html-markdown/compare/v1.1.1...v1.1.2) (2021-09-18)
 
 
