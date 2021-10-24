@@ -188,11 +188,25 @@ export const defaultTranslators: TranslatorConfigObject = {
     if (!href) return {};
 
     // Encodes symbols that can cause problems in markdown
-    const encodedHref = href
-      .replace(/\(/g, "%28")
-      .replace(/\)/g, "%29")
-      .replace(/_/g, "%5F")
-      .replace(/\*/g, "%2A");
+    let encodedHref = '';
+    for (const chr of href) {
+      switch (chr) {
+        case '(':
+          encodedHref += '%28';
+          break;
+        case ')':
+          encodedHref += '%29';
+          break;
+        case '_':
+          encodedHref += '%5F';
+          break;
+        case '*':
+          encodedHref += '%2A';
+          break;
+        default:
+          encodedHref += chr;
+      }
+    }
 
     const title = node.getAttribute('title');
 
