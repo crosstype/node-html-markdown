@@ -187,19 +187,40 @@ export const defaultTranslators: TranslatorConfigObject = {
     const href = node.getAttribute('href');
     if (!href) return {};
 
+    // Encodes symbols that can cause problems in markdown
+    let encodedHref = '';
+    for (const chr of href) {
+      switch (chr) {
+        case '(':
+          encodedHref += '%28';
+          break;
+        case ')':
+          encodedHref += '%29';
+          break;
+        case '_':
+          encodedHref += '%5F';
+          break;
+        case '*':
+          encodedHref += '%2A';
+          break;
+        default:
+          encodedHref += chr;
+      }
+    }
+
     const title = node.getAttribute('title');
 
     // Inline link, when possible
     // See: https://github.com/crosstype/node-html-markdown/issues/17
-    if (node.textContent === href) return { content: `<${href}>` };
+    if (node.textContent === href) return { content: `<${encodedHref}>` };
 
     return {
       postprocess: ({ content }) => content.replace(/(?:\r?\n)+/g, ' '),
       childTranslators: visitor.instance.aTagTranslators,
       prefix: '[',
       postfix: ']' + (!options.useLinkReferenceDefinitions
-               ? `(${href}${title ? ` "${title}"` : ''})`
-               : `[${visitor.addOrGetUrlDefinition(href)}]`)
+               ? `(${encodedHref}${title ? ` "${title}"` : ''})`
+               : `[${visitor.addOrGetUrlDefinition(encodedHref)}]`)
     }
   },
 
