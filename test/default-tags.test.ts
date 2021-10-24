@@ -44,14 +44,17 @@ describe(`Default Tags`, () => {
 
   test(`Link (a)`, () => {
     const url = 'http://www.github.com/crosstype';
+    const specialUrl = 'http://www.github.com/crosstype/**/_test(123)';
+    const encodedSpecialUrl = 'http://www.github.com/crosstype/%2A%2A/%5Ftest%28123%29';
     const res = translate(`
         <a href="${url}">a<br><br>b<strong>c</strong></a>
         <a>a<strong>b</strong></a> <!-- This node is treated as text due to no href -->
         <a href="${url}">${url}</a>
         <!-- see: https://github.com/crosstype/node-html-markdown/issues/25 -->
         <a href="${url}">a<a href="2">nested</a><img src="${url}">b</a>
+        <b><i><a href="${specialUrl}" title="a">b</a></i></b>
     `);
-    expect(res).toBe(`[a b**c**](${url}) a**b** <${url}> [a](${url})[nested](2)![](${url})b `);
+    expect(res).toBe(`[a b**c**](${url}) a**b** <${url}> [a](${url})[nested](2)![](${url})b **_[b](${encodedSpecialUrl} "a")_** `);
   });
 
   test(`Image (img)`, () => {
