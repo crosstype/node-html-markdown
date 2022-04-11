@@ -77,4 +77,9 @@ describe(`Default Tags`, () => {
       expect(res).toBe(getExpected(`        \n          \n* a  \nb\n           \n          \n* b  \n              \n   * c  \n   d  \n              \n   1. e  \n   f\n        \n      `));
     });
   });
+
+  test(`Table`, () => {
+    const res = translateAsBlock('a<tr>b</tr>c<table><td>X</td></table>');
+    expect(res).toBe(getExpected(`a\nb\nc\n\nX\n\n`));
+  })
 });
