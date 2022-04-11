@@ -20,6 +20,10 @@ export interface NodeMetadata {
   noEscape?: boolean
   preserveWhitespace?: boolean
   translators?: TranslatorConfigObject
+  tableMeta?: {
+    node: ElementNode,
+    caption?: string
+  }
 }
 
 export type NodeMetadataMap = Map<ElementNode, NodeMetadata>
@@ -184,6 +188,13 @@ export class Visitor {
           preserveWhitespace: true
         }
         break;
+      case 'TABLE':
+        metadata = {
+          ...metadata,
+          tableMeta: {
+            node: node
+          }
+        }
     }
     if (metadata) this.nodeMetadata.set(node, metadata);
 
@@ -205,7 +216,7 @@ export class Visitor {
     if (cfg.ignore) return;
 
     /* Update metadata if needed */
-    if ((cfg.noEscape && !metadata?.noEscape) || (cfg.childTranslators && !metadata?.translators)) {
+    if ((cfg.noEscape && !metadata?.noEscape) || (cfg.childTranslators && (!metadata?.translators || cfg.overrideMetadata))) {
       metadata = { ...metadata, noEscape: cfg.noEscape, translators: cfg.childTranslators };
       this.nodeMetadata.set(node, metadata);
     }

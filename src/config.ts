@@ -1,4 +1,4 @@
-import { isWhiteSpaceOnly, surround, tagSurround, trimNewLines } from './utilities';
+import { isWhiteSpaceOnly, splitSpecial, surround, tagSurround, trimNewLines } from './utilities';
 import { PostProcessResult, TranslatorConfigObject } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
 import { Options as NodeHtmlParserOptions } from 'node-html-parser'
@@ -182,6 +182,62 @@ export const defaultTranslators: TranslatorConfigObject = {
     }
   },
 
+  /* Table */
+  'table': ({ visitor }) => ({
+    surroundingNewlines: 2,
+    childTranslators: visitor.instance.tableTranslators,
+    overrideMetadata: true,
+    postprocess: ({ content, nodeMetadata, node }) => {
+      // Split and trim leading + trailing pipes
+      const rawRows = splitSpecial(content).map(({ text }) => text.replace(/^(?:\|\s+)?(.+)\s*\|\s*$/, '$1'));
+
+      /* Get Row Data */
+      const rows: string[][] = [];
+      let colWidth: number[] = [];
+      for (const row of rawRows) {
+        if (!row) continue;
+
+        /* Track columns */
+        const cols = row.split(' |').map((c, i) => {
+          c = c.trim();
+          if (colWidth.length < i + 1 || colWidth[i] < c.length) colWidth[i] = c.length;
+
+          return c;
+        });
+
+        rows.push(cols);
+      }
+
+      if (rows.length < 1) return PostProcessResult.RemoveNode;
+
+      /* Compose Table */
+      const maxCols = colWidth.length;
+
+      let res = '';
+      const caption = nodeMetadata.get(node)!.tableMeta!.caption;
+      if (caption) res += caption + '\n';
+
+      rows.forEach((cols, rowNumber) => {
+        res += '| ';
+
+        /* Add Columns */
+        for (let i = 0; i < maxCols; i++) {
+          let c = (cols[i] ?? '');
+          c += ' '.repeat(Math.max(0, (colWidth[i] - c.length))); // Pad to max length
+
+          res += c + ' |' + (i < maxCols - 1 ? ' ' : '');
+        }
+
+        res += '\n';
+
+        // Add separator row
+        if (rowNumber === 0) res += '|' + colWidth.map(w => ' ' + '-'.repeat(w) + ' |').join('') + '\n'
+      });
+
+      return res;
+    }
+  }),
+
   /* Link */
   'a': ({ node, options, visitor }) => {
     const href = node.getAttribute('href');
@@ -239,12 +295,64 @@ export const defaultTranslators: TranslatorConfigObject = {
   },
 }
 
+export const tableTranslatorConfig: TranslatorConfigObject = {
+  /* Table Caption */
+  'caption': ({ visitor }) => ({
+    surroundingNewlines: false,
+    childTranslators: visitor.instance.tableCellTranslators,
+    overrideMetadata: true,
+    postprocess: ({ content, nodeMetadata, node }) => {
+      const caption = content.replace(/(?:\r?\n)+/g, ' ').trim();
+      if (caption) nodeMetadata.get(node)!.tableMeta!.caption = '__' + caption + '__'
+
+      return PostProcessResult.RemoveNode;
+    },
+  }),
+
+  /* Table row */
+  'tr': ({ visitor }) => ({
+    surroundingNewlines: false,
+    childTranslators: visitor.instance.tableRowTranslators,
+    overrideMetadata: true,
+    postfix: '\n',
+    prefix: '| ',
+    postprocess: ({ content }) => !/ \|\s*$/.test(content) ? PostProcessResult.RemoveNode : content
+  }),
+
+  /* Table cell, (header cell) */
+  'th,td': ({ visitor }) => ({
+    surroundingNewlines: false,
+    childTranslators: visitor.instance.tableCellTranslators, // FIXME: Circular references should be avoided.
+    overrideMetadata: true,
+    prefix: ' ',
+    postfix: ' |',
+    postprocess: ({ content }) =>
+      trimNewLines(content)
+        .replace('|', '\\|')
+        .replace(/(?:\r?\n)+/g, ' ')
+        .trim()
+  }),
+}
+
+export const tableRowTranslatorConfig: TranslatorConfigObject = {
+  'th,td': tableTranslatorConfig['th,td']
+}
+
+export const tableCellTranslatorConfig: TranslatorConfigObject = {
+  'a': defaultTranslators['a'],
+  'strong,b': defaultTranslators['strong,b'],
+  'del,s,strike': defaultTranslators['del,s,strike'],
+  'em,i': defaultTranslators['em,i'],
+  'img': defaultTranslators['img']
+}
+
 export const defaultCodeBlockTranslators: TranslatorConfigObject = {
   'br': { content: `\n`, recurse: false },
   'hr': { content: '---', recurse: false },
   'h1,h2,h3,h4,h5,h6': { prefix: '[', postfix: ']' },
   'ol,ul': defaultTranslators['ol,ul'],
   'li': defaultTranslators['li'],
+  'tr': { surroundingNewlines: true },
   'img': { recurse: false }
 }
 
