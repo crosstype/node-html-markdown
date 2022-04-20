@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/crosstype/node-html-markdown/compare/v1.1.3...v1.2.0) (2022-04-20)
+
+
+### Features
+
+* Added table support ([faaebe8](https://github.com/crosstype/node-html-markdown/commit/faaebe8b8b85a6e4680a286f24ff963db097cc66))
+
 ### [1.1.3](https://github.com/crosstype/node-html-markdown/compare/v1.1.2...v1.1.3) (2021-10-24)
 
 
