@@ -37,24 +37,24 @@ Estimated processing times (fastest to slowest):
   [node-html-markdown (reused instance)]
     100 kB:  17ms
     1 MB:    176ms
-    50 MB:   8.82sec
-    1 GB:    3min, 1sec
-    50 GB:   2hr, 30min, 32sec
+    50 MB:   8.80sec
+    1 GB:    3min, 0sec
+    50 GB:   2hr, 30min, 14sec
 
   [turndown (reused instance)]
-    100 kB:  35ms
-    1 MB:    356ms
-    50 MB:   17.80sec
-    1 GB:    6min, 5sec
-    50 GB:   5hr, 3min, 48sec
+    100 kB:  27ms
+    1 MB:    280ms
+    50 MB:   13.98sec
+    1 GB:    4min, 46sec
+    50 GB:   3hr, 58min, 35sec
 
 -----------------------------------------------------------------------------
 
 Speed comparison - node-html-markdown (reused instance) is:
 
   1.02 times as fast as node-html-markdown
-  1.99 times as fast as turndown
-  2.02 times as fast as turndown (reused instance)
+  1.57 times as fast as turndown
+  1.59 times as fast as turndown (reused instance)
 
 -----------------------------------------------------------------------------
 ```
