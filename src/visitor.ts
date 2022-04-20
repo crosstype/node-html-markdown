@@ -216,8 +216,13 @@ export class Visitor {
     if (cfg.ignore) return;
 
     /* Update metadata if needed */
-    if ((cfg.noEscape && !metadata?.noEscape) || (cfg.childTranslators && (!metadata?.translators || cfg.overrideMetadata))) {
-      metadata = { ...metadata, noEscape: cfg.noEscape, translators: cfg.childTranslators };
+    if (cfg.noEscape && !metadata?.noEscape) {
+      metadata = { ...metadata, noEscape: cfg.noEscape };
+      this.nodeMetadata.set(node, metadata);
+    }
+
+    if (cfg.childTranslators && (cfg.childTranslators !== metadata?.translators)) {
+      metadata = { ...metadata, translators: cfg.childTranslators }
       this.nodeMetadata.set(node, metadata);
     }
 

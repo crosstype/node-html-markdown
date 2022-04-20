@@ -93,11 +93,6 @@ export interface TranslatorConfig {
    * Custom translator collection to use for child HTML nodes
    */
   childTranslators?: TranslatorCollection
-
-  /**
-   * Force overrite node metadata (for custom translators)
-   */
-  overrideMetadata?: boolean
 }
 
 export enum PostProcessResult {

@@ -186,7 +186,6 @@ export const defaultTranslators: TranslatorConfigObject = {
   'table': ({ visitor }) => ({
     surroundingNewlines: 2,
     childTranslators: visitor.instance.tableTranslators,
-    overrideMetadata: true,
     postprocess: ({ content, nodeMetadata, node }) => {
       // Split and trim leading + trailing pipes
       const rawRows = splitSpecial(content).map(({ text }) => text.replace(/^(?:\|\s+)?(.+)\s*\|\s*$/, '$1'));
@@ -300,7 +299,6 @@ export const tableTranslatorConfig: TranslatorConfigObject = {
   'caption': ({ visitor }) => ({
     surroundingNewlines: false,
     childTranslators: visitor.instance.tableCellTranslators,
-    overrideMetadata: true,
     postprocess: ({ content, nodeMetadata, node }) => {
       const caption = content.replace(/(?:\r?\n)+/g, ' ').trim();
       if (caption) nodeMetadata.get(node)!.tableMeta!.caption = '__' + caption + '__'
@@ -313,7 +311,6 @@ export const tableTranslatorConfig: TranslatorConfigObject = {
   'tr': ({ visitor }) => ({
     surroundingNewlines: false,
     childTranslators: visitor.instance.tableRowTranslators,
-    overrideMetadata: true,
     postfix: '\n',
     prefix: '| ',
     postprocess: ({ content }) => !/ \|\s*$/.test(content) ? PostProcessResult.RemoveNode : content
@@ -322,8 +319,7 @@ export const tableTranslatorConfig: TranslatorConfigObject = {
   /* Table cell, (header cell) */
   'th,td': ({ visitor }) => ({
     surroundingNewlines: false,
-    childTranslators: visitor.instance.tableCellTranslators, // FIXME: Circular references should be avoided.
-    overrideMetadata: true,
+    childTranslators: visitor.instance.tableCellTranslators,
     prefix: ' ',
     postfix: ' |',
     postprocess: ({ content }) =>
