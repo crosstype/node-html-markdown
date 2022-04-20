@@ -11,7 +11,7 @@
     "htmltomarkdown-benchmark": "./execute.js"
   },
   "dependencies": {
-    "async": "^3.2.0",
+    "async": "^3.2.2",
     "node-html-markdown": "link:../",
     "summary": "^1.0.0",
     "turndown": "^7.0.0"
