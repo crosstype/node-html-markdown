@@ -102,6 +102,24 @@ describe(`Options`, () => {
     instance.options.strongDelimiter = originalStrongDelimiter;
   });
 
+
+  test(`strikeDelimiter`, () => {
+    const originalStrikeDelimiter = instance.options.strikeDelimiter;
+    const html = `<strike>some text</strike><s>more text</s><del>one more text</del>`;
+
+    const resDefaultStrikeDelimiter = translate(html);
+    expect(resDefaultStrikeDelimiter).toBe(`~~some text~~ ~~more text~~ ~~one more text~~`);
+
+    instance.options.strikeDelimiter = '~';
+    const resShortStrikeDelimiter = translate(html);
+    expect(resDefaultStrikeDelimiter).toBe(`~some text~ ~more text~ ~one more text~`);
+
+    instance.options.strikeDelimiter =  '+++';
+    const resWideStrikeDelimiter = translate(html);
+    expect(resDefaultStrikeDelimiter).toBe(`+++some text+++ +++more text+++ +++one more text+++`);
+    instance.options.strikeDelimiter = originalStrikeDelimiter;
+  });
+
   test(`ignore`, () => {
     const strongEmHTML = `<strong>some text</strong><em>more text</em>`;
 

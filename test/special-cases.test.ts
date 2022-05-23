@@ -16,7 +16,7 @@ const getDelims = (instance: NodeHtmlMarkdown) => Object.fromEntries(textFormatT
       case 'del':
       case 's':
       case 'strike':
-        return '~~';
+        return instance.options.strikeDelimiter;
       case 'em':
       case 'i':
         return instance.options.emDelimiter;
