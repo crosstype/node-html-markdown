@@ -112,11 +112,11 @@ describe(`Options`, () => {
 
     instance.options.strikeDelimiter = '~';
     const resShortStrikeDelimiter = translate(html);
-    expect(resDefaultStrikeDelimiter).toBe(`~some text~ ~more text~ ~one more text~`);
+    expect(resShortStrikeDelimiter).toBe(`~some text~ ~more text~ ~one more text~`);
 
     instance.options.strikeDelimiter =  '+++';
     const resWideStrikeDelimiter = translate(html);
-    expect(resDefaultStrikeDelimiter).toBe(`+++some text+++ +++more text+++ +++one more text+++`);
+    expect(resWideStrikeDelimiter).toBe(`+++some text+++ +++more text+++ +++one more text+++`);
     instance.options.strikeDelimiter = originalStrikeDelimiter;
   });
 
