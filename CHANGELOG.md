@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.2](https://github.com/crosstype/node-html-markdown/compare/v1.2.0...v1.2.2) (2022-10-26)
+
+
+### Fixes
+
+* Can't get text from TextNode in the browser (fixes [#40](https://github.com/crosstype/node-html-markdown/issues/40)) ([feec660](https://github.com/crosstype/node-html-markdown/commit/feec6609cc4ad5c00ce81835d60c3a00036f82e7))
+* perfStart and perfStop breaking code in the browser (fixes [#36](https://github.com/crosstype/node-html-markdown/issues/36) ([7d52c92](https://github.com/crosstype/node-html-markdown/commit/7d52c928b718acae578692736cda1f17d4733ab1))
+
 ### [1.2.1](https://github.com/crosstype/node-html-markdown/compare/v1.2.0...v1.2.1) (2022-10-26)
 
 
