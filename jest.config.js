@@ -3,10 +3,13 @@ module.exports = {
   preset: 'ts-jest',
   testRegex: '.*(test|spec)\\.tsx?$',
   moduleFileExtensions: [ 'ts', 'tsx', 'js', 'jsx', 'json', 'node' ],
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/test/tsconfig.json'
-    }
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/test/tsconfig.json'
+      }
+    ]
   },
   modulePaths: [ "<rootDir>" ],
   testTimeout: 10000,
