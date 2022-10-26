@@ -5,6 +5,7 @@
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
+    "sourceMap": true,
     "plugins": [
       {
         "transform": "./transformer.js",
