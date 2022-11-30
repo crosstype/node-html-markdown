@@ -5,6 +5,14 @@ const config: Config = {
   testEnvironment: 'node',
   testRegex: '.*test\\.tsx?$',
   preset: 'ts-jest/presets/default-esm',
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: '<rootDir>/test/tsconfig.json'
+      }
+    ]
+  },
   modulePaths: [ '<rootDir>' ],
   testTimeout: 10000,
   roots: [ '<rootDir>' ],
