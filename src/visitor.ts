@@ -157,10 +157,16 @@ export class Visitor {
     if (!node.preserve) return;
 
     /* Handle text node */
-    if (isTextNode(node))
+    if (isTextNode(node)) {
+      if ((<any>node).wholeText) {
+        (<any>node).text ??= (<any>node).wholeText;
+        (<any>node).trimmedText ??= trimNewLines((<any>node).wholeText);
+      }
+
       return node.isWhitespace && !metadata?.preserveWhitespace
              ? (!result.text.length || result.trailingNewlineStats.whitespace > 0) ? void 0 : this.appendResult(' ')
              : this.appendResult(this.processText(metadata?.preserveWhitespace ? node.text : node.trimmedText, metadata));
+    }
 
     if (textOnly || !isElementNode(node)) return;
 

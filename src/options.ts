@@ -59,18 +59,18 @@ export interface NodeHtmlMarkdownOptions {
    * Line Start Escape pattern
    * (Note: Setting this will override the default escape settings, you might want to use textReplace option instead)
    */
-  lineStartEscape: [ pattern: RegExp, replacement: string ]
+  lineStartEscape: readonly [ pattern: RegExp, replacement: string ]
 
   /**
    * Global escape pattern
    * (Note: Setting this will override the default escape settings, you might want to use textReplace option instead)
    */
-  globalEscape: [ pattern: RegExp, replacement: string ]
+  globalEscape: readonly [ pattern: RegExp, replacement: string ]
 
   /**
    * User-defined text replacement pattern (Replaces matching text retrieved from nodes)
    */
-  textReplace?: [ pattern: RegExp, replacement: string ][]
+  textReplace?: (readonly [ pattern: RegExp, replacement: string ])[]
 
   /**
    * Keep images with data: URI (Note: These can be up to 1MB each)

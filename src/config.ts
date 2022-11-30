@@ -50,7 +50,7 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
    *     [                      Url                             [caption](url)
    *     ]                      Url                             [caption](url)
    */
-  globalEscape: [ /[\\`*_~\[\]]/gm, '\\$&' ],
+  globalEscape: [ /[\\`*_~\[\]]/gm, '\\$&' ] as const,
   /**
    * Note:  The following compiled pattern was selected after perf testing various alternatives.
    *        Please be mindful of performance if updating/changing it.
@@ -67,7 +67,7 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
   lineStartEscape: [
     /^(\s*?)((?:\+\s)|(?:[=>-])|(?:#{1,6}\s))|(?:(\d+)(\.\s))/gm,
     '$1$3\\$2$4'
-  ]
+  ] as const
 });
 
 // endregion
@@ -375,6 +375,7 @@ export const aTagTranslatorConfig: TranslatorConfigObject = {
 export const nodeHtmlParserConfig: NodeHtmlParserOptions = {
   lowerCaseTagName: false,
   comment: false,
+  fixNestedATags: true,
   blockTextElements: {
     script: false,
     noscript: false,

@@ -1,7 +1,7 @@
 {
   "name": "node-html-markdown",
   "description": "Fast HTML to markdown cross-compiler, compatible with both node and the browser",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "main": "dist/node-html-markdown.js",
   "types": "dist/index.d.ts",
   "type": "module",
@@ -54,11 +54,11 @@
     "node": ">=10.0.0"
   },
   "dependencies": {
-    "node-html-parser": "^5.3.3"
+    "node-html-parser": "^6.1.1"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
-    "@types/node": "^17.0.25",
+    "@types/node": "^18.11.5",
     "esbuild": "^0.15.16",
     "esbuild-node-externals": "^1.5.0",
     "jest": "^29.3.1",
