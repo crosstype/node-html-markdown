@@ -38,6 +38,7 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
   codeBlockStyle: <'indented' | 'fenced'>'fenced',
   emDelimiter: '_',
   strongDelimiter: '**',
+  strikeDelimiter: '~~',
   maxConsecutiveNewlines: 3,
   /**
    * Character:               Affects:                       Example:
@@ -104,10 +105,10 @@ export const defaultTranslators: TranslatorConfigObject = {
   /* Strikethrough */
   'del,s,strike': {
     spaceIfRepeatingChar: true,
-    postprocess: ({ content }) =>
+    postprocess: ({ content, options: { strikeDelimiter } }) =>
       isWhiteSpaceOnly(content)
       ? PostProcessResult.RemoveNode
-      : tagSurround(content, '~~')
+      : tagSurround(content, strikeDelimiter)
   },
 
   /* Italic / Emphasis */

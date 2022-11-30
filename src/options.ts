@@ -40,6 +40,12 @@ export interface NodeHtmlMarkdownOptions {
   strongDelimiter: string,
 
   /**
+   * Strong delimiter
+   * @default ~~
+   */
+   strikeDelimiter: string,
+
+  /**
    * Supplied elements will be ignored (ignores inner text does not parse children)
    */
   readonly ignore?: string[],
