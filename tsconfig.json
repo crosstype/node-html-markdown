@@ -3,13 +3,8 @@
   "include": [ "src" ],
 
   "compilerOptions": {
+    "emitDeclarationOnly" : true,
     "rootDir": "src",
-    "outDir": "dist",
-    "plugins": [
-      {
-        "transform": "./transformer.js",
-        "removePerf": true
-      }
-    ]
+    "outDir": "dist"
   }
 }
