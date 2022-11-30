@@ -9,7 +9,7 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals';
     target: 'es2017',
     logLevel: 'info',
     color: true,
-    // minify: true,
+    minify: true,
     sourcemap: true,
     legalComments: 'external'
   }
@@ -20,20 +20,26 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals';
     outfile: 'dist/node-html-markdown.js',
     format: 'esm',
     platform: 'node',
+    define: {
+      '__IS_BROWSER__': 'false'
+    },
     plugins: [ nodeExternalsPlugin({
       packagePath: './package.json'
     }) ]
-  }).then()
+  })
 
   await build({
     ...commonOptions,
     outfile: 'dist/node-html-markdown.cjs',
     format: 'cjs',
     platform: 'node',
+    define: {
+      '__IS_BROWSER__': 'false'
+    },
     plugins: [ nodeExternalsPlugin({
       packagePath: './package.json'
     }) ]
-  }).then()
+  })
 
   /**
    * Browser bundles are use for import/require directly from browser scripts.
@@ -45,9 +51,13 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals';
     format: 'esm',
     platform: 'browser',
     define: {
-      'process.env.LOG_PERF': process.env.LOG_PERF ?? 'false'
-    }
-  }).then()
+      // This will remove the perfStart/End after minified by esbuild.
+      'process.env.LOG_PERF': process.env.LOG_PERF ?? 'false',
+      // This will remove the node-html-parser usage
+      '__IS_BROWSER__': 'true'
+    },
+    external: ['node-html-parser']
+  })
 
   await build({
     ...commonOptions,
@@ -55,7 +65,9 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals';
     format: 'cjs',
     platform: 'browser',
     define: {
-      'process.env.LOG_PERF': process.env.LOG_PERF ?? 'false'
-    }
-  }).then()
+      'process.env.LOG_PERF': process.env.LOG_PERF ?? 'false',
+      '__IS_BROWSER__': 'true'
+    },
+    external: ['node-html-parser']
+  })
 })()

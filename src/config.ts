@@ -1,7 +1,7 @@
 import { isWhiteSpaceOnly, splitSpecial, surround, tagSurround, trimNewLines } from './utilities';
 import { PostProcessResult, TranslatorConfigObject } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
-import { Options as NodeHtmlParserOptions } from 'node-html-parser'
+import type { Options as NodeHtmlParserOptions } from 'node-html-parser'
 
 
 /* ****************************************************************************************************************** */

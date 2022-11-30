@@ -2,7 +2,6 @@ import { NodeHtmlMarkdownOptions } from './options';
 import { ElementNode, HtmlNode } from './nodes';
 import { nodeHtmlParserConfig } from './config';
 
-
 /* ****************************************************************************************************************** */
 // region: String Utils
 /* ****************************************************************************************************************** */
@@ -123,6 +122,9 @@ export const truthyStr = (v: any, value?: string): string => v ? ((value !== und
 /* ****************************************************************************************************************** */
 // region: Parser
 /* ****************************************************************************************************************** */
+// For esbuild removing code
+declare global {const __IS_BROWSER__: boolean}
+
 
 function tryParseWithNativeDom(html: string): ElementNode | undefined {
   try {
@@ -169,24 +171,25 @@ const getNodeHtmlParser = () => {
 export function parseHTML(html: string, options: NodeHtmlMarkdownOptions): ElementNode {
   let nodeHtmlParse: ReturnType<typeof getNodeHtmlParser>;
 
-  /* If specified, try to parse with native engine, fallback to node-html-parser */
   perfStart('parse');
   let el: ElementNode | undefined;
-  if (options.preferNativeParser) {
+  /* If specified, try to parse with native engine, fallback to node-html-parser */
+  if (__IS_BROWSER__ || options.preferNativeParser) {
     try {
       el = tryParseWithNativeDom(html);
     }
     catch (e) {
+      if (__IS_BROWSER__) throw e;
       nodeHtmlParse = getNodeHtmlParser();
       if (nodeHtmlParse) console.warn('Native DOM parser encountered an error during parse', e);
       else throw e;
     }
   } else nodeHtmlParse = getNodeHtmlParser();
 
-  if (!el) el = nodeHtmlParse!(html, nodeHtmlParserConfig);
+  if (!__IS_BROWSER__ && !el) el = nodeHtmlParse!(html, nodeHtmlParserConfig);
   perfStop('parse');
 
-  return el;
+  return el!;
 }
 
 // endregion

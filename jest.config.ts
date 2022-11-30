@@ -13,6 +13,9 @@ const config: Config = {
       }
     ]
   },
+  globals: {
+    '__IS_BROWSER__': false
+  },
   modulePaths: [ '<rootDir>' ],
   testTimeout: 10000,
   roots: [ '<rootDir>' ],
