@@ -179,10 +179,11 @@ export function parseHTML(html: string, options: NodeHtmlMarkdownOptions): Eleme
       el = tryParseWithNativeDom(html);
     }
     catch (e) {
-      if (__IS_BROWSER__) throw e;
-      nodeHtmlParse = getNodeHtmlParser();
-      if (nodeHtmlParse) console.warn('Native DOM parser encountered an error during parse', e);
-      else throw e;
+      if (!__IS_BROWSER__) {
+        nodeHtmlParse = getNodeHtmlParser();
+        if (nodeHtmlParse) console.warn('Native DOM parser encountered an error during parse', e);
+        else throw e;
+      } else throw e;
     }
   } else nodeHtmlParse = getNodeHtmlParser();
 

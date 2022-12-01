@@ -9,7 +9,7 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals';
     target: 'es2017',
     logLevel: 'info',
     color: true,
-    minify: true,
+    minifySyntax: true,
     sourcemap: true,
     legalComments: 'external'
   }
