@@ -122,13 +122,17 @@ export const truthyStr = (v: any, value?: string): string => v ? ((value !== und
 /* ****************************************************************************************************************** */
 // region: Parser
 /* ****************************************************************************************************************** */
+
 // For esbuild removing code
-declare global {const __IS_BROWSER__: boolean}
+declare global { let __IS_BROWSER__: boolean; }
 
 
 function tryParseWithNativeDom(html: string): ElementNode | undefined {
   try {
-    if (!(window?.DOMParser && (new window.DOMParser()).parseFromString('', 'text/html'))) return void 0;
+    if (DOMParser) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      if (doc.documentElement) return doc.documentElement
+    }
   }
   catch {
     return void 0;
