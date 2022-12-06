@@ -218,10 +218,12 @@ export function getChildNodes(node: HtmlNode | Node): (Node | HtmlNode)[] {
   }
 }
 
+/* istanbul ignore next */
 export function perfStart(label: string) {
   if (process.env.LOG_PERF) console.time(label);
 }
 
+/* istanbul ignore next */
 export function perfStop(label: string) {
   if (process.env.LOG_PERF) console.timeEnd(label);
 }
