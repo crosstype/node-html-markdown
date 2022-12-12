@@ -68,7 +68,9 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
   lineStartEscape: [
     /^(\s*?)((?:\+\s)|(?:[=>-])|(?:#{1,6}\s))|(?:(\d+)(\.\s))/gm,
     '$1$3\\$2$4'
-  ] as const
+  ] as const,
+
+  useAngleLinks: true
 });
 
 // endregion
@@ -268,7 +270,7 @@ export const defaultTranslators: TranslatorConfigObject = {
 
     // Inline link, when possible
     // See: https://github.com/crosstype/node-html-markdown/issues/17
-    if (node.textContent === href) return { content: `<${encodedHref}>` };
+    if (node.textContent === href && options.useAngleLinks) return { content: `<${encodedHref}>` };
 
     return {
       postprocess: ({ content }) => content.replace(/(?:\r?\n)+/g, ' '),

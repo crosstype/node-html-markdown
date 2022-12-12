@@ -214,6 +214,18 @@ export interface NodeHtmlMarkdownOptions {
    * [2]: /url2
    */
   useLinkReferenceDefinitions?: boolean
+
+  /**
+   * Wrap URL text in < > instead of []() syntax.
+   * 
+   * @example
+   * The input <a href="https://google.com">https://google.com</a>
+   * becomes <https://google.com>
+   * instead of [https://google.com](https://google.com)
+   * 
+   * @default true
+   */
+  useAngleLinks?: boolean
 }
 ```
 
