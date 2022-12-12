@@ -225,7 +225,7 @@ export interface NodeHtmlMarkdownOptions {
    * 
    * @default true
    */
-  useAngleLinks?: boolean
+  useInlineLinks?: boolean
 }
 ```
 

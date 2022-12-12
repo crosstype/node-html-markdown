@@ -316,8 +316,8 @@ text`);
     instance.options.useLinkReferenceDefinitions = originalUseLinkReferenceDefinitions;
   });
 
-  test(`useAngleLinks`, () => {
-    const originalUseAngleLinksDefinitions = instance.options.useAngleLinks;
+  test(`useInlineLinks`, () => {
+    const originalUseInlineLinksDefinitions = instance.options.useInlineLinks;
 
     const url = "http://www.github.com/crosstype";
     const html = `Hello:&nbsp;
@@ -327,16 +327,16 @@ text`);
         <a href="${url}">repeat link</a> Goodbye!
     `;
 
-    instance.options.useAngleLinks = false;
+    instance.options.useInlineLinks = false;
     let res = translate(html);
     expect(res).toBe(`Hello: [${url}](${url}) a**b** [link2](${url}/other) [repeat link](${url}) Goodbye!`);
 
-    instance.options.useAngleLinks = true;
+    instance.options.useInlineLinks = true;
     res = translate(html);
     expect(res).toBe(
       `Hello: <${url}> a**b** [link2](${url}/other) [repeat link](${url}) Goodbye!`
     );
 
-    instance.options.useLinkReferenceDefinitions = originalUseAngleLinksDefinitions;
+    instance.options.useLinkReferenceDefinitions = originalUseInlineLinksDefinitions;
   });
 });

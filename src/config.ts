@@ -70,7 +70,7 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
     '$1$3\\$2$4'
   ] as const,
 
-  useAngleLinks: true
+  useInlineLinks: true
 });
 
 // endregion
@@ -270,7 +270,7 @@ export const defaultTranslators: TranslatorConfigObject = {
 
     // Inline link, when possible
     // See: https://github.com/crosstype/node-html-markdown/issues/17
-    if (node.textContent === href && options.useAngleLinks) return { content: `<${encodedHref}>` };
+    if (node.textContent === href && options.useInlineLinks) return { content: `<${encodedHref}>` };
 
     return {
       postprocess: ({ content }) => content.replace(/(?:\r?\n)+/g, ' '),
