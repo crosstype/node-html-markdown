@@ -294,4 +294,28 @@ text`);
 
     instance.options.useLinkReferenceDefinitions = originalUseLinkReferenceDefinitions;
   });
+
+  test(`useInlineLinks`, () => {
+    const originalUseInlineLinksDefinitions = instance.options.useInlineLinks;
+
+    const url = 'http://www.github.com/crosstype';
+    const html = `Hello:&nbsp;
+        <a href="${url}">${url}</a> <!-- inline link -->&nbsp;
+        <a>a<strong>b</strong></a> <!-- This node is treated as text due to no href -->
+        <a href="${url}/other">link2</a>
+        <a href="${url}">repeat link</a> Goodbye!
+    `;
+
+    instance.options.useInlineLinks = false;
+    let res = translate(html);
+    expect(res).toBe(`Hello: [${url}](${url}) a**b** [link2](${url}/other) [repeat link](${url}) Goodbye!`);
+
+    instance.options.useInlineLinks = true;
+    res = translate(html);
+    expect(res).toBe(
+      `Hello: <${url}> a**b** [link2](${url}/other) [repeat link](${url}) Goodbye!`
+    );
+
+    instance.options.useLinkReferenceDefinitions = originalUseInlineLinksDefinitions;
+  });
 });
