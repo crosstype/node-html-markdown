@@ -21,6 +21,7 @@ old
 TODO.md
 
 # Junk
+.yarn/
 temp/
 .DS_Store
 tmp

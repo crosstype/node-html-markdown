@@ -1,5 +1,18 @@
 import type * as NHParser from 'node-html-parser';
-import type { CommentNode } from 'node-html-parser';
+
+
+/* ****************************************************************************************************************** */
+// region: Locals
+/* ****************************************************************************************************************** */
+
+const NodeType = {
+  ELEMENT_NODE: 1,
+  TEXT_NODE: 3,
+  COMMENT_NODE: 8
+}
+
+// endregion
+
 
 /* ****************************************************************************************************************** */
 // region: Types
@@ -14,6 +27,7 @@ type NodeBase = { preserve?: boolean }
 export type HtmlNode = (NHParser.Node | Node) & NodeBase
 export type ElementNode = (NHParser.HTMLElement | HTMLElement) & NodeBase
 export type TextNode = (NHParser.TextNode) & NodeBase
+export type CommentNode = (NHParser.CommentNode) & NodeBase
 
 // endregion
 
@@ -21,12 +35,6 @@ export type TextNode = (NHParser.TextNode) & NodeBase
 /* ****************************************************************************************************************** */
 // region: TypeGuards
 /* ****************************************************************************************************************** */
-
-const NodeType = {
-  ELEMENT_NODE: 1,
-  TEXT_NODE: 3,
-  COMMENT_NODE: 8
-}
 
 export const isTextNode = (node: HtmlNode): node is TextNode => node.nodeType === NodeType.TEXT_NODE;
 export const isCommentNode = (node: HtmlNode): node is CommentNode => node.nodeType === NodeType.COMMENT_NODE;

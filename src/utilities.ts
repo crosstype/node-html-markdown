@@ -2,6 +2,17 @@ import { NodeHtmlMarkdownOptions } from './options';
 import { ElementNode, HtmlNode } from './nodes';
 import { nodeHtmlParserConfig } from './config';
 
+
+/* ****************************************************************************************************************** */
+// region: Locals
+/* ****************************************************************************************************************** */
+
+// For esbuild removing code
+declare global { let __IS_BROWSER__: boolean; }
+
+// endregion
+
+
 /* ****************************************************************************************************************** */
 // region: String Utils
 /* ****************************************************************************************************************** */
@@ -109,23 +120,12 @@ export const getTrailingWhitespaceInfo = (s: string): { whitespace: number, newL
   return res;
 }
 
-/**
- * If value is truthy, returns `value` (or `v` if no `value` provided), otherwise, returns an empty string
- * @param v - Var to check for truthiness
- * @param value - Value to return if true
- */
-export const truthyStr = (v: any, value?: string): string => v ? ((value !== undefined) ? value : String(v)) : '';
-
 // endregion
 
 
 /* ****************************************************************************************************************** */
-// region: Parser
+// region: Parser Utils
 /* ****************************************************************************************************************** */
-
-// For esbuild removing code
-declare global { let __IS_BROWSER__: boolean; }
-
 
 function tryParseWithNativeDom(html: string): ElementNode | undefined {
   try {
@@ -201,7 +201,7 @@ export function parseHTML(html: string, options: NodeHtmlMarkdownOptions): Eleme
 
 
 /* ****************************************************************************************************************** */
-// region: General
+// region: General Utils
 /* ****************************************************************************************************************** */
 
 export function getChildNodes<T extends HtmlNode | Node>(node: T): T[]
