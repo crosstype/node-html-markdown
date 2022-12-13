@@ -2,19 +2,25 @@
   "name": "node-html-markdown",
   "description": "Fast HTML to markdown cross-compiler, compatible with both node and the browser",
   "version": "1.2.2",
-  "main": "dist/index.js",
+  "main": "dist/node-html-markdown.js",
   "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    "require": "./dist/node-html-markdown.cjs",
+    "default": "./dist/node-html-markdown.js"
+  },
   "scripts": {
-    "compile": "tsc",
-    "build": "yarn run clean && yarn run compile",
-    "clean": "npx -y rimraf coverage dist **/*.tsbuildinfo",
+    "build": "npm-run-all clean --parallel build:esbuild build:types",
+    "build:esbuild": "tsx build.ts",
+    "build:types": "tsc",
+    "clean": "rimraf coverage dist",
     "------------- ": "-------------",
     "benchmark": "cd benchmark && yarn run benchmark quick",
     "benchmark:large": "cd benchmark && yarn run benchmark",
     "test": "jest",
     "test:coverage": "jest --collect-coverage",
     "-------------  ": "-------------",
-    "prepare": "ts-patch patch tsc --silent && cd benchmark && yarn install"
+    "prepare": "cd benchmark && yarn install"
   },
   "files": [
     "README.md",
@@ -33,7 +39,7 @@
   ],
   "author": {
     "name": "Ron S.",
-    "url": "http://twitter.com/ron"
+    "url": "https://twitter.com/ron"
   },
   "repository": {
     "type": "git",
@@ -51,15 +57,19 @@
     "node-html-parser": "^6.1.1"
   },
   "devDependencies": {
-    "@types/jest": "~28.1.1",
+    "@types/jest": "^29.2.3",
     "@types/node": "^18.11.5",
-    "jest": "^29.2.2",
-    "standard-version": "^9.5.0",
+    "esbuild": "^0.15.16",
+    "esbuild-node-externals": "^1.5.0",
+    "jest": "^29.3.1",
+    "linkedom": "^0.14.21",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
+    "standard-version": "^9.3.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
-    "ts-patch": "^2.0.2",
-    "typescript": "^4.8.4",
-    "rimraf": "^3.0.2"
+    "tsx": "^3.12.1",
+    "typescript": "^4.6.3"
   },
   "standard-version": {
     "types": [
@@ -96,5 +106,6 @@
         "hidden": true
       }
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.1"
 }
