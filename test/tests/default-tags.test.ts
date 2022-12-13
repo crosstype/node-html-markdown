@@ -1,6 +1,5 @@
 // noinspection HtmlUnknownTarget
-
-import { NodeHtmlMarkdown } from '../src';
+import { NodeHtmlMarkdown } from '../../src';
 
 
 /* ****************************************************************************************************************** *
@@ -10,6 +9,7 @@ import { NodeHtmlMarkdown } from '../src';
 describe(`Default Tags`, () => {
   let instance: NodeHtmlMarkdown;
   const translate = (html: string) => instance.translate(html);
+
   beforeAll(() => {
     instance = new NodeHtmlMarkdown();
   });

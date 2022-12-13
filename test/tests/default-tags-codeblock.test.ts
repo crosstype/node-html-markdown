@@ -1,6 +1,6 @@
 // noinspection HtmlUnknownTarget
 
-import { NodeHtmlMarkdown } from '../src';
+import { NodeHtmlMarkdown } from '../../src';
 
 
 /* ****************************************************************************************************************** *
