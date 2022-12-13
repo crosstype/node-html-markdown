@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/crosstype/node-html-markdown/compare/v1.2.0...v1.3.0) (2022-12-13)
+
+
+### Features
+
+* Added `useInlineLinks` option ([c318667](https://github.com/crosstype/node-html-markdown/commit/c318667334d979db3cf7bcd3600f9dd1618ba5b3))
+* Added option to customize custom strike tag. ([82cf1e3](https://github.com/crosstype/node-html-markdown/commit/82cf1e3c33662254983f35bb2000c62fc3d5870c))
+
+
+### Fixes
+
+* Can't get text from TextNode in the browser (fixes [#40](https://github.com/crosstype/node-html-markdown/issues/40)) ([feec660](https://github.com/crosstype/node-html-markdown/commit/feec6609cc4ad5c00ce81835d60c3a00036f82e7))
+* perfStart and perfStop breaking code in the browser (fixes [#36](https://github.com/crosstype/node-html-markdown/issues/36) ([7d52c92](https://github.com/crosstype/node-html-markdown/commit/7d52c928b718acae578692736cda1f17d4733ab1))
+
 ### [1.2.2](https://github.com/crosstype/node-html-markdown/compare/v1.2.0...v1.2.2) (2022-10-26)
 
 
