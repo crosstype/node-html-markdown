@@ -20,7 +20,7 @@
     "test": "jest",
     "test:coverage": "jest --collect-coverage",
     "-------------  ": "-------------",
-    "prepare": "cd benchmark && yarn install"
+    "prepare": "cd benchmark && yarn install && cd ../test && yarn install"
   },
   "files": [
     "README.md",

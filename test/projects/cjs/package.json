@@ -1,8 +1,8 @@
 {
-  "name": "esm",
+  "name": "cjs",
   "version" : "0.0.0-pvt",
   "private" : true,
-  "type": "module",
+  "type": "commonjs",
   "peerDependencies" : {
     "node-html-markdown": "*"
   }

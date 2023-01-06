@@ -3,6 +3,10 @@ import { defaultOptions } from '../../src/config';
 import { DOMParser } from 'linkedom';
 
 
+/* ****************************************************************************************************************** *
+ * parseHTML() tests
+ * ****************************************************************************************************************** */
+
 describe('parseHTML', () => {
   test('should parse HTML with native parser in browser', () => {
     __IS_BROWSER__ = true;

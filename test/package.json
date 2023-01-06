@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "license": "MIT",
+  "devDependencies": {
+    "node-html-markdown": "link:..",
+    "jest-puppeteer": "^6.2.0"
+  },
+  "workspaces": [
+    "projects/*"
+  ]
+}
