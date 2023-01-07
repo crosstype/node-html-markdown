@@ -23,6 +23,9 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals';
     define: {
       '__IS_BROWSER__': 'false'
     },
+    banner: {
+      js: `import {createRequire} from 'module'; const require = createRequire(import.meta.url);`
+    },
     plugins: [ nodeExternalsPlugin({
       packagePath: './package.json'
     }) ]
@@ -56,7 +59,7 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals';
       // This will remove the node-html-parser usage
       '__IS_BROWSER__': 'true'
     },
-    external: ['node-html-parser']
+    external: [ 'node-html-parser' ]
   })
 
   await build({
@@ -68,6 +71,6 @@ import { nodeExternalsPlugin } from 'esbuild-node-externals';
       'process.env.LOG_PERF': process.env.LOG_PERF ?? 'false',
       '__IS_BROWSER__': 'true'
     },
-    external: ['node-html-parser']
+    external: [ 'node-html-parser' ]
   })
 })()

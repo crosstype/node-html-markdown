@@ -162,7 +162,7 @@ function tryParseWithNativeDom(html: string): ElementNode | undefined {
 
 const getNodeHtmlParser = () => {
   try {
-    return require('node-html-parser').parse as typeof import('node-html-parser').parse
+    return require('node-html-parser').parse as typeof import('node-html-parser').default.parse
   }
   catch {
     return undefined;
