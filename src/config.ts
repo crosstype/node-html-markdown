@@ -190,7 +190,7 @@ export const defaultTranslators: TranslatorConfigObject = {
     childTranslators: visitor.instance.tableTranslators,
     postprocess: ({ content, nodeMetadata, node }) => {
       // Split and trim leading + trailing pipes
-      const rawRows = splitSpecial(content).map(({ text }) => text.replace(/^(?:\|\s+)?(.+)\s*\|\s*$/, '$1'));
+      const rawRows = splitSpecial(content).map(({ text }) => text.replace(/^(?:\|)?(.+)\s*\|\s*$/, '$1'));
 
       /* Get Row Data */
       const rows: string[][] = [];
@@ -238,6 +238,9 @@ export const defaultTranslators: TranslatorConfigObject = {
       return res;
     }
   }),
+
+  /* Table Columns */
+  'td,th': { preserveIfEmpty: true },
 
   /* Link */
   'a': ({ node, options, visitor }) => {
