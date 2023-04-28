@@ -100,6 +100,13 @@ describe(`Default Tags`, () => {
       expect(res).toBe('```fortran\n' + str + '\n```\n\n```\n' + str + '\n```');
     });
 
+    test(`Data language`, () => {
+      const res = translate(
+        `<pre data-language="jsx"><code data-language="jsx">${str}</code></pre><pre><code>${str}</code></pre>`
+      );
+      expect(res).toBe("```jsx\n" + str + "\n```\n\n```\n" + str + "\n```");
+    });
+
     test(`Indented`, () => {
       const originalCodeFence = instance.options.codeBlockStyle;
       instance.options.codeBlockStyle = 'indented';
@@ -110,6 +117,7 @@ describe(`Default Tags`, () => {
 
       instance.options.codeFence = originalCodeFence;
     });
+
   });
 
   describe(`Lists (ol + li, ul + li)`, () => {

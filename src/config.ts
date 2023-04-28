@@ -169,7 +169,8 @@ export const defaultTranslators: TranslatorConfigObject = {
 
     /* Handle code block */
     if (codeBlockStyle === 'fenced') {
-      const language = node.getAttribute('class')?.match(/language-(\S+)/)?.[1] || '';
+      const language =
+        node.getAttribute("class")?.match(/language-(\S+)/)?.[1] || node.getAttribute("data-language") || "";
       return {
         noEscape: true,
         prefix: codeFence + language + '\n',
