@@ -155,7 +155,7 @@ export interface NodeHtmlMarkdownOptions {
   strongDelimiter: string,
 
   /**
-   * Strong delimiter
+   * Strike delimiter
    * @default ~~
    */
   strikeDelimiter: string,
