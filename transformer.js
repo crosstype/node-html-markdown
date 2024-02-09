@@ -2,7 +2,7 @@
 module.exports = function (program, cfg, { ts }) {
   return (ctx) => {
     return function visit(node) {
-      if (process.env.CI || !cfg.removePerf) return node;
+      if (process && process.env && process.env.CI || !cfg.removePerf) return node;
       // Remove the functions
       if (ts.isFunctionDeclaration(node)
         && [ 'perfStart', 'perfStop' ].includes(node.name.escapedText))
