@@ -1,7 +1,7 @@
 {
   "name": "node-html-markdown",
   "description": "Fast HTML to markdown cross-compiler, compatible with both node and the browser",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -53,7 +53,7 @@
   "devDependencies": {
     "@types/jest": "~28.1.1",
     "@types/node": "^18.11.5",
-    "jest": "^29.2.2",
+    "jest": "29.7.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
