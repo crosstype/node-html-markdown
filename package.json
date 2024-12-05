@@ -1,5 +1,5 @@
 {
-  "name": "node-html-markdown",
+  "name": "@clearfeed-ai/node-html-markdown",
   "description": "Fast HTML to markdown cross-compiler, compatible with both node and the browser",
   "version": "1.4.1",
   "main": "dist/index.js",
