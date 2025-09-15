@@ -110,7 +110,13 @@ export interface NodeHtmlMarkdownOptions {
    *
    * @default true
    */
-  useInlineLinks?: boolean
+  useInlineLinks?: boolean,
+
+  /**
+   * Preserve newlines in inline elements while still allowing other processing
+   * @default false
+   */
+  preserveInlineNewlines?: boolean
 }
 
 // endregion

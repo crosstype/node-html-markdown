@@ -70,7 +70,8 @@ export const defaultOptions: Readonly<NodeHtmlMarkdownOptions> = Object.freeze({
     '$1$3\\$2$4'
   ] as const,
 
-  useInlineLinks: true
+  useInlineLinks: true,
+  preserveInlineNewlines: false
 });
 
 // endregion

@@ -136,7 +136,15 @@ export class Visitor {
    */
   private processText(text: string, metadata: NodeMetadata | undefined) {
     let res = text;
-    if (!metadata?.preserveWhitespace) res = res.replace(/\s+/g, ' ');
+    if (!metadata?.preserveWhitespace) {
+      if (this.options.preserveInlineNewlines) {
+        // Preserve newlines, but normalize other whitespace
+        res = res.replace(/[^\S\r\n]+/g, ' ');
+      } else {
+        // Normalize all whitespace
+        res = res.replace(/\s+/g, ' ');
+      }
+    }
     if (metadata?.noEscape) return res;
 
     const { lineStartEscape, globalEscape, textReplace } = this.options;
