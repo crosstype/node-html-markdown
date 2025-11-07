@@ -127,10 +127,10 @@ export const defaultTranslators: TranslatorConfigObject = {
   }),
 
   /* List Item */
-  'li': ({ options: { bulletMarker }, indentLevel, listKind, listItemNumber }) => {
+  'li': ({ options: { bulletMarker, indent }, indentLevel, listKind, listItemNumber }) => {
     const indentationLevel = +(indentLevel || 0);
     return {
-      prefix: '   '.repeat(+(indentLevel || 0)) +
+      prefix: indent.repeat(+(indentLevel || 0)) +
         (((listKind === 'OL') && (listItemNumber !== undefined)) ? `${listItemNumber}. ` : `${bulletMarker} `),
       surroundingNewlines: 1,
       postprocess: ({ content }) =>
@@ -138,7 +138,7 @@ export const defaultTranslators: TranslatorConfigObject = {
         ? PostProcessResult.RemoveNode
         : content
           .trim()
-          .replace(/([^\r\n])(?:\r?\n)+/g, `$1  \n${'   '.repeat(indentationLevel)}`)
+          .replace(/([^\r\n])(?:\r?\n)+/g, `$1  \n${indent.repeat(indentationLevel)}`)
           .replace(/(\S+?)[^\S\r\n]+$/gm, '$1  ')
     }
   },
