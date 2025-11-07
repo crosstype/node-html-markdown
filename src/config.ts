@@ -354,8 +354,7 @@ export const defaultCodeBlockTranslators: TranslatorConfigObject = {
   'hr': { content: '---', recurse: false },
   'h1,h2,h3,h4,h5,h6': { prefix: '[', postfix: ']' },
   'ol,ul': { surroundingNewlines: false },
-  'li':
-  'blockquote': { surroundingNewlines: false }, defaultTranslators['li'],
+  'li': defaultTranslators['li'],
   'tr': { surroundingNewlines: false },
   'img': { recurse: false }
 }
