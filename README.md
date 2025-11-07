@@ -155,7 +155,7 @@ export interface NodeHtmlMarkdownOptions {
   strongDelimiter: string,
 
   /**
-   * Strong delimiter
+   * Strike delimiter
    * @default ~~
    */
   strikeDelimiter: string,
@@ -228,6 +228,85 @@ export interface NodeHtmlMarkdownOptions {
   useInlineLinks?: boolean
 }
 ```
+
+## Newline Handling
+
+### Understanding Paragraph Spacing
+
+In standard Markdown, paragraphs are separated by blank lines. This library follows this convention, so HTML block elements like `<p>`, `<div>`, `<h1>`, etc. are surrounded by blank lines in the output.
+
+**Example:**
+
+```ts
+const html = `<p>Hello</p><p>World</p><p>!</p>`;
+const markdown = NodeHtmlMarkdown.translate(html);
+console.log(markdown);
+// Output:
+// Hello
+//
+// World
+//
+// !
+```
+
+This is the expected behavior and produces valid, readable Markdown. If you need tighter spacing, consider using line breaks instead of paragraphs.
+
+### Line Breaks vs Paragraphs
+
+- **Paragraphs** (`<p>`) create blank lines between content (standard Markdown behavior)
+- **Line breaks** (`<br>`) create single line breaks with two trailing spaces (Markdown line break syntax)
+
+**Example:**
+
+```ts
+// Using line breaks
+const html = `<p>Line 1<br>Line 2<br>Line 3</p>`;
+const markdown = NodeHtmlMarkdown.translate(html);
+console.log(markdown);
+// Output:
+// Line 1
+// Line 2
+// Line 3
+```
+
+### Controlling Consecutive Newlines
+
+The `maxConsecutiveNewlines` option (default: `3`) limits how many consecutive newlines appear in the output. This helps keep the Markdown clean and prevents excessive whitespace.
+
+**Example with multiple `<br>` tags:**
+
+```ts
+// Default behavior - limits to 3 consecutive newlines
+const html = `<p>a</p>${'<br>'.repeat(10)}<p>b</p>`;
+const markdown = NodeHtmlMarkdown.translate(html);
+// Result has maximum 3 consecutive line breaks
+
+// Allow more consecutive newlines
+const markdown2 = NodeHtmlMarkdown.translate(html, {
+  maxConsecutiveNewlines: 10
+});
+// Result preserves all 10 line breaks
+```
+
+**Example with inline elements:**
+
+```ts
+const html = `<b>text</b>${'<br>'.repeat(10)}<em>something</em>`;
+
+// Default (max 3 newlines)
+NodeHtmlMarkdown.translate(html);
+// Output: **text**  \n  \n  \n_something_
+
+// Custom (max 10 newlines)
+NodeHtmlMarkdown.translate(html, { maxConsecutiveNewlines: 10 });
+// Output: **text**  \n  \n  \n  \n  \n  \n  \n  \n  \n  \n_something_
+```
+
+**When to adjust this setting:**
+
+- **Decrease** (e.g., `maxConsecutiveNewlines: 1`) for more compact output
+- **Increase** (e.g., `maxConsecutiveNewlines: 10`) when you need to preserve spacing from the source HTML
+- **Keep default** (`3`) for balanced, readable Markdown output
 
 ## Custom Translators
 
