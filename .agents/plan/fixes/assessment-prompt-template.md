@@ -95,6 +95,16 @@ Create a detailed action plan including:
 - **Don't implement yet** - this is assessment only, not execution
 - **Don't over-research** - timebox investigation, note what's unknown
 
+### Test Quality Requirements (CRITICAL)
+- **ALL tests MUST pass** - No shortcuts, no exceptions
+- **NEVER delete tests to make them pass** - This is absolutely forbidden
+- **NEVER skip tests** - Use `.skip()` only temporarily with justification
+- **NEVER lower test standards** - Don't weaken assertions to pass
+- **NEVER ignore test failures** - Every failure must be investigated and resolved
+- **If tests prove difficult** - Flag for additional agent support, don't compromise
+- **Test failures are data** - They reveal problems that must be fixed, not hidden
+- **When in doubt** - Write MORE tests, not fewer
+
 ### Report Format
 - **Use markdown** - clear headings, lists, code blocks
 - **No emojis** - professional technical writing
@@ -474,6 +484,9 @@ Your assessment is successful if:
 - Scope creep into unassigned issues
 - Implementation instead of planning
 - Missing effort/risk assessments
+- **Deleting or skipping tests to make them pass** - NEVER acceptable
+- **Weakening test assertions** - NEVER compromise test quality
+- **Ignoring test failures** - NEVER ship with failing tests
 
 ---
 
@@ -485,6 +498,7 @@ Your assessment is successful if:
 4. **Be honest about unknowns** - If unsure, say what's needed to find out
 5. **Make it actionable** - The output should enable Phase 3 execution
 6. **Follow constraints** - Info-dense, specific, professional
+7. **TEST QUALITY IS SACRED** - Never delete, skip, or weaken tests. All tests must pass. If something proves too difficult, flag for additional agent support rather than taking shortcuts.
 
 ---
 
