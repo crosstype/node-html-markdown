@@ -164,9 +164,21 @@ export class Visitor {
         (<any>node).trimmedText ??= trimNewLines((<any>node).wholeText);
       }
 
-      return node.isWhitespace && !metadata?.preserveWhitespace
-             ? (!result.text.length || result.trailingNewlineStats.whitespace > 0) ? void 0 : this.appendResult(' ')
-             : this.appendResult(this.processText(metadata?.preserveWhitespace ? node.text : node.trimmedText, metadata));
+      if (node.isWhitespace && !metadata?.preserveWhitespace) {
+        return (!result.text.length || result.trailingNewlineStats.whitespace > 0) ? void 0 : this.appendResult(' ');
+      }
+
+      // Fix for issues #61 and #34: Process original text to preserve trailing whitespace before inline elements
+      const sourceText = metadata?.preserveWhitespace ? node.text : node.text || node.trimmedText;
+      let processedText = this.processText(sourceText, metadata);
+
+      // Trim leading spaces only if original started with newline; keep trailing spaces for inline elements
+      if (!metadata?.preserveWhitespace && processedText) {
+        if (sourceText && /^\n/.test(sourceText)) processedText = processedText.replace(/^ /, '');
+        if (sourceText && !/\s$/.test(sourceText)) processedText = processedText.replace(/ +$/, '');
+      }
+
+      return this.appendResult(processedText);
     }
 
     if (textOnly || !isElementNode(node)) return;
