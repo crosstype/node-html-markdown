@@ -128,7 +128,7 @@ export const truthyStr = (v: any, value?: string): string => v ? ((value !== und
  * Note: Do not change - values are tuned for performance
  */
 export const nodeHtmlParserConfig: NodeHtmlParserOptions = {
-  lowerCaseTagName: false,
+  lowerCaseTagName: true,
   comment: false,
   fixNestedATags: true,
   blockTextElements: {

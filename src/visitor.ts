@@ -111,14 +111,15 @@ export class Visitor {
     const { translators } = this.instance;
     (function visit(node: HtmlNode): boolean {
       let res = false
-      if (isTextNode(node) || (isElementNode(node) && contentlessElements.includes(node.tagName))) {
+      if (isTextNode(node) || (isElementNode(node) && contentlessElements.includes((node.tagName || '').toUpperCase()))) {
         res = true;
       }
       else {
         const childNodes = getChildNodes(node);
         if (!childNodes.length) {
-          const translator = translators[(node as ElementNode).tagName];
-          if (translator?.preserveIfEmpty || typeof translator === 'function') res = true;
+          const elementNode = node as ElementNode;
+          const translator = elementNode.tagName ? translators.get(elementNode.tagName) : undefined;
+          if (typeof translator === 'function' || translator?.preserveIfEmpty) res = true;
         }
         else
           for (const child of childNodes) {
@@ -171,11 +172,14 @@ export class Visitor {
     if (textOnly || !isElementNode(node)) return;
 
     /* Handle element node */
-    const translatorCfgOrFactory: TranslatorConfig | TranslatorConfigFactory | undefined =
-      metadata?.translators ? metadata.translators[node.tagName] : this.instance.translators[node.tagName];
+    const tagNameUpper = (node.tagName || '').toUpperCase();
+
+    const translatorCfgOrFactory: TranslatorConfig | TranslatorConfigFactory | undefined = tagNameUpper
+      ? (metadata?.translators ? metadata.translators[tagNameUpper] : this.instance.translators.get(node.tagName))
+      : undefined;
 
     /* Update metadata with list detail */
-    switch (node.tagName) {
+    switch (tagNameUpper) {
       case 'UL':
       case 'OL':
         metadata = {
