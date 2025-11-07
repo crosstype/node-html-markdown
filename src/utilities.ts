@@ -1,6 +1,6 @@
 import { NodeHtmlMarkdownOptions } from './options';
 import { ElementNode, HtmlNode } from './nodes';
-import { nodeHtmlParserConfig } from './config';
+import { Options as NodeHtmlParserOptions } from 'node-html-parser';
 
 
 /* ****************************************************************************************************************** */
@@ -123,6 +123,20 @@ export const truthyStr = (v: any, value?: string): string => v ? ((value !== und
 /* ****************************************************************************************************************** */
 // region: Parser
 /* ****************************************************************************************************************** */
+
+/**
+ * Note: Do not change - values are tuned for performance
+ */
+export const nodeHtmlParserConfig: NodeHtmlParserOptions = {
+  lowerCaseTagName: true,
+  comment: false,
+  fixNestedATags: true,
+  blockTextElements: {
+    script: false,
+    noscript: false,
+    style: false
+  }
+};
 
 function tryParseWithNativeDom(html: string): ElementNode | undefined {
   try {
