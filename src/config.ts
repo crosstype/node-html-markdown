@@ -171,6 +171,7 @@ export const defaultTranslators: TranslatorConfigObject = {
       const language = node.getAttribute('class')?.match(/language-(\S+)/)?.[1] || '';
       return {
         noEscape: true,
+        preserveWhitespace: true,
         prefix: codeFence + language + '\n',
         postfix: '\n' + codeFence,
         childTranslators: visitor.instance.codeBlockTranslators
@@ -178,6 +179,7 @@ export const defaultTranslators: TranslatorConfigObject = {
     } else {
       return {
         noEscape: true,
+        preserveWhitespace: true,
         postprocess: ({ content }) => content.replace(/^/gm, '    '),
         childTranslators: visitor.instance.codeBlockTranslators
       }
@@ -351,9 +353,10 @@ export const defaultCodeBlockTranslators: TranslatorConfigObject = {
   'br': { content: `\n`, recurse: false },
   'hr': { content: '---', recurse: false },
   'h1,h2,h3,h4,h5,h6': { prefix: '[', postfix: ']' },
-  'ol,ul': defaultTranslators['ol,ul'],
-  'li': defaultTranslators['li'],
-  'tr': { surroundingNewlines: true },
+  'ol,ul': { surroundingNewlines: false },
+  'li':
+  'blockquote': { surroundingNewlines: false }, defaultTranslators['li'],
+  'tr': { surroundingNewlines: false },
   'img': { recurse: false }
 }
 
