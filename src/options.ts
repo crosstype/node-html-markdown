@@ -20,6 +20,12 @@ export interface NodeHtmlMarkdownOptions {
    * @default *
    */
   bulletMarker: string,
+  
+  /**
+   * Indentation string for nested lists
+   * @default '  '
+   */
+  indent: string,
 
   /**
    * Style for code block
