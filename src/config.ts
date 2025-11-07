@@ -138,7 +138,7 @@ export const defaultTranslators: TranslatorConfigObject = {
         ? PostProcessResult.RemoveNode
         : content
           .trim()
-          .replace(/([^\r\n])(?:\r?\n)+/g, `$1  \n${indent.repeat(indentationLevel)}`)
+          .replace(/([^\r\n])(?:\r?\n)+(?!\s*[-*+]|\s*\d+\.)/g, `$1  \n${indent.repeat(indentationLevel)}`)
           .replace(/(\S+?)[^\S\r\n]+$/gm, '$1  ')
     }
   },
