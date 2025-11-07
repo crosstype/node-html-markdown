@@ -101,4 +101,67 @@ describe(`Special Cases`, () => {
     const res = translate(html);
     expect(res).toBe(expected);
   });
+
+  // See: https://github.com/crosstype/node-html-markdown/issues/63
+  describe(`Handles mixed-case HTML tags correctly`, () => {
+    test(`handles mixed-case <Br> tag`, () => {
+      const res = translate('Foo<Br>Bar');
+      expect(res).toBe('Foo  \nBar');
+    });
+
+    test(`handles uppercase <BR> tag`, () => {
+      const res = translate('Hello<BR>World');
+      expect(res).toBe('Hello  \nWorld');
+    });
+
+    test(`handles mixed-case <DIV> tag`, () => {
+      const res = translate('<DIV>content</DIV>');
+      expect(res).toBe('content');
+    });
+
+    test(`handles mixed-case <Div> tag`, () => {
+      const res = translate('<Div>test content</Div>');
+      expect(res).toBe('test content');
+    });
+
+    test(`handles mixed-case <P> tag`, () => {
+      const res = translate('<P>Hello</P>');
+      expect(res).toBe('Hello');
+    });
+
+    test(`handles mixed-case <pArAgRaPh> tag`, () => {
+      const res = translate('<pArAgRaPh>Strange case</pArAgRaPh>');
+      expect(res).toBe('Strange case');
+    });
+
+    test(`handles mixed-case formatting tags`, () => {
+      const res = translate('<Strong>Bold</Strong> and <Em>Italic</Em>');
+      expect(res).toBe('**Bold** and _Italic_');
+    });
+
+    test(`handles mixed-case <Hr> tag`, () => {
+      const res = translate('Before<Hr>After');
+      expect(res).toBe('Before\n\n---\n\nAfter');
+    });
+
+    test(`handles mixed-case list tags`, () => {
+      const res = translate('<Ul><Li>Item 1</Li><Li>Item 2</Li></Ul>');
+      expect(res).toBe('* Item 1\n* Item 2');
+    });
+
+    test(`handles mixed-case heading tags`, () => {
+      const res = translate('<H1>Title</H1><H2>Subtitle</H2>');
+      expect(res).toBe('# Title\n\n## Subtitle');
+    });
+
+    test(`handles completely lowercase tags`, () => {
+      const res = translate('<br><div>content</div><strong>bold</strong>');
+      expect(res).toBe('  \n\ncontent\n\n**bold**');
+    });
+
+    test(`handles mixed-case nested tags without data loss`, () => {
+      const res = translate('<Div><P>Paragraph 1</P><Br><P>Paragraph 2</P></Div>');
+      expect(res).toBe('Paragraph 1\n\n  \nParagraph 2');
+    });
+  });
 });
