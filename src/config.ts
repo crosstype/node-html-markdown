@@ -1,7 +1,6 @@
 import { isWhiteSpaceOnly, splitSpecial, surround, tagSurround, trimNewLines } from './utilities';
 import { PostProcessResult, TranslatorConfigObject } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
-import { Options as NodeHtmlParserOptions } from 'node-html-parser'
 
 
 /* ****************************************************************************************************************** */
@@ -364,26 +363,5 @@ export const aTagTranslatorConfig: TranslatorConfigObject = {
   'em,i': defaultTranslators['em,i'],
   'img': defaultTranslators['img']
 }
-
-// endregion
-
-
-/* ****************************************************************************************************************** */
-// region: General
-/* ****************************************************************************************************************** */
-
-/**
- * Note: Do not change - values are tuned for performance
- */
-export const nodeHtmlParserConfig: NodeHtmlParserOptions = {
-  lowerCaseTagName: false,
-  comment: false,
-  fixNestedATags: true,
-  blockTextElements: {
-    script: false,
-    noscript: false,
-    style: false
-  }
-};
 
 // endregion
