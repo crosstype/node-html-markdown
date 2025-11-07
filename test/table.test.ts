@@ -98,5 +98,20 @@ describe(`Table`, () => {
 
       expect(translate(html)).toBe(expected);
     });
+
+    test(`Empty Cells`, () => {
+      const html = `<table>
+        <tr><td>abc</td><td>def</td><td>ghi</td></tr>
+        <tr><td></td><td></td><td>ghi1234567</td></tr>
+        <tr><td>abc1</td><td>def1234</td><td>c</td></tr>
+      </table>`;
+      const expected =
+        `| abc  | def     | ghi        |\n` +
+        `| ---- | ------- | ---------- |\n` +
+        `|      |         | ghi1234567 |\n` +
+        `| abc1 | def1234 | c          |`;
+      const result = translate(html);
+      expect(result).toBe(expected);
+    });
   });
 });
