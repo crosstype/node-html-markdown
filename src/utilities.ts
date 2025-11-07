@@ -141,6 +141,8 @@ export const nodeHtmlParserConfig: NodeHtmlParserOptions = {
 function tryParseWithNativeDom(html: string): ElementNode | undefined {
   try {
     if (!(window?.DOMParser && (new window.DOMParser()).parseFromString('', 'text/html'))) return void 0;
+
+    if (!document) return void 0;
   }
   catch {
     return void 0;
@@ -225,11 +227,11 @@ export function getChildNodes(node: HtmlNode | Node): (Node | HtmlNode)[] {
 }
 
 export function perfStart(label: string) {
-  if (process.env.LOG_PERF) console.time(label);
+  if (process && process.env && process.env.LOG_PERF) console.time(label);
 }
 
 export function perfStop(label: string) {
-  if (process.env.LOG_PERF) console.timeEnd(label);
+  if (process && process.env && process.env.LOG_PERF) console.timeEnd(label);
 }
 
 // endregion
