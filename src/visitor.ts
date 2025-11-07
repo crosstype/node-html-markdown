@@ -316,7 +316,10 @@ export function getMarkdownForHtmlNodes(instance: NodeHtmlMarkdown, rootNode: Ht
     '$1'
   );
 
-  return trimNewLines(result);
+  // Trim newlines and any trailing space (but preserve two-space line breaks)
+  result = trimNewLines(result);
+  if (result.endsWith(' ') && !result.endsWith('  ')) result = result.trimEnd();
+  return result;
 }
 
 // endregion
