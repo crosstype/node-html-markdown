@@ -263,7 +263,7 @@ text`);
     instance.options.keepDataImages = false;
     const resNoKeep = translate(`<img alt="normal" src="normal_img.jpg">
       <img src="data:image/gif;base64,R0lGODlhEA"/>`);
-    expect(resNoKeep).toBe(`![normal](normal_img.jpg) `);
+    expect(resNoKeep).toBe(`![normal](normal_img.jpg)`);
 
     instance.options.keepDataImages = originalKeepDataImages;
   });
@@ -289,7 +289,7 @@ text`);
     instance.options.useLinkReferenceDefinitions = true;
     res = translate(html);
     expect(res).toBe(
-      `Hello: [a b**c**][1] a**b** [link2][2] [repeat link][1] <${url}> Goodbye!\n\n[1]: ${url}\n[2]: ${url}/other`
+      `Hello: [a b**c**][1] a**b** [link2][2] [repeat link][1] <${url}> Goodbye! \n\n[1]: ${url}\n[2]: ${url}/other`
     );
 
     instance.options.useLinkReferenceDefinitions = originalUseLinkReferenceDefinitions;
@@ -316,6 +316,6 @@ text`);
       `Hello: <${url}> a**b** [link2](${url}/other) [repeat link](${url}) Goodbye!`
     );
 
-    instance.options.useLinkReferenceDefinitions = originalUseInlineLinksDefinitions;
+    instance.options.useInlineLinks = originalUseInlineLinksDefinitions;
   });
 });
