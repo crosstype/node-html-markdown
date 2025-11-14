@@ -148,6 +148,25 @@ describe(`Options`, () => {
     expect(resWithAll).toBe(`**some text**_more text_`);
   });
 
+  test(`ignore block elements (issue #49)`, () => {
+    // Test that ignore option works for block elements like NAV
+    const htmlWithNav = `<p>Before</p><nav>Navigation content</nav><p>After</p>`;
+
+    const instanceIgnoreNav = new NodeHtmlMarkdown({
+      ignore: ['nav']
+    });
+    const resNoNav = instanceIgnoreNav.translate(htmlWithNav);
+    expect(resNoNav).toBe(`Before\n\nAfter`);
+
+    // Test with multiple block elements
+    const htmlMultiBlock = `<div>Content</div><nav>Nav</nav><section>Section</section>`;
+    const instanceIgnoreNavSection = new NodeHtmlMarkdown({
+      ignore: ['nav', 'section']
+    });
+    const resNoNavSection = instanceIgnoreNavSection.translate(htmlMultiBlock);
+    expect(resNoNavSection).toBe(`Content`);
+  });
+
   test(`blockElements`, () => {
     const html = `<em>x</em><strong>yyy</strong><em>x</em><span>text</span>`;
     const instanceStrongBlock = new NodeHtmlMarkdown({

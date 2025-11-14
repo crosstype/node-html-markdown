@@ -38,15 +38,15 @@ export class NodeHtmlMarkdown {
     const blockElements = this.options.blockElements?.concat(defaultBlockElements) ?? defaultBlockElements;
 
     /* Setup Translator Bases */
-    ignoredElements?.forEach(el => {
-      this.translators.set(el, { ignore: true, recurse: false });
-      this.codeBlockTranslators.set(el, { ignore: true, recurse: false });
-    })
-
     blockElements?.forEach(el => {
       this.translators.set(el, { surroundingNewlines: 2 });
       this.codeBlockTranslators.set(el, { surroundingNewlines: 2 });
     });
+
+    ignoredElements?.forEach(el => {
+      this.translators.set(el, { ignore: true, recurse: false });
+      this.codeBlockTranslators.set(el, { ignore: true, recurse: false });
+    })
 
     /* Add and merge bases with default and custom translator configs */
     for (const [ elems, cfg ] of Object.entries({ ...defaultTranslators, ...customTranslators }))
