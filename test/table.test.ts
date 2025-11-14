@@ -113,5 +113,41 @@ describe(`Table`, () => {
       const result = translate(html);
       expect(result).toBe(expected);
     });
+
+    test(`Table inside list item`, () => {
+      const html = `
+        <ul>
+        <li>
+          <p>foo</p>
+          <table>
+            <thead>
+              <tr>
+                <th>foo</th>
+                <th>bar</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>baz</td>
+                <td>qux</td>
+              </tr>
+            </tbody>
+          </table>
+        </li>
+      </ul>`;
+
+      const result = translate(html);
+
+      // Should not have backslashes from incorrect line break handling
+      expect(result).not.toContain('|\\');
+
+      // Should use default bullet marker (*)
+      expect(result).toMatch(/^\* foo/);
+
+      // Table should appear (specific format may vary)
+      expect(result).toContain('| foo | bar |');
+      expect(result).toContain('| --- | --- |');
+      expect(result).toContain('| baz | qux |');
+    })
   });
 });
