@@ -353,10 +353,14 @@ export const defaultCodeBlockTranslators: TranslatorConfigObject = {
   'br': { content: `\n`, recurse: false },
   'hr': { content: '---', recurse: false },
   'h1,h2,h3,h4,h5,h6': { prefix: '[', postfix: ']' },
-  'ol,ul': { surroundingNewlines: false },
-  'li': defaultTranslators['li'],
-  'tr': { surroundingNewlines: false },
-  'img': { recurse: false }
+  'img': { recurse: false },
+
+  // Block elements should not add newlines in code blocks (fixes #52, #24)
+  'div,p,section,article,aside,header,footer,main,nav': { surroundingNewlines: false },
+  'ol,ul,li': { surroundingNewlines: false },
+  'table,thead,tbody,tfoot,tr,td,th': { surroundingNewlines: false },
+  'blockquote,pre': { surroundingNewlines: false },
+  'dl,dt,dd': { surroundingNewlines: false }
 }
 
 export const aTagTranslatorConfig: TranslatorConfigObject = {
