@@ -17,8 +17,10 @@ package-lock.json
 .env
 .vscode
 .idea/jsLibraryMappings.xml
+.idea/copilot.*.xml
 old
 TODO.md
+.claude/settings.local.json
 
 # Junk
 temp/

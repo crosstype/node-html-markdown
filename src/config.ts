@@ -127,10 +127,10 @@ export const defaultTranslators: TranslatorConfigObject = {
   }),
 
   /* List Item */
-  'li': ({ options: { bulletMarker }, indentLevel, listKind, listItemNumber }) => {
+  'li': ({ options: { bulletMarker, indent }, indentLevel, listKind, listItemNumber }) => {
     const indentationLevel = +(indentLevel || 0);
     return {
-      prefix: '   '.repeat(+(indentLevel || 0)) +
+      prefix: indent.repeat(+(indentLevel || 0)) +
         (((listKind === 'OL') && (listItemNumber !== undefined)) ? `${listItemNumber}. ` : `${bulletMarker} `),
       surroundingNewlines: 1,
       postprocess: ({ content }) =>
@@ -138,7 +138,7 @@ export const defaultTranslators: TranslatorConfigObject = {
         ? PostProcessResult.RemoveNode
         : content
           .trim()
-          .replace(/([^\r\n])(?:\r?\n)+/g, `$1  \n${'   '.repeat(indentationLevel)}`)
+          .replace(/([^\r\n])(?:\r?\n)+(?!\s*[-*+]|\s*\d+\.)/g, `$1  \n${indent.repeat(indentationLevel)}`)
           .replace(/(\S+?)[^\S\r\n]+$/gm, '$1  ')
     }
   },
@@ -171,6 +171,7 @@ export const defaultTranslators: TranslatorConfigObject = {
       const language = node.getAttribute('class')?.match(/language-(\S+)/)?.[1] || '';
       return {
         noEscape: true,
+        preserveWhitespace: true,
         prefix: codeFence + language + '\n',
         postfix: '\n' + codeFence,
         childTranslators: visitor.instance.codeBlockTranslators
@@ -178,6 +179,7 @@ export const defaultTranslators: TranslatorConfigObject = {
     } else {
       return {
         noEscape: true,
+        preserveWhitespace: true,
         postprocess: ({ content }) => content.replace(/^/gm, '    '),
         childTranslators: visitor.instance.codeBlockTranslators
       }
@@ -190,7 +192,7 @@ export const defaultTranslators: TranslatorConfigObject = {
     childTranslators: visitor.instance.tableTranslators,
     postprocess: ({ content, nodeMetadata, node }) => {
       // Split and trim leading + trailing pipes
-      const rawRows = splitSpecial(content).map(({ text }) => text.replace(/^(?:\|\s+)?(.+)\s*\|\s*$/, '$1'));
+      const rawRows = splitSpecial(content).map(({ text }) => text.replace(/^(?:\|)?(.+)\s*\|\s*$/, '$1'));
 
       /* Get Row Data */
       const rows: string[][] = [];
@@ -238,6 +240,9 @@ export const defaultTranslators: TranslatorConfigObject = {
       return res;
     }
   }),
+
+  /* Table Columns */
+  'td,th': { preserveIfEmpty: true },
 
   /* Link */
   'a': ({ node, options, visitor }) => {
@@ -348,10 +353,14 @@ export const defaultCodeBlockTranslators: TranslatorConfigObject = {
   'br': { content: `\n`, recurse: false },
   'hr': { content: '---', recurse: false },
   'h1,h2,h3,h4,h5,h6': { prefix: '[', postfix: ']' },
-  'ol,ul': defaultTranslators['ol,ul'],
-  'li': defaultTranslators['li'],
-  'tr': { surroundingNewlines: true },
-  'img': { recurse: false }
+  'img': { recurse: false },
+
+  // Block elements should not add newlines in code blocks (fixes #52, #24)
+  'div,p,section,article,aside,header,footer,main,nav': { surroundingNewlines: false },
+  'ol,ul,li': { surroundingNewlines: false },
+  'table,thead,tbody,tfoot,tr,td,th': { surroundingNewlines: false },
+  'blockquote,pre': { surroundingNewlines: false },
+  'dl,dt,dd': { surroundingNewlines: false }
 }
 
 export const aTagTranslatorConfig: TranslatorConfigObject = {
