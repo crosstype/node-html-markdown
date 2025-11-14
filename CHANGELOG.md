@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/crosstype/node-html-markdown/compare/v1.3.0...v2.0.0) (2025-11-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Explicitly deny special handling for elements that should not be inside codeblocks
+
+* Explicitly deny special handling for elements that should not be inside codeblocks ([80fd704](https://github.com/crosstype/node-html-markdown/commit/80fd70449ce820cf550ba7439a5e089f211741e5))
+
+
+### Fixes
+
+* correct nested list indentation to 2 spaces (fixes [#57](https://github.com/crosstype/node-html-markdown/issues/57)) ([9358ccc](https://github.com/crosstype/node-html-markdown/commit/9358ccc3103cd3099d1ee1f491ee9c99f58c9ddc))
+* eliminate circular dependency between config and utilities (fixes [#74](https://github.com/crosstype/node-html-markdown/issues/74)) ([3934406](https://github.com/crosstype/node-html-markdown/commit/3934406eab11854fa8f98649967453f63368cce3))
+* fixed table parsing issue (closes [#38](https://github.com/crosstype/node-html-markdown/issues/38), closes [#47](https://github.com/crosstype/node-html-markdown/issues/47)) ([5ac217a](https://github.com/crosstype/node-html-markdown/commit/5ac217aba1ae7818a7f5ccb70c013eaf40c9d9cb))
+* handle mixed-case HTML tags correctly (fixes [#63](https://github.com/crosstype/node-html-markdown/issues/63)) ([9016420](https://github.com/crosstype/node-html-markdown/commit/9016420e200208c886cc3cb2b45b078c6fa4134b))
+* Ignore options overwritten if block element. (fixes [#49](https://github.com/crosstype/node-html-markdown/issues/49)) ([bdc0d09](https://github.com/crosstype/node-html-markdown/commit/bdc0d0900c00ffaa5c87d326985372ce21ba5009))
+* preserve whitespace and newlines in code blocks (fixes [#52](https://github.com/crosstype/node-html-markdown/issues/52), [#24](https://github.com/crosstype/node-html-markdown/issues/24)) ([372be6d](https://github.com/crosstype/node-html-markdown/commit/372be6d688c6473f0ad0cc34c6333f79793f2268))
+* preserve whitespace before inline formatting elements (fixes [#61](https://github.com/crosstype/node-html-markdown/issues/61), fixes [#34](https://github.com/crosstype/node-html-markdown/issues/34)) ([ba035e6](https://github.com/crosstype/node-html-markdown/commit/ba035e68dc05b2348444644b82fc49b168d0794b))
+* Prevent backslash escaping in tables within list items (fixes [#60](https://github.com/crosstype/node-html-markdown/issues/60)) ([f15e482](https://github.com/crosstype/node-html-markdown/commit/f15e4823e2354fd40e44764b5e8c2f87f3f8d931))
+* remove perf functions from browser builds (fixes [#58](https://github.com/crosstype/node-html-markdown/issues/58)) ([d1552fd](https://github.com/crosstype/node-html-markdown/commit/d1552fd712f4752608ea12885f306c1aec2984a6))
+* trim trailing whitespace while preserving two-space line breaks ([c0062b8](https://github.com/crosstype/node-html-markdown/commit/c0062b8027ffbcf96edf7013c89518f95c2327e6))
+
 ## [1.3.0](https://github.com/crosstype/node-html-markdown/compare/v1.2.0...v1.3.0) (2022-12-13)
 
 

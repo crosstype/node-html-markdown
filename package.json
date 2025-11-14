@@ -1,7 +1,7 @@
 {
   "name": "node-html-markdown",
   "description": "Fast HTML to markdown cross-compiler, compatible with both node and the browser",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
