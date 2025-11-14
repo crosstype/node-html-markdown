@@ -29,7 +29,7 @@ describe(`Default Tags`, () => {
   test(`Non-processed Elements (b, strong, del, s, strike, em, i, pre, code, blockquote, a)`, () => {
     const tags = [ 'b', 'strong', 'del', 's', 'strike', 'em', 'i', 'code', 'a', 'pre', 'blockquote' ];
     const html = tags.map(t => `<${t}>${t}</${t}>`).join(' ');
-    const exp = 'b strong del s strike em i code a \n\npre\n\n blockquote\n\n';
+    const exp = 'b strong del s strike em i code a pre blockquote';
 
     const res = translateAsBlock(html);
     expect(res).toBe(getExpected(exp));
@@ -60,7 +60,7 @@ describe(`Default Tags`, () => {
           </li>
         </ol>
       `);
-      expect(res).toBe(getExpected(`        \n          \n1. a  \nb\n           \n          \n2. b  \n              \n   1. c  \n   d  \n              \n   * e  \n   f\n        \n      `));
+      expect(res).toBe(getExpected(`\n        \n          a\n\nb\n            \n          b\n            c\nd\n            e\nf\n        \n      `));
     });
 
     test(`Multi-level Unordered List`, () => {
@@ -74,12 +74,31 @@ describe(`Default Tags`, () => {
           </li>
         </ul>
       `);
-      expect(res).toBe(getExpected(`        \n          \n* a  \nb\n           \n          \n* b  \n              \n   * c  \n   d  \n              \n   1. e  \n   f\n        \n      `));
+      expect(res).toBe(getExpected(`\n        \n          a\n\nb\n            \n          b\n            c\nd\n            e\nf\n        \n      `));
     });
   });
 
-  test(`Table`, () => {
-    const res = translateAsBlock('a<tr>b</tr>c<table><td>X</td></table>');
-    expect(res).toBe(getExpected(`a\nb\nc\n\nX\n\n`));
-  })
+  test('Block elements should not add extra newlines', () => {
+    // DIV
+    const div = translateAsBlock('a<div>b</div>c');
+    expect(div).toBe(getExpected('abc'));
+
+    // P
+    const p = translateAsBlock('x<p>y</p>z');
+    expect(p).toBe(getExpected('xyz'));
+
+    // BLOCKQUOTE
+    const bq = translateAsBlock('foo<blockquote>bar</blockquote>baz');
+    expect(bq).toBe(getExpected('foobarbaz'));
+  });
+
+  test('Table elements should not add extra newlines', () => {
+    const res = translateAsBlock('a<tr>b</tr>c<table><td>X</td></table>d');
+    expect(res).toBe(getExpected('abcXd'));
+  });
+
+  test('List elements should not add extra newlines', () => {
+    const res = translateAsBlock('start<ul><li>item</li></ul>end');
+    expect(res).toBe(getExpected('startitemend'));
+  });
 });
