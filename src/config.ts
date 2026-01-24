@@ -291,11 +291,31 @@ export const defaultTranslators: TranslatorConfigObject = {
     const src = node.getAttribute('src') || '';
     if (!src || (!options.keepDataImages && /^data:/i.test(src))) return { ignore: true };
 
+    let encodedSrc = '';
+    for (const chr of src) {
+      switch (chr) {
+        case '(':
+          encodedSrc += '%28';
+          break;
+        case ')':
+          encodedSrc += '%29';
+          break;
+        case '_':
+          encodedSrc += '%5F';
+          break;
+        case '*':
+          encodedSrc += '%2A';
+          break;
+        default:
+          encodedSrc += chr;
+      }
+    }
+
     const alt = node.getAttribute('alt') || '';
     const title = node.getAttribute('title') || '';
 
     return {
-      content: `![${alt}](${src}${title && ` "${title}"`})`,
+      content: `![${alt}](${encodedSrc}${title && ` "${title}"`})`,
       recurse: false
     }
   },
