@@ -164,4 +164,16 @@ describe(`Special Cases`, () => {
       expect(res).toBe('Paragraph 1\n\n  \nParagraph 2');
     });
   });
+
+  describe(`handles parenthesis within an URL correctly`, () => {
+    test(`handles parenthesis within an anchor href`, () => {
+      const res = translate(`<a href="http://example.com/my-cool-article(2).png">My cool article</a>`);
+      expect(res).toBe("[My cool article](http://example.com/my-cool-article%282%29.png)");
+    });
+
+    test(`handles parenthesis within an img src`, () => {
+      const res = translate(`<img src="http://example.com/some-selfie(2).png"/>`);
+      expect(res).toBe("![](http://example.com/some-selfie%282%29.png)");
+    });
+  });
 });

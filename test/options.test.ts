@@ -277,12 +277,12 @@ text`);
     instance.options.keepDataImages = true;
     const resKeep = translate(`<img alt="normal" src="normal_img.jpg">
       <img src="data:image/gif;base64,R0lGODlhEA"/>`);
-    expect(resKeep).toBe(`![normal](normal_img.jpg) ![](data:image/gif;base64,R0lGODlhEA)`);
+    expect(resKeep).toBe(`![normal](normal%5Fimg.jpg) ![](data:image/gif;base64,R0lGODlhEA)`);
 
     instance.options.keepDataImages = false;
     const resNoKeep = translate(`<img alt="normal" src="normal_img.jpg">
       <img src="data:image/gif;base64,R0lGODlhEA"/>`);
-    expect(resNoKeep).toBe(`![normal](normal_img.jpg)`);
+    expect(resNoKeep).toBe(`![normal](normal%5Fimg.jpg)`);
 
     instance.options.keepDataImages = originalKeepDataImages;
   });
