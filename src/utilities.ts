@@ -225,11 +225,11 @@ export function getChildNodes(node: HtmlNode | Node): (Node | HtmlNode)[] {
 }
 
 export function perfStart(label: string) {
-  if (process.env.LOG_PERF) console.time(label);
+  if (typeof process !== 'undefined' && process?.env?.LOG_PERF) console.time(label);
 }
 
 export function perfStop(label: string) {
-  if (process.env.LOG_PERF) console.timeEnd(label);
+  if (typeof process !== 'undefined' && process?.env?.LOG_PERF) console.timeEnd(label);
 }
 
 // endregion
