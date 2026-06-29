@@ -59,14 +59,18 @@ describe(`Default Tags`, () => {
 
   test(`Image (img)`, () => {
     const url = `http://www.github.com/crosstype/`
+    // Parentheses in the src would otherwise break the markdown destination
+    const specialUrl = 'http://www.github.com/crosstype/img(123).png';
+    const encodedSpecialUrl = 'http://www.github.com/crosstype/img%28123%29.png';
     const res = translate(`
         <img src="${url}1">
         <img title="t2" alt="a2"> <!-- This node is elided due to no href -->
         <img src="${url}3" title="t3">
         <img src="${url}4" title="t4" alt="a4">
         <img src="data:image/gif;base64,R/"><!-- This node is elided due to default option keepDataImages = false -->
+        <img src="${specialUrl}" alt="a5">
     `);
-    expect(res).toBe(`![](${url}1)` + ` ![](${url}3 "t3")` + ` ![a4](${url}4 "t4")`);
+    expect(res).toBe(`![](${url}1)` + ` ![](${url}3 "t3")` + ` ![a4](${url}4 "t4")` + ` ![a5](${encodedSpecialUrl})`);
   });
 
   test(`Pre-formatted Text (pre)`, () => {

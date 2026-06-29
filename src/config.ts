@@ -1,4 +1,4 @@
-import { isWhiteSpaceOnly, splitSpecial, surround, tagSurround, trimNewLines } from './utilities';
+import { encodeUrlParens, isWhiteSpaceOnly, splitSpecial, surround, tagSurround, trimNewLines } from './utilities';
 import { PostProcessResult, TranslatorConfigObject } from './translator';
 import { NodeHtmlMarkdownOptions } from './options';
 
@@ -295,7 +295,7 @@ export const defaultTranslators: TranslatorConfigObject = {
     const title = node.getAttribute('title') || '';
 
     return {
-      content: `![${alt}](${src}${title && ` "${title}"`})`,
+      content: `![${alt}](${encodeUrlParens(src)}${title && ` "${title}"`})`,
       recurse: false
     }
   },

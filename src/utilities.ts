@@ -12,6 +12,13 @@ export const surround = (source: string, surroundStr: string) => `${surroundStr}
 export const isWhiteSpaceOnly = (s: string) => !/\S/.test(s);
 
 /**
+ * Percent-encode parentheses in a markdown link/image destination. An unescaped `)` ends the
+ * destination early, so an `<img src="foo)bar.png">` would otherwise produce `![](foo)bar.png)`,
+ * which a parser reads as an image of `foo` followed by literal `bar.png)` text.
+ */
+export const encodeUrlParens = (url: string) => url.replace(/\(/g, '%28').replace(/\)/g, '%29');
+
+/**
  * Split string, preserving specific newline used for each line
  */
 export function splitSpecial(s: string) {
