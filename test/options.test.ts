@@ -302,13 +302,13 @@ text`);
     instance.options.useLinkReferenceDefinitions = false;
     let res = translate(html);
     expect(res).toBe(
-      `Hello: [a b**c**](${url}) a**b** [link2](${url}/other) [repeat link](${url}) <${url}> Goodbye!`
+      `Hello:\u00A0 [a b**c**](${url}) a**b** [link2](${url}/other) [repeat link](${url}) <${url}>\u00A0Goodbye!`
     );
 
     instance.options.useLinkReferenceDefinitions = true;
     res = translate(html);
     expect(res).toBe(
-      `Hello: [a b**c**][1] a**b** [link2][2] [repeat link][1] <${url}> Goodbye! \n\n[1]: ${url}\n[2]: ${url}/other`
+      `Hello:\u00A0 [a b**c**][1] a**b** [link2][2] [repeat link][1] <${url}>\u00A0Goodbye! \n\n[1]: ${url}\n[2]: ${url}/other`
     );
 
     instance.options.useLinkReferenceDefinitions = originalUseLinkReferenceDefinitions;
@@ -327,12 +327,12 @@ text`);
 
     instance.options.useInlineLinks = false;
     let res = translate(html);
-    expect(res).toBe(`Hello: [${url}](${url}) a**b** [link2](${url}/other) [repeat link](${url}) Goodbye!`);
+    expect(res).toBe(`Hello:\u00A0 [${url}](${url}) \u00A0 a**b** [link2](${url}/other) [repeat link](${url}) Goodbye!`);
 
     instance.options.useInlineLinks = true;
     res = translate(html);
     expect(res).toBe(
-      `Hello: <${url}> a**b** [link2](${url}/other) [repeat link](${url}) Goodbye!`
+      `Hello:\u00A0 <${url}> \u00A0 a**b** [link2](${url}/other) [repeat link](${url}) Goodbye!`
     );
 
     instance.options.useInlineLinks = originalUseInlineLinksDefinitions;

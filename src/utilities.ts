@@ -12,6 +12,15 @@ export const surround = (source: string, surroundStr: string) => `${surroundStr}
 export const isWhiteSpaceOnly = (s: string) => !/\S/.test(s);
 
 /**
+ * Whitespace that HTML collapses: ASCII only (https://infra.spec.whatwg.org/#ascii-whitespace).
+ * Unlike `\s`, it leaves out NBSP (U+00A0, `&nbsp;`), which exists to not be collapsed.
+ */
+const collapsibleWhitespace = '[ \\t\\n\\f\\r]';
+export const collapsibleWhitespaceRegex = new RegExp(`${collapsibleWhitespace}+`, 'g');
+const collapsibleWhitespaceOnlyRegex = new RegExp(`^${collapsibleWhitespace}*$`);
+export const isCollapsibleWhitespace = (s: string) => collapsibleWhitespaceOnlyRegex.test(s);
+
+/**
  * Split string, preserving specific newline used for each line
  */
 export function splitSpecial(s: string) {
@@ -42,6 +51,13 @@ export function splitSpecial(s: string) {
 
   return lines;
 }
+
+/**
+ * Whitespace kept beside a surrounded tag: the character next to the content, unless the run holds NBSP, which
+ * HTML doesn't collapse, so the whole run is kept with only its collapsible whitespace collapsed
+ */
+const edgeWhitespace = (run: string, adjacent: string | undefined) =>
+  run.includes('\u00A0') ? run.replace(collapsibleWhitespaceRegex, ' ') : (adjacent ?? '');
 
 /**
  * Surround tag content with delimiter (moving any leading/trailing space to outside the tag
@@ -87,8 +103,8 @@ export function tagSurround(content: string, surroundStr: string) {
 
     if (endPos === undefined) endPos = text.length - 1;
 
-    const leadingSpace = startPos > 0 ? text[startPos - 1] : '';
-    const trailingSpace = endPos < (text.length - 1) ? text[endPos + 1] : '';
+    const leadingSpace = edgeWhitespace(text.slice(0, startPos), text[startPos - 1]);
+    const trailingSpace = edgeWhitespace(text.slice(endPos + 1), text[endPos + 1]);
 
     const slicedText = text.slice(startPos, endPos + 1)
 

@@ -47,8 +47,24 @@ describe(`Special Cases`, () => {
     test.each(textFormatTags)(`%s`, tag => {
       const delim = delims[tag];
 
-      expect(translate(`<p><${tag}> &nbsp;Label:&nbsp; </${tag}>Value</p>`)).toBe(` ${delim}Label:${delim} Value`);
-      expect(translate(`<p><${tag}>&nbsp; Label: &nbsp;</${tag}>Value</p>`)).toBe(` ${delim}Label:${delim} Value`);
+      expect(translate(`<p><${tag}> &nbsp;Label:&nbsp; </${tag}>Value</p>`)).toBe(` \u00A0${delim}Label:${delim}\u00A0 Value`);
+      expect(translate(`<p><${tag}>&nbsp; Label: &nbsp;</${tag}>Value</p>`)).toBe(`\u00A0 ${delim}Label:${delim} \u00A0Value`);
+    });
+  });
+
+  // See: https://github.com/crosstype/node-html-markdown/issues/87
+  describe(`Keeps NBSP rather than collapsing it like ASCII whitespace`, () => {
+    test(`as an entity or as the character`, () => {
+      expect(translate(`<h2>A&nbsp;&nbsp;&nbsp;B</h2>`)).toBe(`## A\u00A0\u00A0\u00A0B`);
+      expect(translate(`<p>A\u00A0\u00A0B</p>`)).toBe(`A\u00A0\u00A0B`);
+    });
+
+    test(`when it is a whole text node between tags`, () => {
+      expect(translate(`<p><b>a</b>&nbsp;&nbsp;<b>b</b></p>`)).toBe(`**a**\u00A0\u00A0**b**`);
+    });
+
+    test(`while still collapsing the ASCII whitespace around it`, () => {
+      expect(translate(`<p>a \t\n&nbsp;\n b</p>`)).toBe(`a \u00A0 b`);
     });
   });
 

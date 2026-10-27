@@ -1,6 +1,8 @@
 import { NodeHtmlMarkdown } from './main';
-import { ElementNode, HtmlNode, isElementNode, isTextNode } from './nodes';
-import { getChildNodes, getTrailingWhitespaceInfo, perfStart, perfStop, trimNewLines } from './utilities';
+import { ElementNode, HtmlNode, isCollapsibleWhitespaceNode, isElementNode, isTextNode } from './nodes';
+import {
+  collapsibleWhitespaceRegex, getChildNodes, getTrailingWhitespaceInfo, perfStart, perfStop, trimNewLines
+} from './utilities';
 import {
   createTranslatorContext, isTranslatorConfig, PostProcessResult, TranslatorConfig, TranslatorConfigFactory,
   TranslatorConfigObject, TranslatorContext
@@ -137,7 +139,7 @@ export class Visitor {
    */
   private processText(text: string, metadata: NodeMetadata | undefined) {
     let res = text;
-    if (!metadata?.preserveWhitespace) res = res.replace(/\s+/g, ' ');
+    if (!metadata?.preserveWhitespace) res = res.replace(collapsibleWhitespaceRegex, ' ');
     if (metadata?.noEscape) return res;
 
     const { lineStartEscape, globalEscape, textReplace } = this.options;
@@ -164,7 +166,7 @@ export class Visitor {
         (<any>node).trimmedText ??= trimNewLines((<any>node).wholeText);
       }
 
-      if (node.isWhitespace && !metadata?.preserveWhitespace) {
+      if (isCollapsibleWhitespaceNode(node) && !metadata?.preserveWhitespace) {
         return (!result.text.length || result.trailingNewlineStats.whitespace > 0) ? void 0 : this.appendResult(' ');
       }
 
