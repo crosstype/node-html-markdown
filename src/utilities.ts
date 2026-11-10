@@ -98,9 +98,11 @@ export function tagSurround(content: string, surroundStr: string) {
   return res;
 }
 
+export const trailingWhitespaceLookback = 10;
+
 export const getTrailingWhitespaceInfo = (s: string): { whitespace: number, newLines: number } => {
   const res = { whitespace: 0, newLines: 0 };
-  const minI = Math.max(s.length - 10, 0);
+  const minI = Math.max(s.length - trailingWhitespaceLookback, 0);
   for (let i = s.length - 1; i >= minI; --i) {
     const token = s.slice(i, i + 1);
     if (!/\s/.test(token)) break;
