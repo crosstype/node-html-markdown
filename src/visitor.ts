@@ -1,6 +1,8 @@
 import { NodeHtmlMarkdown } from './main';
 import { ElementNode, HtmlNode, isElementNode, isTextNode } from './nodes';
-import { getChildNodes, getTrailingWhitespaceInfo, perfStart, perfStop, trimNewLines } from './utilities';
+import {
+  getChildNodes, getTrailingWhitespaceInfo, perfStart, perfStop, trailingWhitespaceLookback, trimNewLines
+} from './utilities';
 import {
   createTranslatorContext, isTranslatorConfig, PostProcessResult, TranslatorConfig, TranslatorConfigFactory,
   TranslatorConfigObject, TranslatorContext
@@ -29,7 +31,10 @@ export interface NodeMetadata {
 export type NodeMetadataMap = Map<ElementNode, NodeMetadata>
 
 type VisitorResult = {
-  text: string
+  readonly text: string
+  parts: string[]
+  length: number
+  tail: string
   trailingNewlineStats: {
     whitespace: number
     newLines: number
@@ -60,7 +65,10 @@ export class Visitor {
   )
   {
     this.result = {
-      text: '',
+      parts: [],
+      length: 0,
+      tail: '',
+      get text() { return this.parts.join(''); },
       trailingNewlineStats: {
         whitespace: 0,
         newLines: 0
@@ -86,10 +94,36 @@ export class Visitor {
     if (!s && startPos === undefined) return;
     const { result } = this;
 
-    if (startPos !== undefined) result.text = result.text.substr(0, startPos);
-    result.text += (spaceIfRepeatingChar && result.text.slice(-1) === s[0] ? ' ' : '') + s;
+    if (startPos !== undefined) {
+      while (result.length > startPos) result.length -= result.parts.pop()!.length;
 
-    result.trailingNewlineStats = getTrailingWhitespaceInfo(result.text);
+      result.tail = '';
+      for (let i = result.parts.length - 1; i >= 0 && result.tail.length < trailingWhitespaceLookback; --i)
+        result.tail = result.parts[i].slice(-trailingWhitespaceLookback) + result.tail;
+      result.tail = result.tail.slice(-trailingWhitespaceLookback);
+    }
+
+    const text = (spaceIfRepeatingChar && result.tail.slice(-1) === s[0] ? ' ' : '') + s;
+    if (text) {
+      result.parts.push(text);
+      result.length += text.length;
+      result.tail = (result.tail + text).slice(-trailingWhitespaceLookback);
+    }
+
+    result.trailingNewlineStats = getTrailingWhitespaceInfo(result.tail);
+  }
+
+  /**
+   * Get output text from startPos to the end
+   */
+  public getResultText(startPos: number): string {
+    const { parts } = this.result;
+
+    let partsStart = this.result.length;
+    let i = parts.length;
+    while (partsStart > startPos) partsStart -= parts[--i].length;
+
+    return parts.slice(i).join('');
   }
 
   public appendNewlines(count: number) {
@@ -165,7 +199,7 @@ export class Visitor {
       }
 
       if (node.isWhitespace && !metadata?.preserveWhitespace) {
-        return (!result.text.length || result.trailingNewlineStats.whitespace > 0) ? void 0 : this.appendResult(' ');
+        return (!result.length || result.trailingNewlineStats.whitespace > 0) ? void 0 : this.appendResult(' ');
       }
 
       // Fix for issues #61 and #34: Process original text to preserve trailing whitespace before inline elements
@@ -248,7 +282,7 @@ export class Visitor {
       this.nodeMetadata.set(node, metadata);
     }
 
-    const startPosOuter = result.text.length;
+    const startPosOuter = result.length;
 
     /* Write opening */
     if (cfg.surroundingNewlines) this.appendNewlines(+cfg.surroundingNewlines);
@@ -257,7 +291,7 @@ export class Visitor {
     /* Write inner content */
     if (typeof cfg.content === 'string') this.appendResult(cfg.content, void 0, cfg.spaceIfRepeatingChar);
     else {
-      const startPos = result.text.length;
+      const startPos = result.length;
 
       // Process child nodes
       for (const child of getChildNodes(node)) this.visitNode(child, (cfg.recurse === false), metadata);
@@ -266,7 +300,7 @@ export class Visitor {
       if (cfg.postprocess) {
         const postRes = cfg.postprocess({
           ...(ctx || createTranslatorContext(this, node, metadata)),
-          content: result.text.substr(startPos)
+          content: this.getResultText(startPos)
         });
 
         // If remove flag sent, remove / omit everything for this node (prefix, newlines, content, postfix)
