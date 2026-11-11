@@ -114,6 +114,29 @@ describe(`Table`, () => {
       expect(result).toBe(expected);
     });
 
+    test(`Empty Cells with empty children`, () => {
+      const html = `<table>
+        <tr><th><p></p></th><th>B</th><th>C</th></tr>
+        <tr><td><p></p></td><td>b</td><td>c</td></tr>
+        <tr><td>a</td><td><span></span></td><td>c</td></tr>
+        <tr><td>a</td><td>b</td><td><p><span></span></p></td></tr>
+        <tr><td><p></p><p></p></td><td>b</td><td>c</td></tr>
+        <tr><td><p></p></td><td><p></p></td><td><p></p></td></tr>
+        <tr><td>a</td><td>b</td><td>c</td></tr>
+      </table>`;
+      const expected =
+        `|   | B | C |\n` +
+        `| - | - | - |\n` +
+        `|   | b | c |\n` +
+        `| a |   | c |\n` +
+        `| a | b |   |\n` +
+        `|   | b | c |\n` +
+        `|   |   |   |\n` +
+        `| a | b | c |`;
+      const result = translate(html);
+      expect(result).toBe(expected);
+    });
+
     test(`Table inside list item`, () => {
       const html = `
         <ul>

@@ -121,11 +121,19 @@ export class Visitor {
           const translator = elementNode.tagName ? translators.get(elementNode.tagName) : undefined;
           if (typeof translator === 'function' || translator?.preserveIfEmpty) res = true;
         }
-        else
+        else {
           for (const child of childNodes) {
             if (!res) res = visit(child);
             else visit(child);
           }
+
+          /* preserveIfEmpty also applies if none of the children have content (e.g. <td><p></p></td>) */
+          if (!res) {
+            const elementNode = node as ElementNode;
+            const translator = elementNode.tagName ? translators.get(elementNode.tagName) : undefined;
+            if (typeof translator === 'object' && translator.preserveIfEmpty) res = true;
+          }
+        }
       }
       return node.preserve = res;
     })(node);
